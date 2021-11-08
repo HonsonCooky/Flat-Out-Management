@@ -1,5 +1,5 @@
 import express, {json} from "express";
-import mongoose, {connection, MongooseOptions} from "mongoose";
+import mongoose, {MongooseOptions} from "mongoose";
 import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
 import {initializeUtilInterface} from "./Interface/UtilInterface";
@@ -18,7 +18,7 @@ const mongoOptions: MongooseOptions = {
 let sessionLogs: string[] = []
 export const getLogs = () => { return [...sessionLogs] }
 export const addLogs = (...logs: string[]) => {sessionLogs = sessionLogs.concat(logs)}
-export const isDbConnected = () => { return connection.readyState === 1}
+export const isDbConnected = () => { return mongoose.connection.readyState === 1}
 
 // Connect to MONGO
 mongoose.connect(mongoUri, mongoOptions).then(() => addLogs("MongoDB connected"))
