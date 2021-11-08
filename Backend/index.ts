@@ -2,6 +2,7 @@ import express, {json} from "express";
 import mongoose, {connection, MongooseOptions} from "mongoose";
 import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
+import {initializeUtilInterface} from "./Interface/UtilInterface";
 
 
 export const app = express()
@@ -23,5 +24,6 @@ export const isDbConnected = () => { return connection.readyState === 1}
 mongoose.connect(mongoUri, mongoOptions).then(() => addLogs("MongoDB connected"))
 
 // Initialize the interface and start HEROKU instance
+initializeUtilInterface()
 initializeUserInterface()
 app.listen(port, () => { addLogs("Heroku connected"); console.log(`http://localhost:${port}`)})
