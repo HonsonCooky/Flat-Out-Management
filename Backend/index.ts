@@ -4,7 +4,6 @@ import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
 import {initializeUtilInterface} from "./Interface/UtilInterface";
 
-
 export const app = express()
 export const jsonHandler = json()
 config()
@@ -21,6 +20,8 @@ export const addLogs = (...logs: string[]) => {sessionLogs = sessionLogs.concat(
 export const isDbConnected = () => { return mongoose.connection.readyState === 1}
 
 // Connect to MONGO
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 mongoose.connect(mongoUri, mongoOptions).then(() => addLogs("MongoDB connected"))
 
 // Initialize the interface and start HEROKU instance
