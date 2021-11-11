@@ -1,4 +1,5 @@
-import {app, isDbConnected} from "../index";
+import {app} from "../index";
+import {isDbConnected} from "../Util/UtilFunctions";
 
 export const initializeUtilInterface = () => {
     app.get("/", (req, res) => {

@@ -63,21 +63,16 @@ export interface User {
     email: string,
     username: string,
     password: string,
-    nickname?: string,
+    nickname: string,
     group: string,
     lists: string[]
 }
 
 const UserDefinition = {
-    email: {
-        type: String,
-        required: [true, 'Users require an email address'],
-        unique: true,
-        validate: customEmailValidator
-    },
+    email: {type: String, required: [true, 'Users require an email address'], unique: true, validate: customEmailValidator},
     username: {type: String, required: [true, 'Users require a name'], unique: true, validate: customNameValidator},
-    password: {type: String, required: [true, 'User requires a password']}, // Can't be unique, else two users can't have the same password hash+salt mix
-    nickname: {type: String, required: [true, 'User requires a nickname'], unique: true, validate: customNameValidator},
+    password: {type: String, required: [true, 'Users require a password']}, // Can't be unique, else two users can't have the same password hash+salt mix
+    nickname: {type: String, required: [true, 'Users require a nickname'], validate: customNameValidator},
     group: {type: String, required: [true, 'User groups require a name'], validate: customNameValidator}, // Can't be unique, multiple users can point to the same group.
     lists: [{type: String, required: [true, 'User lists require a name']}] // Can't be unique, multiple users can point to the same lists
 }
