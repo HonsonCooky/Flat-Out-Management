@@ -5,4 +5,8 @@ export const initializeUtilInterface = () => {
     app.get("/", (req, res) => {
       res.status(200).send("Heroku: True, MongoDB: " + isDbConnected())
     })
+
+    app.get("/get/wakeup", (req, res) => {
+        res.status(200).send("Heroku: True, MongoDB: " + isDbConnected())
+    })
 }

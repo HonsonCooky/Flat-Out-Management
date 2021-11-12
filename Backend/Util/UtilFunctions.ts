@@ -47,11 +47,14 @@ export function compareHashes(nonHash: string, hash: string): boolean {
  * Error handler (express middleware) that sends error messages which can be directly displayed by the client.
  * This removes computation on the client side, as the information is already calculated here on the server side.
  ----------------------------------------------------------------------------------------------------------------- */
-export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res) => {
     let msg: string = err.message
-    console.log(msg)
     if (msg.startsWith('400')) res.status(400).send(`${msg.replace(/400:/g, '')}`)
     else if (msg.startsWith('500')) res.status(500).send(`${msg.replace(/500:/g, '')}`)
-    else if (msg.includes('duplicate')) res.status(400).send('Looks')
-    else if (err) res.status(500).send("Opps! I don't know what happened *shrugs*. Whatever you tried to do, didn't work. Try again?")
+    else if (msg.includes('duplicate')) res.status(400).send(`Unfortunately, a document with these credentials` +
+        ` already exists.`)
+    else if (err) {
+        addLogs(`${req.body} ==> ${msg}`)
+        res.status(500).send("Opps! I don't know what happened *shrugs*. Whatever you tried to do, didn't work. Try again?")
+    }
 }

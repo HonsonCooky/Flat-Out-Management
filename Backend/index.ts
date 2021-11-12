@@ -1,4 +1,4 @@
-import express, {ErrorRequestHandler} from "express";
+import express from "express";
 import mongoose, {MongooseOptions} from "mongoose";
 import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
@@ -20,7 +20,8 @@ const mongoOptions: MongooseOptions = {
 
 /**
  * MONGODB:
- * Connect to the MongoDB interface. Set some variables such that deprecated fields are used/unused.
+ * Connect to the MongoDB interface. Set some variables such that deprecated fields are used/unused. MongoDB
+ * connections are slow, so doing it asynchronously first should help speed up the connection process.
  */
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
