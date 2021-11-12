@@ -46,7 +46,7 @@ async function authAndGetUser(auth: Authenticator): Promise<User> {
  */
 async function validateUser(user: User) {
     let errMsg = new UserModel(user).validateSync()
-    if (errMsg != null) throw new Error("400:" + errMsg.message.replace(/,/g, "\n").replace(/:/, ''))
+    if (errMsg) throw new Error("400:" + errMsg.message.replace(/,/g, "\n").replace(/:/, ''))
 }
 
 /** ----------------------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ async function validateUser(user: User) {
 export async function userSignup(user: User): Promise<SanitizedUser> {
     if (!user.nickname) user.nickname = user.username
     if (!user.lists) user.lists = []
-    user.password = saltAndHash(user.password)
     await validateUser(user)
+    user.password = saltAndHash(user.password)
     await new UserModel(user).save()
     return sanitizeUser(user)
 }
@@ -88,18 +88,17 @@ export async function userLogin(body: Authenticator): Promise<SanitizedUser> {
 export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
     const {auth, update} = body
     let oldUser: User = await authAndGetUser(auth)
-    let newUser: User = await UserModel.findOneAndUpdate({email: oldUser.email}, Object.assign(oldUser, update), {
-        new: true,
-        upsert: false
-    })
+    let newUser: User = await UserModel.findOneAndUpdate({email: oldUser.email},
+        Object.assign(oldUser, update), {new: true, upsert: false})
+    await validateUser(newUser)
     return sanitizeUser(newUser)
 }
 
 /**
- * The remove function is slightly different, but will follow the same footprint as before. Removing the user from
- * the MongoDB 'users' collection will simply delete the user account. Like most actions, this requires a password
+ * REMOVE: The remove function is slightly different, but will follow the same footprint as before. Removing the user
+ * from the MongoDB 'users' collection will simply delete the user account. Like most actions, this requires a password
  * such that no one can do this on accident, or without intentional bad design.
- * @param body: AuthenticationUser
+ * @param body: Authenticator
  */
 export async function userRemove(body: Authenticator): Promise<SanitizedUser> {
     let user: User = await authAndGetUser(body)
@@ -107,7 +106,12 @@ export async function userRemove(body: Authenticator): Promise<SanitizedUser> {
     return sanitizeUser(user)
 }
 
+/**
+ * GET: A faster 'get.time < post.time' means of retrieving the information for a user.
+ * No validation here, simply get and wait.
+ * @param params: {i: string, p: string}
+ */
 export async function userGet(params: any): Promise<SanitizedUser> {
-    const {u, p} = params
-    return sanitizeUser(await authAndGetUser({identifier: u, password: p}))
+    const {i, p} = params
+    return sanitizeUser(await authAndGetUser({identifier: i, password: p}))
 }

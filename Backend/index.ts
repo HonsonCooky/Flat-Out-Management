@@ -4,6 +4,7 @@ import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
 import {initializeUtilInterface} from "./Interface/UtilInterface";
 import {addLogs, errorHandler} from "./Util/UtilFunctions";
+import {initializeGroupInterface} from "./Interface/GroupInterface";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -38,8 +39,9 @@ export const app = express()
 app.use(express.json())
 
 // Initialize interfaces, grouped by interactions with MongoDB collections
-initializeUtilInterface()
+initializeGroupInterface()
 initializeUserInterface()
+initializeUtilInterface()
 
 // Middleware AFTER requests
 app.use(errorHandler)

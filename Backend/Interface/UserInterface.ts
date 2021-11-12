@@ -32,7 +32,7 @@ export function initializeUserInterface() {
             .catch(e => next(e))
     })
 
-    app.get('/get/user/:u&:p', (req, res, next) => {
+    app.get('/get/user/:i&:p', (req, res, next) => {
         userGet(req.params)
             .then((user: SanitizedUser) => res.status(200).send(user))
             .catch(e => next(e))

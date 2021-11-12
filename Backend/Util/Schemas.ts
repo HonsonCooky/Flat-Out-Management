@@ -89,12 +89,12 @@ const ListSchema = new Schema({
 
 export const ListModel = mongoose.model("Lists", ListSchema)
 
-/**
+/** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
  * The User Schema is an aggregate of information on some user. The normal information is collected. Name, Email,
  * Password. Each user will be associated to some Group (their flat), and may contain several different lists. Groups
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
- */
+ --------------------------------------------------------------------------------------------------------------- */
 
 export interface User extends Document {
     email: string,
@@ -142,11 +142,11 @@ export const UserSchema = new Schema({
 export const UserModel = mongoose.model("Users", UserSchema)
 
 
-/**
+/** ---------------------------------------------------------------------------------------------------------------
  * GROUP SCHEMA:
  * The Group Schema contains an object, which provides access to a group. Is its essence, a group is a hub. A central
  * location for all members of the group (flat). For this
- */
+ --------------------------------------------------------------------------------------------------------------- */
 
 export interface Group extends Document {
     groupName: string,
@@ -195,4 +195,4 @@ const GroupSchema = new Schema({
     }
 }, {timestamps: true})
 
-export const GroupModel = mongoose.model("Groups", UserSchema)
+export const GroupModel = mongoose.model("Groups", GroupSchema)

@@ -49,13 +49,12 @@ export function compareHashes(nonHash: string, hash: string): boolean {
  ----------------------------------------------------------------------------------------------------------------- */
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
     let msg: string = err.message
-    console.log("here", msg)
+    addLogs(`${JSON.stringify(req.body)} ==> ${msg}`)
     if (msg.startsWith('400')) res.status(400).send(`${msg.replace(/400:/g, '')}`)
     else if (msg.startsWith('500')) res.status(500).send(`${msg.replace(/500:/g, '')}`)
     else if (msg.includes('duplicate')) res.status(400).send(`Unfortunately, a document with these credentials` +
         ` already exists.`)
     else if (err) {
-        addLogs(`${req.body} ==> ${msg}`)
         res.status(500).send("Opps! I don't know what happened *shrugs*. Whatever you tried to do, didn't work. Try again?")
     }
 }
