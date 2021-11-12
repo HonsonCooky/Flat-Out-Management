@@ -3,16 +3,9 @@ import {userGet, userLogin, userRemove, userSignup, userUpdate} from "../Managem
 import {SanitizedUser} from "../Util/Schemas";
 
 /**
- * User Interfaces: Handle high level API requests. Create an API to utilize elsewhere, and handle errors.
- */
-
-/** ------------------------------------------------------------------------------------------------------------------
- * API initializers
- ------------------------------------------------------------------------------------------------------------------ */
-
-/**
- * Idea: Parse back the user in as many instances as possible, to reduce the number of time '/get/user/:u&:p' is
- * needed. Overall, reducing the number of calls to the API.
+ * UserInterface: Not to be confused with a UI, the UserInterface.ts contains one function for calling and handling
+ * (parsing handling to middleware) UserManagement functions. In a nutshell, it is the EXPRESS interface setup,
+ * relaying calls to the Mongoose backend in /Management/UserManagement.ts
  */
 export function initializeUserInterface() {
     app.post("/post/user/signup", (req, res, next) => {

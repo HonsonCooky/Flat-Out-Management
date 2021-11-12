@@ -1,4 +1,4 @@
-import {AuthenticationUser, SanitizedUser, UpdateUser, User, UserModel} from "../Util/Schemas";
+import {Authenticator, SanitizedUser, UpdateUser, User, UserModel} from "../Util/Schemas";
 import {compareHashes, saltAndHash} from "../Util/UtilFunctions";
 
 /** ----------------------------------------------------------------------------------------------------------------
@@ -23,19 +23,18 @@ function sanitizeUser(user: User): SanitizedUser {
 /**
  * Get the User from the MongoDB collection, and check that a given password is the same as the stored password. The
  * method will throw errors in cases where something is wrong.
- * @param auth: AuthenticationUser
+ * @param auth: Authenticator
  */
-async function authAndGetUser(auth: AuthenticationUser): Promise<User> {
+async function authAndGetUser(auth: Authenticator): Promise<User> {
     // Check the user exists
     let user: User = await UserModel.findOne({
         $or: [{email: auth.identifier.toLowerCase()}, {username: auth.identifier.toLowerCase()}]
     })
-    if (user === null) throw new Error(`400:Cannot find user ${auth.identifier}`)
+    if (!user) throw new Error(`400:Cannot find user ${auth.identifier}`)
 
     // Check the password for user is correct
-    if (!auth.password || !compareHashes(auth.password, user.password)) {
+    if (!auth.password || !compareHashes(auth.password, user.password))
         throw new Error(`400:Incorrect password, but we do know that user ${user.username} exists`)
-    }
 
     return user
 }
@@ -75,7 +74,7 @@ export async function userSignup(user: User): Promise<SanitizedUser> {
  * information is given back to the user.
  * @param body: AuthenticationUser
  */
-export async function userLogin(body: AuthenticationUser): Promise<SanitizedUser> {
+export async function userLogin(body: Authenticator): Promise<SanitizedUser> {
     let user = await authAndGetUser(body)
     await validateUser(user) // For good measure
     return sanitizeUser(user)
@@ -102,7 +101,7 @@ export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
  * such that no one can do this on accident, or without intentional bad design.
  * @param body: AuthenticationUser
  */
-export async function userRemove(body: AuthenticationUser): Promise<SanitizedUser> {
+export async function userRemove(body: Authenticator): Promise<SanitizedUser> {
     let user: User = await authAndGetUser(body)
     await UserModel.deleteOne(user) // Match on the entire user, such that no miscalculations can be made
     return sanitizeUser(user)

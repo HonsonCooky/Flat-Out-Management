@@ -14,14 +14,29 @@ function nameValidator(v: string) {
     return /^\S.{2,19}$/.test(v)
 }
 
-const customNameValidator = [nameValidator, "'Name is too long - too short - or doesn't start with a character"]
+const customNameValidator = [nameValidator, "Names need to be 3-20 characters long; starting with a character"]
 
 function emailValidator(v: string) {
     return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v)
 }
 
-const customEmailValidator = [emailValidator, "Email is not formatted correctly"]
+const customEmailValidator = [emailValidator, "Email is incorrectly formatted"]
 
+function arrayValidator(v: string[]) {
+    return Array.isArray(v) && v.length > 0
+}
+
+const customArrayValidator = [arrayValidator, "Array is missing necessary contents"]
+
+export interface Authenticator {
+    identifier: string,
+    password: string
+}
+
+interface Update {
+    auth: Authenticator
+    update: null
+}
 
 /** ---------------------------------------------------------------------------------------------------------------
  * ITEM SCHEMA:
@@ -30,11 +45,17 @@ const customEmailValidator = [emailValidator, "Email is not formatted correctly"
  * list item may have a name, associated group, and a number associated to it. This is a 'generic' object, at least,
  * as far as Mongoose will allow.
  --------------------------------------------------------------------------------------------------------------- */
+export interface Item extends Document {
+    itemName: string,
+    itemDesc?: string,
+    association?: string,
+    multiplier?: number,
+}
+
 const ItemSchema = new Schema({
-    key: {type: String, required: [true, 'Items require a name'], unique: true, lowercase: true},
     itemName: {type: String, required: [true, 'Items require a name'], validate: customNameValidator},
     itemDesc: String,
-    association: {type: String, validate: customNameValidator},
+    association: String,
     multiplier: Number,
 })
 
@@ -45,11 +66,25 @@ const ItemSchema = new Schema({
  * information, but rather, a means of regulating client side accessible information. The key is generated once,
  * and held with a group or several users.
  --------------------------------------------------------------------------------------------------------------- */
+export interface List extends Document {
+    key: string,
+    listName: string,
+    associations?: string[],
+    listItems?: Item[]
+}
+
 const ListSchema = new Schema({
     key: {type: String, required: [true, 'Lists require a unique key'], unique: true, lowercase: true},
     listName: {type: String, required: [true, 'Lists require a name'], validate: customNameValidator},
-    association: [{type: String, required: [true, 'List associations require a name'], lowercase: true}],
-    listItems: [ItemSchema]
+    associations: {
+        type: [{type: String, lowercase: true}],
+        required: [true, 'Lists require some association'],
+        validate: customArrayValidator
+    },
+    listItems: {
+        type: [ItemSchema],
+        required: [true, 'Lists require a list... silly']
+    }
 }, {timestamps: true})
 
 export const ListModel = mongoose.model("Lists", ListSchema)
@@ -64,14 +99,13 @@ export const ListModel = mongoose.model("Lists", ListSchema)
 export interface User extends Document {
     email: string,
     username: string,
-    username_lower: string,
     password: string,
     nickname: string,
     group: string,
     lists: string[]
 }
 
-export interface SanitizedUser {
+export type SanitizedUser = {
     email: string,
     username: string,
     nickname: string, // Is put into the database, so will be returned.
@@ -79,15 +113,7 @@ export interface SanitizedUser {
     lists: string[]
 }
 
-export interface AuthenticationUser {
-    identifier: string,
-    password: string
-}
-
-export interface UpdateUser {
-    auth: AuthenticationUser,
-    update: User
-}
+export type UpdateUser = Omit<Update, 'update'> & { update: User }
 
 export const UserSchema = new Schema({
     email: {
@@ -97,7 +123,7 @@ export const UserSchema = new Schema({
         lowercase: true,
         validate: customEmailValidator
     },
-    username: {type: String, required: [true, 'Users require a name'], unique: true, lowercase: true},
+    username: {type: String, required: [true, 'Users require a username'], unique: true, lowercase: true},
     // Password: Can't be unique, else two users can't have the same password hash+salt mix
     password: {type: String, required: [true, 'Users require a password']},
     // Nickname: The name which an application is likely to utilize. Doesn't need to be unique, but should be less
@@ -107,7 +133,10 @@ export const UserSchema = new Schema({
     // a flatting application, without an flat.
     group: {type: String, required: [true, 'User groups require a name'], lowercase: true},
     // Can't be unique, multiple users can point to the same lists
-    lists: [{type: String, required: [true, 'User lists require a name'], lowercase: true}]
+    lists: {
+        type: [{type: String, lowercase: true}],
+        required: [true, 'Users require AT LEAST an empty array to play with']
+    }
 }, {timestamps: true})
 
 export const UserModel = mongoose.model("Users", UserSchema)
@@ -118,6 +147,25 @@ export const UserModel = mongoose.model("Users", UserSchema)
  * The Group Schema contains an object, which provides access to a group. Is its essence, a group is a hub. A central
  * location for all members of the group (flat). For this
  */
+
+export interface Group extends Document {
+    groupName: string,
+    password: string,
+    users: string[],
+    lists: string[],
+    chores: Item[]
+}
+
+export type SanitizedGroup = {
+    groupName: string,
+    users: string[],
+    lists: string[],
+    chores: Item[]
+}
+
+
+export type UpdateGroup = Omit<Update, 'update'> & { update: Group }
+
 const GroupSchema = new Schema({
     groupName: {
         type: String,
@@ -128,16 +176,23 @@ const GroupSchema = new Schema({
     },
     password: {type: String, required: [true, 'Groups require a password']},
     // A user can't be in more than one group
-    users: [{
-        type: String,
-        required: [true, 'Group users require a name'],
-        unique: true,
-        lowercase: true,
-        validate: customNameValidator
-    }],
+    users: {
+        type: [{
+            type: String,
+            unique: true,
+            lowercase: true,
+        }],
+        validate: customArrayValidator
+    },
     // A group list cannot span across multiple groups
-    lists: [{type: String, required: [true, 'Group lists require a name'], unique: true, lowercase: true}],
-    chores: [ItemSchema]
+    lists: {
+        type: [{type: String, unique: true, lowercase: true}],
+        required: [true, 'Groups require AT LEAST an empty list for lists']
+    },
+    chores: {
+        type: [ItemSchema],
+        required: [true, 'Groups require AT LEAST an empty list for chores'],
+    }
 }, {timestamps: true})
 
 export const GroupModel = mongoose.model("Groups", UserSchema)
