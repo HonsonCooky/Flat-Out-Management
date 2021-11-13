@@ -52,6 +52,8 @@ export interface Item extends Document {
     multiplier?: number,
 }
 
+export type UpdateItem = Omit<Update, 'update'> & {update: Item}
+
 const ItemSchema = new Schema({
     itemName: {type: String, required: [true, 'Items require a name'], validate: customNameValidator},
     itemDesc: String,
@@ -69,9 +71,17 @@ const ItemSchema = new Schema({
 export interface List extends Document {
     key: string,
     listName: string,
-    associations?: string[],
-    listItems?: Item[]
+    associations: string[],
+    listItems: Item[]
 }
+
+export interface SanitizedList {
+    listName: string,
+    associations: string[]
+    listItems: Item[]
+}
+
+export type UpdateList = Omit<Update, 'update'> & { update: List }
 
 const ListSchema = new Schema({
     key: {type: String, required: [true, 'Lists require a unique key'], unique: true, lowercase: true},

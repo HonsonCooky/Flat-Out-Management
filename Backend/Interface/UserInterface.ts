@@ -1,5 +1,5 @@
 import {app} from "../index";
-import {userGet, userLogin, userRemove, userSignup, userUpdate} from "../Management/UserManagement";
+import {userGet, userLogin, userRemove, userCreate, userUpdate} from "../Management/UserManagement";
 import {SanitizedUser} from "../Util/Schemas";
 
 /**
@@ -9,7 +9,7 @@ import {SanitizedUser} from "../Util/Schemas";
  */
 export function initializeUserInterface() {
     app.post("/post/user/signup", (req, res, next) => {
-        userSignup(req.body)
+        userCreate(req.body)
             .then((user: SanitizedUser) => res.status(200).send(user))
             .catch(e => next(e))
     })

@@ -4,12 +4,6 @@ import {compareHashes, saltAndHash} from "../Util/UtilFunctions";
 /** ----------------------------------------------------------------------------------------------------------------
  * UTIL FUNCTIONS
  ------------------------------------------------------------------------------------------------------------------- */
-/**
- * A simple conversion from a MongoDB user, to a SanitizedUser. This enables the internal calls to access all the
- * information of the user, but the sanitized user is the JSON object that is parsed to the client. Removing
- * information that is not-relevant, or needs to be kept secret.
- * @param user: User
- */
 function sanitizeUser(user: User): SanitizedUser {
     return {
         email: user.email,
@@ -20,30 +14,19 @@ function sanitizeUser(user: User): SanitizedUser {
     }
 }
 
-/**
- * Get the User from the MongoDB collection, and check that a given password is the same as the stored password. The
- * method will throw errors in cases where something is wrong.
- * @param auth: Authenticator
- */
 async function authAndGetUser(auth: Authenticator): Promise<User> {
-    // Check the user exists
+    // Check if user exists
     let user: User = await UserModel.findOne({
         $or: [{email: auth.identifier.toLowerCase()}, {username: auth.identifier.toLowerCase()}]
     })
     if (!user) throw new Error(`400:Cannot find user ${auth.identifier}`)
 
-    // Check the password for user is correct
+    // Authenticate the password
     if (!auth.password || !compareHashes(auth.password, user.password))
         throw new Error(`400:Incorrect password, but we do know that user ${user.username} exists`)
-
     return user
 }
 
-/**
- * The user schema has some inbuilt middleware validations. This function ensures that whatever JSON object is
- * parsed in, conforms to the necessary structure of the UserSchema.
- * @param user: User
- */
 async function validateUser(user: User) {
     let errMsg = new UserModel(user).validateSync()
     if (errMsg) throw new Error("400:" + errMsg.message.replace(/,/g, "\n").replace(/:/, ''))
@@ -54,25 +37,21 @@ async function validateUser(user: User) {
  ------------------------------------------------------------------------------------------------------------------- */
 
 /**
- * SIGNUP: Given a JSON body, the signup acts as an interface to fill, validate, and enter a USER document into the
- * 'users' MongoDB collection. Note, errors are thrown to indicate the presence of some issue.
- * @param user: User
+ * CREATE: Create a User document
+ * @param body: User
  */
-export async function userSignup(user: User): Promise<SanitizedUser> {
-    if (!user.nickname) user.nickname = user.username
-    if (!user.lists) user.lists = []
-    await validateUser(user)
-    user.password = saltAndHash(user.password)
-    await new UserModel(user).save()
-    return sanitizeUser(user)
+export async function userCreate(body: User): Promise<SanitizedUser> {
+    if (!body.nickname) body.nickname = body.username
+    if (!body.lists) body.lists = []
+    await validateUser(body)
+    body.password = saltAndHash(body.password)
+    await new UserModel(body).save()
+    return sanitizeUser(body)
 }
 
 /**
- * LOGIN: Given a JSON body, the login acts as an interface to authenticate an attempted login by some user.
- * Firstly, it validates the existence, and correctness of the user through a email/username and password. Then it
- * validates that the user stored is a valid user. Finally, it sanitized the JSON object such that only relevant
- * information is given back to the user.
- * @param body: AuthenticationUser
+ * LOGIN: Return the User object if successful authentication
+ * @param body: Authenticator
  */
 export async function userLogin(body: Authenticator): Promise<SanitizedUser> {
     let user = await authAndGetUser(body)
@@ -81,8 +60,7 @@ export async function userLogin(body: Authenticator): Promise<SanitizedUser> {
 }
 
 /**
- * UPDATE: Given a JSON body, the update function acts as an interface to authenticate then update, a pre-existing
- * user in the MongoDB 'users' collection.
+ * UPDATE: Update some User, authenticating the action first.
  * @param body: UpdateUser
  */
 export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
@@ -95,9 +73,7 @@ export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
 }
 
 /**
- * REMOVE: The remove function is slightly different, but will follow the same footprint as before. Removing the user
- * from the MongoDB 'users' collection will simply delete the user account. Like most actions, this requires a password
- * such that no one can do this on accident, or without intentional bad design.
+ * REMOVE: Remove a User, authenticating the action first.
  * @param body: Authenticator
  */
 export async function userRemove(body: Authenticator): Promise<SanitizedUser> {
@@ -107,8 +83,7 @@ export async function userRemove(body: Authenticator): Promise<SanitizedUser> {
 }
 
 /**
- * GET: A faster 'get.time < post.time' means of retrieving the information for a user.
- * No validation here, simply get and wait.
+ * GET: Get the details of a User
  * @param params: {i: string, p: string}
  */
 export async function userGet(params: any): Promise<SanitizedUser> {
