@@ -8,7 +8,7 @@ import {SanitizedUser} from "../Util/Schemas";
  * relaying calls to the Mongoose backend in /Management/UserManagement.ts
  */
 export function initializeUserInterface() {
-    app.post("/post/user/signup", (req, res, next) => {
+    app.post("/post/user/create", (req, res, next) => {
         userCreate(req.body)
             .then((user: SanitizedUser) => res.status(200).send(user))
             .catch(e => next(e))
