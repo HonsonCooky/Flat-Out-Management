@@ -7,12 +7,13 @@ import {compareHashes, saltAndHash} from "../Util/UtilFunctions";
 function sanitizeUser(user: User): SanitizedUser {
     return {
         email: user.email,
-        username: user.username,
-        nickname: user.nickname,
         group: user.group,
-        lists: user.lists || []
+        lists: user.lists,
+        nickname: user.nickname,
+        username: user.username
     }
 }
+
 
 async function authAndGetUser(auth: Authenticator): Promise<User> {
     // Check if user exists
@@ -42,7 +43,7 @@ async function validateUser(user: User) {
  */
 export async function userCreate(body: User): Promise<SanitizedUser> {
     if (!body.nickname) body.nickname = body.username
-    if (!body.lists) body.lists = []
+    body.lists = []
     await validateUser(body)
     body.password = saltAndHash(body.password)
     await new UserModel(body).save()
@@ -66,9 +67,14 @@ export async function userLogin(body: Authenticator): Promise<SanitizedUser> {
 export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
     const {auth, update} = body
     let oldUser: User = await authAndGetUser(auth)
-    let newUser: User = await UserModel.findOneAndUpdate({email: oldUser.email},
-        Object.assign(oldUser, update), {new: true, upsert: false})
+    let oldKey: string = oldUser.email
+
+    // Apply update locally and validate
+    let newUser: User = Object.assign(oldUser, update)
     await validateUser(newUser)
+
+    // Passing validation, update the MongoDB instance
+    await UserModel.findOneAndUpdate({email: oldKey}, newUser, {new: true, upsert: false})
     return sanitizeUser(newUser)
 }
 

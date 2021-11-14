@@ -1,5 +1,12 @@
 import {app} from "../index";
-import {groupCreate, groupGet, groupLogin, groupRemove, groupUpdate} from "../Management/GroupManagement";
+import {
+    groupCreate,
+    groupGet,
+    groupLogin,
+    groupLoginAuto,
+    groupRemove,
+    groupUpdate
+} from "../Management/GroupManagement";
 import {SanitizedGroup} from "../Util/Schemas";
 
 
@@ -17,6 +24,12 @@ export function initializeGroupInterface() {
 
     app.post('/post/group/login', (req, res, next) => {
         groupLogin(req.body)
+            .then((group: SanitizedGroup) => res.status(200).send(group))
+            .catch(e => next(e))
+    })
+
+    app.post('/post/group/autologin', (req, res, next) => {
+        groupLoginAuto(req.body)
             .then((group: SanitizedGroup) => res.status(200).send(group))
             .catch(e => next(e))
     })

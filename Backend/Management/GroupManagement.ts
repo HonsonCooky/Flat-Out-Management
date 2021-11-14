@@ -3,7 +3,7 @@ import {
     Group,
     GroupModel,
     SanitizedGroup,
-    UpdateGroup
+    UpdateGroup, User
 } from "../Util/Schemas";
 import {compareHashes, saltAndHash} from "../Util/UtilFunctions";
 
@@ -13,9 +13,9 @@ import {compareHashes, saltAndHash} from "../Util/UtilFunctions";
 function sanitizeGroup(group: Group): SanitizedGroup {
     return {
         groupName: group.groupName,
-        users: group.users,
+        chores: group.chores,
         lists: group.lists,
-        chores: group.chores
+        users: group.users
     }
 }
 
@@ -45,8 +45,8 @@ async function validateGroup(group: Group) {
  * @param body: Group
  */
 export async function groupCreate(body: Group): Promise<SanitizedGroup> {
-    if (!body.lists) body.lists = []
-    if (!body.chores) body.chores = []
+    body.lists = []
+    body.chores = []
     await validateGroup(body)
     body.password = saltAndHash(body.password)
     await new GroupModel(body).save()
@@ -64,15 +64,37 @@ export async function groupLogin(body: Authenticator): Promise<SanitizedGroup> {
 }
 
 /**
+ * AUTO LOGIN: Users who are validated with the group have instant access without password needed. Saves storing the
+ * password on the client side (unsafe)
+ * @param body: User
+ */
+export async function groupLoginAuto(body: User): Promise<SanitizedGroup>{
+    let group: Group = await GroupModel.findOne({groupName: body.group.toLowerCase()})
+    if (!group) throw new Error(`400: Cannot find group ${body.group}`)
+    await validateGroup(group)
+
+    // Check user is in group
+    if (!group.users.includes(body.username.toLowerCase()))
+        throw new Error(`400:User not registered with group '${group.groupName}'`)
+
+    return sanitizeGroup(group)
+}
+
+/**
  * UPDATE: Update some Group, authenticating the action first.
  * @param body: UpdateGroup
  */
 export async function groupUpdate(body: UpdateGroup): Promise<SanitizedGroup> {
     const {auth, update} = body
     let oldGroup: Group = await authAndGetGroup(auth)
-    let newGroup: Group = await GroupModel.findOneAndUpdate({groupName: oldGroup.groupName},
-        Object.assign(oldGroup, update), {new: true, upsert: false})
+    let oldKey: string = oldGroup.groupName
+
+    // Apply update locally and validate
+    let newGroup = Object.assign(oldGroup, update)
     await validateGroup(newGroup)
+
+    // Passing validation, update the MongoDB instance
+    await GroupModel.findOneAndUpdate({groupName: oldKey}, newGroup, {new: true, upsert: false})
     return sanitizeGroup(newGroup)
 }
 

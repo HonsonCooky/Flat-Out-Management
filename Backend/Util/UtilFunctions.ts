@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs'
-import crypto from 'crypto'
 import mongoose from "mongoose";
 import {ErrorRequestHandler} from "express";
 
@@ -29,10 +28,6 @@ export const isDbConnected = () => {
  * CRYPTO:
  * Crypto functions to provide some UUID, hashing and salting, also validation of hashes.
  ----------------------------------------------------------------------------------------------------------------- */
-export function uuidGen(): string {
-    return crypto.randomUUID()
-}
-
 export function saltAndHash(input: string): string {
     return bcrypt.hashSync(input, bcrypt.genSaltSync())
 }

@@ -30,7 +30,7 @@ const customArrayValidator = [arrayValidator, "Array is missing necessary conten
 
 export interface Authenticator {
     identifier: string,
-    password: string
+    password?: string
 }
 
 interface Update {
@@ -71,13 +71,6 @@ const ItemSchema = new Schema({
 export interface List extends Document {
     key: string,
     listName: string,
-    associations: string[],
-    listItems: Item[]
-}
-
-export interface SanitizedList {
-    listName: string,
-    associations: string[]
     listItems: Item[]
 }
 
@@ -86,11 +79,6 @@ export type UpdateList = Omit<Update, 'update'> & { update: List }
 const ListSchema = new Schema({
     key: {type: String, required: [true, 'Lists require a unique key'], unique: true, lowercase: true},
     listName: {type: String, required: [true, 'Lists require a name'], validate: customNameValidator},
-    associations: {
-        type: [{type: String, lowercase: true}],
-        required: [true, 'Lists require some association'],
-        validate: customArrayValidator
-    },
     listItems: {
         type: [ItemSchema],
         required: [true, 'Lists require a list... silly']
@@ -141,7 +129,7 @@ export const UserSchema = new Schema({
     nickname: {type: String, required: [true, 'Users require a nickname'], validate: customNameValidator},
     // Group: Can't be unique, multiple users can point to the same group. Is required, as the user cannot exist in
     // a flatting application, without an flat.
-    group: {type: String, required: [true, 'User groups require a name'], lowercase: true},
+    group: {type: String, required: [true, 'User groups require a name'], lowercase: true, validate: customNameValidator},
     // Can't be unique, multiple users can point to the same lists
     lists: {
         type: [{type: String, lowercase: true}],
