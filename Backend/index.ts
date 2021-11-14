@@ -5,6 +5,7 @@ import {initializeUserInterface} from "./Interface/UserInterface";
 import {initializeUtilInterface} from "./Interface/UtilInterface";
 import {addLogs, errorHandler} from "./Util/UtilFunctions";
 import {initializeGroupInterface} from "./Interface/GroupInterface";
+import {initializeListInterface} from "./Interface/ListInterface";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -40,6 +41,7 @@ app.use(express.json())
 
 // Initialize interfaces, grouped by interactions with MongoDB collections
 initializeGroupInterface()
+initializeListInterface()
 initializeUserInterface()
 initializeUtilInterface()
 

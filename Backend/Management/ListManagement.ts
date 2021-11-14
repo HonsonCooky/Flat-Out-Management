@@ -6,6 +6,7 @@ import {saltAndHash} from "../Util/UtilFunctions";
 
 async function authAndGetList(identifier: string): Promise<List> {
     // Check if list exists, simply having the key is enough for access
+    if (!identifier) throw new Error('400:List needs a key to be identified!')
     let list: List = await ListModel.findOne({key: identifier.toLowerCase()})
     if (!list) throw new Error(`400: Cannot find list ${identifier}`)
     return list
@@ -53,8 +54,8 @@ export async function listUpdate(body: List): Promise<List>{
 
 /**
  * GET: Get a List document.
- * @param param
+ * @param params
  */
-export async function listGet(param: {k: string}): Promise<List>{
-    return authAndGetList(param.k)
+export async function listGet(params: any): Promise<List>{
+    return authAndGetList(params['k'] + params['0'])
 }
