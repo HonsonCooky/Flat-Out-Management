@@ -1,5 +1,5 @@
 {
-  "name": "irastreetserver",
+  "name": "flatoutmanagementapi",
   "version": "0.0.1",
   "description": "Heroku-NodeJS based backend for APK",
   "main": "index.ts",
