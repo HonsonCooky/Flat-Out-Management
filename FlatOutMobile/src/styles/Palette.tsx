@@ -1,15 +1,15 @@
-import {ColorValue} from "react-native";
-
 export interface colorSchema {
-  primary: ColorValue,
-  secondary: ColorValue,
-  accent: ColorValue,
-  accentLight: ColorValue,
-  base: ColorValue,
-  text: ColorValue,
-  placeholder: ColorValue,
-  white: ColorValue,
-  black: ColorValue,
+  primary: string,
+  primaryLight: string,
+  primaryDark: string,
+  secondary: string,
+  secondaryLight: string,
+  secondaryDark: string,
+  base: string,
+  text: string,
+  placeholder: string,
+  white: string,
+  black: string,
 }
 
 interface IPalette {
@@ -20,22 +20,26 @@ interface IPalette {
 
 const Palette: IPalette = {
   light: {
-    primary: "#938F43",
-    secondary: "#90CDC3",
-    accent: "#AF8C72",
-    accentLight: "#F3CBBD",
-    base: "#FBECDB",
+    primary: "#8c9eff",
+    primaryLight: "#c0cfff",
+    primaryDark: "#5870cb",
+    secondary: "#ff80ab",
+    secondaryLight: "#ffb2dd",
+    secondaryDark: "#c94f7c",
+    base: "#f5f5f5",
     text: "#2a2a2a",
     placeholder: "rgba(42,42,42,0.5)",
     white: "#fafafa",
     black: "#1c1c1c",
   },
   dark: {
-    primary: "#938F43",
-    secondary: "#90CDC3",
-    accent: "#AF8C72",
-    accentLight: "#F3CBBD",
-    base: "#FBECDB",
+    primary: "#8c9eff",
+    primaryLight: "#c0cfff",
+    primaryDark: "#5870cb",
+    secondary: "#ff80ab",
+    secondaryLight: "#ffb2dd",
+    secondaryDark: "#c94f7c",
+    base: "#969696",
     text: "#eaeaea",
     placeholder: "#eaeaea",
     white: "#1c1c1c",

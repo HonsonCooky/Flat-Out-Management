@@ -1,29 +1,31 @@
 import React, {useContext} from "react";
-import {NavigationContainer} from "@react-navigation/native";
-import AppTabs from "./AppTabs";
-import AuthStack from "./AuthStack";
-import {UserContext} from "../oraganisms/UserProvider";
-import {StatusBar} from "react-native";
+import {StyleProp, Text, TextStyle} from "react-native";
+import IOverrideStyleWithChildren from "../utils/IOverrideStyleWithChildren";
 import {ThemeContext} from "../oraganisms/ThemeProvider";
+import {combineStyles} from "../utils/IOverrideStyle";
+import Font from "../styles/Font";
 
-export default function Router(): JSX.Element {
 
+export default function Title (props: IOverrideStyleWithChildren ) {
   /** ------------------------------------------------------------------------------------------------------------------
    * Setup
    ------------------------------------------------------------------------------------------------------------------*/
   const Theme = useContext(ThemeContext)
-  const User = useContext(UserContext)
+
+  const defaultStyle: StyleProp<TextStyle> = {
+    fontSize: Font.size.XL,
+    fontFamily: Font.family(Font.fontFamilies.latoBlI),
+    color: Theme.palette.white,
+    textAlign: "center",
+  }
 
   /** ------------------------------------------------------------------------------------------------------------------
-   * Navigator
+   * Component
    ------------------------------------------------------------------------------------------------------------------*/
-  return (
-    <>
-      <StatusBar backgroundColor={Theme.palette.primary}/>
-      <NavigationContainer>
-        {User.authenticated ? <AppTabs/> : <AuthStack/>}
-      </NavigationContainer>
-    </>
-  );
-};
+  return(
+    <Text style={combineStyles(defaultStyle, props.styleText)}>
+      {props.children}
+    </Text>
+  )
 
+}

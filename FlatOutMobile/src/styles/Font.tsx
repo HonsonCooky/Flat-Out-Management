@@ -1,6 +1,6 @@
 import {useFonts} from "expo-font";
 import * as SCP from "@expo-google-fonts/source-code-pro";
-import * as SSP from "@expo-google-fonts/source-sans-pro";
+import * as LATO from "@expo-google-fonts/lato";
 
 const FontFamilies = {
   scpXL: SCP.SourceCodePro_200ExtraLight,
@@ -18,18 +18,16 @@ const FontFamilies = {
   scpBl: SCP.SourceCodePro_900Black,
   scpBlI: SCP.SourceCodePro_900Black_Italic,
 
-  sspXL: SSP.SourceSansPro_200ExtraLight,
-  sspXLI: SSP.SourceSansPro_200ExtraLight_Italic,
-  sspL: SSP.SourceSansPro_300Light,
-  sspLI: SSP.SourceSansPro_300Light_Italic,
-  sspR: SSP.SourceSansPro_400Regular,
-  sspRI: SSP.SourceSansPro_400Regular_Italic,
-  sspSB: SSP.SourceSansPro_600SemiBold,
-  sspSBI: SSP.SourceSansPro_600SemiBold_Italic,
-  sspB: SSP.SourceSansPro_700Bold,
-  sspBI: SSP.SourceSansPro_700Bold_Italic,
-  sspBl: SSP.SourceSansPro_900Black,
-  sspBlI: SSP.SourceSansPro_900Black_Italic
+  latoXL: LATO.Lato_100Thin,
+  latoXLI: LATO.Lato_100Thin_Italic,
+  latoL: LATO.Lato_300Light,
+  latoLI: LATO.Lato_300Light_Italic,
+  latoR: LATO.Lato_400Regular,
+  latoRI: LATO.Lato_400Regular_Italic,
+  latoB: LATO.Lato_700Bold,
+  latoBI: LATO.Lato_700Bold_Italic,
+  latoBl: LATO.Lato_900Black,
+  latoBlI: LATO.Lato_900Black_Italic,
 }
 
 export const loadFonts = () => {

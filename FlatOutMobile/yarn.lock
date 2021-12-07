@@ -1055,15 +1055,15 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
+"@expo-google-fonts/lato@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/lato/-/lato-0.2.0.tgz#e096ed61d23307932ec4fbe3f9de8a3d6248706f"
+  integrity sha512-euVC8IfCpHlI0MDgvf6MNWrgnp4pPvAMiEDUCBmau3cvJBeMASQdtOF+Lz555hzgsMfDV5MbFbWRe+RvylZ1qQ==
+
 "@expo-google-fonts/source-code-pro@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@expo-google-fonts/source-code-pro/-/source-code-pro-0.2.0.tgz#98b5d8eb40529d075ce883566524e0c9a0bd09f6"
   integrity sha512-T0IFdVMe0McnJgXwKvGqMbQNFyG6fzkC7i7P7Ened0XzEYfV0CPwpQRC3lwCIsJ+6td50IUjE7jE2uPf2gAX0w==
-
-"@expo-google-fonts/source-sans-pro@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@expo-google-fonts/source-sans-pro/-/source-sans-pro-0.2.0.tgz#219e600fd24e6f507bb153f8cfc5d236a2c89d82"
-  integrity sha512-V+QMWNjX5gnvnw4JZkW0XbKC4IjWnxUv1Qw7sxuZXpWlOSjU2MmdTKLO+ibGvaX4xAvso5o9rKAYouCroxqrIw==
 
 "@expo/config-plugins@3.1.0":
   version "3.1.0"

@@ -1,10 +1,13 @@
 import React from "react";
-import ThemedPageCentered from "../templates/ThemedPageCentered";
-import Input from "../components/Input";
-import Font from "../styles/Font";
-import Button from "../components/Button";
+import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
+import Input from "../../atoms/Input";
+import Font from "../../styles/Font";
 
 export default function LoginPage(): JSX.Element {
+
+  /** ------------------------------------------------------------------------------------------------------------------
+   * Component
+   ------------------------------------------------------------------------------------------------------------------*/
   return (
     <ThemedPageCentered>
       <Input // Username
@@ -17,7 +20,6 @@ export default function LoginPage(): JSX.Element {
         placeHolder={"Password"}
         onChangeText={(s) => console.log(s)}/>
 
-      <Button onPress={()=> console.log("Here")} text={"Login Now"}/>
     </ThemedPageCentered>
   )
 }

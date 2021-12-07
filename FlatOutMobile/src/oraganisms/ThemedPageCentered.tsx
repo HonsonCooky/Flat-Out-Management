@@ -8,6 +8,9 @@ import {combineStyles} from "../utils/IOverrideStyle";
 
 export default function ThemedPageCentered(props: IOverrideStyleWithChildren): JSX.Element {
 
+  /** ------------------------------------------------------------------------------------------------------------------
+   * Setup
+   ------------------------------------------------------------------------------------------------------------------*/
   const Theme = useContext(ThemeContext)
 
   const defaultStyle: StyleProp<ViewStyle> = {
@@ -20,6 +23,9 @@ export default function ThemedPageCentered(props: IOverrideStyleWithChildren): J
     justifyContent: "center",
   }
 
+  /** ------------------------------------------------------------------------------------------------------------------
+   * Component
+   ------------------------------------------------------------------------------------------------------------------*/
   return (
     <ScrollView
       keyboardShouldPersistTaps={"handled"}
