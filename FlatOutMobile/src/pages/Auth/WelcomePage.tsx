@@ -4,6 +4,7 @@ import {ThemeContext} from "../../oraganisms/ThemeProvider";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import Spacing from "../../styles/Spacing";
 import Title from "../../atoms/Title";
+import ButtonText from "../../atoms/ButtonText";
 
 type Props = NativeStackScreenProps<any>;
 
@@ -35,11 +36,8 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
     },
     image: {
       width: "100%",
-      height: "40%",
+      height: "25%",
     },
-    loginBtn: {
-
-    }
   })
 
   /** ------------------------------------------------------------------------------------------------------------------
@@ -54,10 +52,14 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
       <Title>
         Flat Out Management
       </Title>
-      {/*<ButtonText*/}
-      {/*  text={"Login"}*/}
-      {/*  styleText={defaultStyles.loginBtn}*/}
-      {/*  onPress={() => navigation.navigate('Login')}/>*/}
+        <ButtonText
+          text={"Login"}
+          styleView={{marginTop: Spacing.marginUnderHeader}}
+          onPress={() => navigation.navigate('Login')}/>
+        <ButtonText
+          text={"Create Account"}
+          styleView={{elevation: 1, backgroundColor: Theme.palette.base}}
+          onPress={() => navigation.navigate('Signup')}/>
     </ScrollView>
   )
 }

@@ -38,6 +38,7 @@ export default {
   size: {
     XS: 8,
     S: 16,
+    SM: 20,
     M: 24,
     L: 32,
     XL: 46,

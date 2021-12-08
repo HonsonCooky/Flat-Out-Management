@@ -1,25 +1,29 @@
 import React from "react";
 import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
 import Input from "../../atoms/Input";
-import Font from "../../styles/Font";
+import FloatingCard from "../../oraganisms/FloatingCard";
 
 export default function LoginPage(): JSX.Element {
+
+  /** ------------------------------------------------------------------------------------------------------------------
+   * Setup
+   ------------------------------------------------------------------------------------------------------------------*/
+
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
   return (
-    <ThemedPageCentered>
-      <Input // Username
-        styleText={{fontSize: Font.size.L}}
-        placeHolder={"Username"}
-        onChangeText={(s) => console.log(s)}/>
+    <ThemedPageCentered icon={'person-circle-outline'}>
+      <FloatingCard cardTitle={"Login"}>
+        <Input // Username
+          placeholder={"Email / Username"}
+          onChangeText={(s) => console.log(s)}/>
 
-      <Input // Password
-        styleText={{fontSize: Font.size.L}}
-        placeHolder={"Password"}
-        onChangeText={(s) => console.log(s)}/>
-
+        <Input // Password
+          placeholder={"Password"}
+          onChangeText={(s) => console.log(s)}/>
+      </FloatingCard>
     </ThemedPageCentered>
   )
 }

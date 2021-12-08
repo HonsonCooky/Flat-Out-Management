@@ -26,10 +26,10 @@ const Palette: IPalette = {
     secondary: "#ff80ab",
     secondaryLight: "#ffb2dd",
     secondaryDark: "#c94f7c",
-    base: "#f5f5f5",
+    base: "#ececec",
     text: "#2a2a2a",
     placeholder: "rgba(42,42,42,0.5)",
-    white: "#fafafa",
+    white: "#fdfdfd",
     black: "#1c1c1c",
   },
   dark: {

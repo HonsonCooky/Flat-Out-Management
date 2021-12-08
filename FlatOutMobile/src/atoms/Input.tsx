@@ -2,13 +2,15 @@ import React, {useContext} from "react";
 import {StyleProp, TextInput, TextStyle, TouchableWithoutFeedback} from "react-native";
 import {ThemeContext} from "../oraganisms/ThemeProvider";
 import IOverrideStyle, {combineStyles} from "../utils/IOverrideStyle";
+import Font from "../styles/Font";
+import Spacing from "../styles/Spacing";
 
 /** ------------------------------------------------------------------------------------------------------------------
  * Interface
  ------------------------------------------------------------------------------------------------------------------*/
 interface inputProps extends IOverrideStyle {
   value?: string,
-  placeHolder: string,
+  placeholder: string,
   onChangeText: (s: string) => void,
 }
 
@@ -19,7 +21,15 @@ export default function Input(props: inputProps): JSX.Element {
    ------------------------------------------------------------------------------------------------------------------*/
   const Theme = useContext(ThemeContext)
 
-  const defaultStyle: StyleProp<TextStyle> = {}
+  const defaultStyle: StyleProp<TextStyle> = {
+    width: Spacing.width,
+    fontSize: Font.size.M,
+    marginBottom: Spacing.marginVertical,
+    paddingVertical: Spacing.paddingVertical,
+    borderBottomWidth: Spacing.borderWidth,
+    borderBottomColor: Theme.palette.placeholder,
+    fontFamily: Font.family(Font.fontFamilies.latoR),
+  }
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
@@ -27,7 +37,8 @@ export default function Input(props: inputProps): JSX.Element {
   return (
     <TouchableWithoutFeedback>
       <TextInput
-        placeholder={props.placeHolder}
+        autoCorrect={false}
+        placeholder={props.placeholder}
         onChangeText={props.onChangeText}
         placeholderTextColor={Theme.palette.placeholder}
         style={combineStyles(defaultStyle, props.styleText)}

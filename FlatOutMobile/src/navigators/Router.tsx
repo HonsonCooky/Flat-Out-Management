@@ -19,10 +19,10 @@ export default function Router(): JSX.Element {
    ------------------------------------------------------------------------------------------------------------------*/
   return (
     <>
-      <StatusBar backgroundColor={Theme.palette.primary}/>
       <NavigationContainer>
         {User.authenticated ? <AppTabs/> : <AuthStack/>}
       </NavigationContainer>
+      <StatusBar backgroundColor={Theme.palette.primary}/>
     </>
   );
 };

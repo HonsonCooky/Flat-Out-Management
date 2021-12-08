@@ -6,7 +6,7 @@ import {combineStyles} from "../utils/IOverrideStyle";
 import Font from "../styles/Font";
 
 
-export default function Title (props: IOverrideStyleWithChildren ) {
+export default function Title (props: IOverrideStyleWithChildren ): JSX.Element {
   /** ------------------------------------------------------------------------------------------------------------------
    * Setup
    ------------------------------------------------------------------------------------------------------------------*/
