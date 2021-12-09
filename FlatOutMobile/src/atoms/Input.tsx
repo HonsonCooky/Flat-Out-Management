@@ -12,6 +12,7 @@ interface inputProps extends IOverrideStyle {
   value?: string,
   placeholder: string,
   onChangeText: (s: string) => void,
+  secureTextEntry?: boolean
 }
 
 export default function Input(props: inputProps): JSX.Element {
@@ -24,7 +25,7 @@ export default function Input(props: inputProps): JSX.Element {
   const defaultStyle: StyleProp<TextStyle> = {
     width: Spacing.width,
     fontSize: Font.size.M,
-    marginBottom: Spacing.marginVertical,
+    marginVertical: Spacing.marginVertical,
     paddingVertical: Spacing.paddingVertical,
     borderBottomWidth: Spacing.borderWidth,
     borderBottomColor: Theme.palette.placeholder,
@@ -41,6 +42,7 @@ export default function Input(props: inputProps): JSX.Element {
         placeholder={props.placeholder}
         onChangeText={props.onChangeText}
         placeholderTextColor={Theme.palette.placeholder}
+        secureTextEntry={props.secureTextEntry}
         style={combineStyles(defaultStyle, props.styleText)}
       />
     </TouchableWithoutFeedback>

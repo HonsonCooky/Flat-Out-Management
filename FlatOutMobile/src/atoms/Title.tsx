@@ -15,7 +15,7 @@ export default function Title (props: IOverrideStyleWithChildren ): JSX.Element 
   const defaultStyle: StyleProp<TextStyle> = {
     fontSize: Font.size.XL,
     fontFamily: Font.family(Font.fontFamilies.latoBlI),
-    color: Theme.palette.white,
+    color: Theme.palette.text,
     textAlign: "center",
   }
 

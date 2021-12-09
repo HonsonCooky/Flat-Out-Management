@@ -21,7 +21,7 @@ export default function FloatingCard(props: floatingCardProps): JSX.Element {
   const defaultStyles = StyleSheet.create({
     view: {
       width: Spacing.width,
-      borderRadius: Spacing.borderRadiusRound,
+      borderRadius: Spacing.borderRadius,
       backgroundColor: Theme.palette.white,
       paddingVertical: Spacing.paddingVertical,
       paddingHorizontal: Spacing.paddingHorizontal,

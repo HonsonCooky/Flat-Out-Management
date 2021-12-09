@@ -2,11 +2,12 @@ import React from "react";
 import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
 import Input from "../../atoms/Input";
 import FloatingCard from "../../oraganisms/FloatingCard";
+import ButtonText from "../../atoms/ButtonText";
 
 export default function LoginPage(): JSX.Element {
 
   /** ------------------------------------------------------------------------------------------------------------------
-   * Setup
+   * Functionality
    ------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -23,6 +24,8 @@ export default function LoginPage(): JSX.Element {
         <Input // Password
           placeholder={"Password"}
           onChangeText={(s) => console.log(s)}/>
+
+        <ButtonText onPress={() => console.log("HERE")} text={"Login"} icon={"log-in-sharp"}/>
       </FloatingCard>
     </ThemedPageCentered>
   )

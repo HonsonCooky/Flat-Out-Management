@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {View, Text, TouchableOpacity, StyleSheet} from "react-native";
+import {Text, TouchableOpacity, StyleSheet} from "react-native";
 import IOverrideStyle, {combineStyles} from "../utils/IOverrideStyle";
 import {Ionicons} from "@expo/vector-icons";
 import getFontSize from "../utils/GetFontSize";
@@ -19,36 +19,46 @@ export default function ButtonText(props: buttonProps): JSX.Element {
    ------------------------------------------------------------------------------------------------------------------*/
   const Theme = useContext(ThemeContext)
 
+  const fontSize = getFontSize(combineStyles({fontSize: Font.size.L}, props.styleText))
+
   const defaultStyles = StyleSheet.create({
     view: {
+      flexDirection: "row",
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: Theme.palette.secondaryLight,
       width: Spacing.width,
-      borderRadius: Font.size.M,
+      borderRadius: Spacing.borderRadius,
       marginVertical: Spacing.marginVertical,
       paddingVertical: Spacing.paddingVertical,
       paddingHorizontal: Spacing.paddingHorizontal,
+      elevation: 4,
     },
     text: {
-      textAlign: "center",
-      fontSize: Font.size.M,
+      flex: 1,
+      textAlign: 'center',
+      paddingRight: props.icon ? "20%" : 0,
+      fontSize: Font.size.L,
       fontFamily: Font.family(Font.fontFamilies.latoB),
       color: Theme.palette.text
+    },
+    icon: {
+      paddingHorizontal: Spacing.paddingHorizontal,
     }
   })
-
-  const fontSize = getFontSize(combineStyles(defaultStyles.text, props.styleText))
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
   return (
-    <TouchableOpacity onPress={props.onPress}>
-      <View style={combineStyles(defaultStyles.view, props.styleView)}>
-        {props.icon && <Ionicons name={props.icon} size={fontSize}/>}
+    <TouchableOpacity onPress={props.onPress} activeOpacity={0.6}
+                      style={combineStyles(defaultStyles.view, props.styleView)}>
+      <>
+        {props.icon && <Ionicons name={props.icon} size={fontSize} style={defaultStyles.icon}/>}
         <Text style={combineStyles(defaultStyles.text, props.styleText)}>
           {props.text}
         </Text>
-      </View>
+      </>
     </TouchableOpacity>
   )
 }

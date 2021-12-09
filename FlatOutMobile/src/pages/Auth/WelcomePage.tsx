@@ -17,7 +17,7 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
 
   const space = {
     width: Spacing.width,
-    paddingVertical: Spacing.paddingVertical,
+    paddingVertical: "20%",
     paddingHorizontal: Spacing.paddingHorizontal,
   }
 
@@ -29,14 +29,13 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
   const defaultStyles = StyleSheet.create({
     view: {
       ...viewSpace,
-      backgroundColor: Theme.palette.primaryDark,
-      justifyContent: "center",
+      backgroundColor: Theme.palette.primary,
       alignContent: "center",
       textAlign: "center",
     },
     image: {
       width: "100%",
-      height: "25%",
+      height: "40%",
     },
   })
 
@@ -49,17 +48,17 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
         style={defaultStyles.image}
         resizeMode={"contain"}
         source={require('../../../assets/icon.png')}/>
-      <Title>
+      <Title styleText={{marginBottom: Spacing.marginUnderHeader}}>
         Flat Out Management
       </Title>
-        <ButtonText
-          text={"Login"}
-          styleView={{marginTop: Spacing.marginUnderHeader}}
-          onPress={() => navigation.navigate('Login')}/>
-        <ButtonText
-          text={"Create Account"}
-          styleView={{elevation: 1, backgroundColor: Theme.palette.base}}
-          onPress={() => navigation.navigate('Signup')}/>
+      <ButtonText
+        text={"Login"}
+        styleView={{marginTop: "10%"}}
+        onPress={() => navigation.navigate('Login')}/>
+      <ButtonText
+        text={"Create Account"}
+        styleView={{backgroundColor: Theme.palette.base}}
+        onPress={() => navigation.navigate('Signup')}/>
     </ScrollView>
   )
 }
