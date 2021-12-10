@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import {ThemeContext} from "./ThemeProvider";
-import {StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet, View} from "react-native";
 import Spacing from "../styles/Spacing";
 import {ScrollView} from "react-native-gesture-handler";
 import IOverrideStyleWithChildren from "../utils/IOverrideStyleWithChildren";
@@ -41,7 +41,8 @@ export default function ThemedPageCentered(props: themedPageProps): JSX.Element 
       position: "absolute",
     },
     icon: {
-      fontSize: 150,
+      marginTop: Spacing.marginVertical,
+      fontSize: 100,
       color: Theme.palette.text
     },
   })
@@ -50,16 +51,20 @@ export default function ThemedPageCentered(props: themedPageProps): JSX.Element 
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
   return (
-    <ScrollView
-      keyboardShouldPersistTaps={"handled"}
-      style={{backgroundColor: Theme.palette.base}}
-      contentContainerStyle={combineStyles(defaultStyles.page, props.styleView)}>
-      <View style={defaultStyles.header}>
-        <Ionicons name={props.icon} style={defaultStyles.icon}/>
-      </View>
-      <View style={defaultStyles.children}>
-        {props.children}
-      </View>
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView
+        keyboardDismissMode={"interactive"}
+        onScroll={(e: any) => console.log(e)}
+        keyboardShouldPersistTaps={"handled"}
+        style={{backgroundColor: Theme.palette.base}}
+        contentContainerStyle={combineStyles(defaultStyles.page, props.styleView)}>
+        <View style={defaultStyles.header}>
+          <Ionicons name={props.icon} style={defaultStyles.icon}/>
+        </View>
+        <View style={defaultStyles.children}>
+          {props.children}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }

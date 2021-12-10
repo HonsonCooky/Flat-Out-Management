@@ -28,7 +28,7 @@ export default function Input(props: inputProps): JSX.Element {
     marginVertical: Spacing.marginVertical,
     paddingVertical: Spacing.paddingVertical,
     borderBottomWidth: Spacing.borderWidth,
-    borderBottomColor: Theme.palette.placeholder,
+    borderBottomColor: Theme.palette.base,
     fontFamily: Font.family(Font.fontFamilies.latoR),
   }
 

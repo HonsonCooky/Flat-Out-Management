@@ -26,7 +26,7 @@ const Palette: IPalette = {
     secondary: "#ff80ab",
     secondaryLight: "#ffb2dd",
     secondaryDark: "#c94f7c",
-    base: "#ececec",
+    base: "#e5e5e5",
     text: "#2a2a2a",
     placeholder: "rgba(42,42,42,0.5)",
     white: "#fdfdfd",

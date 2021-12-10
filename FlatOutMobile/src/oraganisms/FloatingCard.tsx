@@ -27,6 +27,7 @@ export default function FloatingCard(props: floatingCardProps): JSX.Element {
       paddingHorizontal: Spacing.paddingHorizontal,
       justifyContent: "center",
       alignContent: "center",
+      elevation: Spacing.elevation
     },
     text: {
       fontSize: Font.size.XXL,

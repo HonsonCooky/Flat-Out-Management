@@ -5,6 +5,7 @@ import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import Spacing from "../../styles/Spacing";
 import Title from "../../atoms/Title";
 import ButtonText from "../../atoms/ButtonText";
+import NavigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
@@ -54,11 +55,11 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
       <ButtonText
         text={"Login"}
         styleView={{marginTop: "10%"}}
-        onPress={() => navigation.navigate('Login')}/>
+        onPress={() => navigation.navigate(NavigationPages.login)}/>
       <ButtonText
         text={"Create Account"}
         styleView={{backgroundColor: Theme.palette.base}}
-        onPress={() => navigation.navigate('Signup')}/>
+        onPress={() => navigation.navigate(NavigationPages.createUser)}/>
     </ScrollView>
   )
 }
