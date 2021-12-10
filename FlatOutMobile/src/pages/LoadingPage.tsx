@@ -1,11 +1,14 @@
 import React, {useContext} from "react";
-import {ImageBackground, StyleSheet, ActivityIndicator} from "react-native";
+import {ImageBackground, StyleSheet, ActivityIndicator, Text} from "react-native";
 import Spacing from "../styles/Spacing";
 import {ThemeContext} from "../oraganisms/ThemeProvider";
 import Font from "../styles/Font";
 
+interface loadingPageProps {
+  assistanceText?: string,
+}
 
-export default function LoadingPage(): JSX.Element {
+export default function LoadingPage(props: loadingPageProps): JSX.Element {
 
   const Theme = useContext(ThemeContext)
 
@@ -13,10 +16,19 @@ export default function LoadingPage(): JSX.Element {
     image: {
       width: Spacing.width,
       height: Spacing.height,
-      backgroundColor: Theme.palette.primary,
+      backgroundColor: Theme.palette.primaryLight,
     },
     animation: {
-      top: "70%",
+      width: Spacing.width,
+      height: "80%",
+      marginBottom: Spacing.marginVertical,
+      flexDirection: "row",
+      alignItems: "flex-end",
+    },
+    text: {
+      textAlign: "center",
+      fontSize: Font.size.SM,
+      fontFamily: Font.family(Font.fontFamilies.scpR)
     }
   })
 
@@ -27,6 +39,9 @@ export default function LoadingPage(): JSX.Element {
         color={Theme.palette.text}
         size={Font.size.XXL * 1.5}
       />
+      <Text style={defaultStyles.text}>
+        {props.assistanceText && props.assistanceText}
+      </Text>
     </ImageBackground>
   )
 }

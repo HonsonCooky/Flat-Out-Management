@@ -27,7 +27,7 @@ export default function AuthStack(): JSX.Element {
 
   return (
     <Stack.Navigator
-      initialRouteName={NavigationPages.welcome}
+      initialRouteName={NavigationPages.createGroup}
       screenOptions={{headerShown: false, cardOverlay: overlay}}>
       <Stack.Screen name={NavigationPages.welcome} component={WelcomePage}/>
       <Stack.Screen name={NavigationPages.login} component={LoginPage}/>
