@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import {ThemeContext} from "./ThemeProvider";
-import {SafeAreaView, StyleSheet, View} from "react-native";
+import {StyleSheet, View, Dimensions} from "react-native";
 import Spacing from "../styles/Spacing";
 import {ScrollView} from "react-native-gesture-handler";
 import IOverrideStyleWithChildren from "../utils/IOverrideStyleWithChildren";
@@ -21,50 +21,50 @@ export default function ThemedPageCentered(props: themedPageProps): JSX.Element 
 
   const defaultStyles = StyleSheet.create({
     page: {
-      backgroundColor: Theme.palette.base,
+      alignItems: "center",
       width: Spacing.width,
       height: Spacing.height,
-      paddingVertical: Spacing.paddingVertical,
-      alignItems: "center",
+      backgroundColor: Theme.palette.base,
     },
     children: {
       width: Spacing.width,
       height: Spacing.height,
-      justifyContent: "center",
-      paddingHorizontal: Spacing.paddingHorizontal
+      paddingHorizontal: Spacing.paddingHorizontal,
+      marginVertical: Spacing.marginVertical,
+      marginBottom: "20%"
     },
     header: {
-      width: Spacing.width,
-      height: "40%",
-      backgroundColor: Theme.palette.primary,
       alignItems: "center",
       position: "absolute",
+      width: Spacing.width,
+      height: Dimensions.get("screen").height * 0.35,
+      backgroundColor: Theme.palette.primary,
     },
     icon: {
-      marginTop: Spacing.marginVertical,
-      fontSize: 100,
-      color: Theme.palette.text
+      color: Theme.palette.text,
+      fontSize: 150,
     },
   })
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
+
   return (
-    <SafeAreaView>
-      <ScrollView
-        keyboardDismissMode={"interactive"}
-        onScroll={(e: any) => console.log(e)}
-        keyboardShouldPersistTaps={"handled"}
-        style={{backgroundColor: Theme.palette.base}}
-        contentContainerStyle={combineStyles(defaultStyles.page, props.styleView)}>
-        <View style={defaultStyles.header}>
-          <Ionicons name={props.icon} style={defaultStyles.icon}/>
-        </View>
+    <ScrollView
+      keyboardShouldPersistTaps={"handled"}
+      contentContainerStyle={{flexGrow: 1}}
+    >
+      <View style={combineStyles(defaultStyles.page, props.styleView)}>
+        <View style={defaultStyles.header}/>
+        <Ionicons
+          name={props.icon}
+          style={defaultStyles.icon}
+        />
         <View style={defaultStyles.children}>
           {props.children}
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   )
 }

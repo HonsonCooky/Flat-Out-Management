@@ -3,15 +3,13 @@ import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
 import Input from "../../atoms/Input";
 import FloatingCard from "../../oraganisms/FloatingCard";
 import ButtonText from "../../atoms/ButtonText";
-import {Text} from "react-native";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
-import Spacing from "../../styles/Spacing";
-import Font from "../../styles/Font";
-import NavigationPages from "../../navigators/NavigationPages";
+import WrongScreenButton from "../../atoms/WrongScreenButton";
+import navigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function LoginPage({navigation}: Props): JSX.Element {
+export default function LoginPage(props: Props): JSX.Element {
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Functionality
@@ -32,6 +30,7 @@ export default function LoginPage({navigation}: Props): JSX.Element {
 
         <Input // Password
           placeholder={"Password"}
+          secureTextEntry={true}
           onChangeText={(s) => console.log(s)}/>
 
         <ButtonText
@@ -40,21 +39,9 @@ export default function LoginPage({navigation}: Props): JSX.Element {
           onPress={() => console.log("HERE")}
           styleView={{marginTop: "10%"}}
         />
-
-        <Text
-          onPress={() => {
-            navigation.pop()
-            navigation.navigate(NavigationPages.createUser)
-          }}
-          style={{
-            fontSize: Font.size.S,
-            fontFamily: Font.family(Font.fontFamilies.scpB),
-            textAlign: "center",
-            marginTop: Spacing.marginVertical,
-          }}
-        >
+        <WrongScreenButton linkPage={navigationPages.createUser} nav={props}>
           Create Account?
-        </Text>
+        </WrongScreenButton>
       </FloatingCard>
     </ThemedPageCentered>
   )

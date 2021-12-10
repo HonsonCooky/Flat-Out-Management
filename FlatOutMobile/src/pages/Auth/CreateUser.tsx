@@ -1,17 +1,16 @@
 import React from "react";
-import {Text} from "react-native";
 import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
 import FloatingCard from "../../oraganisms/FloatingCard";
 import Input from "../../atoms/Input";
 import ButtonText from "../../atoms/ButtonText";
-import Font from "../../styles/Font";
-import Spacing from "../../styles/Spacing";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import NavigationPages from "../../navigators/NavigationPages";
+import WrongScreenButton from "../../atoms/WrongScreenButton";
+import navigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function CreateUser({navigation}: Props): JSX.Element {
+export default function CreateUser(props: Props): JSX.Element {
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
@@ -40,24 +39,13 @@ export default function CreateUser({navigation}: Props): JSX.Element {
         <ButtonText
           text={"Next"}
           icon={"chevron-forward-outline"}
-          onPress={() => navigation.navigate(NavigationPages.createGroup)}
+          onPress={() => props.navigation.navigate(NavigationPages.createGroup)}
           styleView={{marginTop: "10%"}}
         />
 
-        <Text
-          onPress={() => {
-            navigation.pop()
-            navigation.navigate(NavigationPages.login)
-          }}
-          style={{
-            fontSize: Font.size.S,
-            fontFamily: Font.family(Font.fontFamilies.scpB),
-            textAlign: "center",
-            marginTop: Spacing.marginVertical,
-          }}
-        >
+        <WrongScreenButton linkPage={navigationPages.login} nav={props}>
           Login?
-        </Text>
+        </WrongScreenButton>
       </FloatingCard>
     </ThemedPageCentered>
   )

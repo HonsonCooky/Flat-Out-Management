@@ -16,20 +16,12 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
 
   const Theme = useContext(ThemeContext)
 
-  const space = {
-    width: Spacing.width,
-    paddingVertical: "20%",
-    paddingHorizontal: Spacing.paddingHorizontal,
-  }
-
-  const viewSpace = {
-    ...space,
-    height: Spacing.height,
-  }
-
   const defaultStyles = StyleSheet.create({
     view: {
-      ...viewSpace,
+      width: Spacing.width,
+      paddingVertical: "20%",
+      paddingHorizontal: Spacing.paddingHorizontal,
+      height: Spacing.height,
       backgroundColor: Theme.palette.primary,
       alignContent: "center",
       textAlign: "center",

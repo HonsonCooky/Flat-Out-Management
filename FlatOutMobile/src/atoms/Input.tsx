@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {StyleProp, TextInput, TextStyle, TouchableWithoutFeedback} from "react-native";
+import {StyleProp, TextInput, TextStyle} from "react-native";
 import {ThemeContext} from "../oraganisms/ThemeProvider";
 import IOverrideStyle, {combineStyles} from "../utils/IOverrideStyle";
 import Font from "../styles/Font";
@@ -36,15 +36,13 @@ export default function Input(props: inputProps): JSX.Element {
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
   return (
-    <TouchableWithoutFeedback>
-      <TextInput
-        autoCorrect={false}
-        placeholder={props.placeholder}
-        onChangeText={props.onChangeText}
-        placeholderTextColor={Theme.palette.placeholder}
-        secureTextEntry={props.secureTextEntry}
-        style={combineStyles(defaultStyle, props.styleText)}
-      />
-    </TouchableWithoutFeedback>
+    <TextInput
+      placeholder={props.placeholder}
+      onChangeText={props.onChangeText}
+      placeholderTextColor={Theme.palette.placeholder}
+      selectTextOnFocus={true}
+      secureTextEntry={props.secureTextEntry}
+      style={combineStyles(defaultStyle, props.styleText)}
+    />
   )
 }
