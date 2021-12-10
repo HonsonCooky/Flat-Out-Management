@@ -162,3 +162,8 @@ export async function groupGet(params: any): Promise<SanitizedGroup> {
     await updateChores(group)
     return sanitizeGroup(group)
 }
+
+export async function groupGetAll(): Promise<string[]> {
+    let groups = await GroupModel.find()
+    return groups.map((g: Group) => g.groupName)
+}

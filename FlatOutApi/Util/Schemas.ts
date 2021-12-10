@@ -142,7 +142,7 @@ export const UserSchema = new Schema({
     nickname: {type: String, required: [true, 'Users require a nickname'], validate: nameValidator},
     // Group: Can't be unique, multiple users can point to the same group. Is required, as the user cannot exist in
     // a flatting application, without an flat.
-    group: {type: String, required: [true, 'User groups require a name'], lowercase: true, validate: groupValidator},
+    group: {type: String, lowercase: true, validate: groupValidator},
     // Can't be unique, multiple users can point to the same lists
     lists: {
         type: [{type: String, lowercase: true}],

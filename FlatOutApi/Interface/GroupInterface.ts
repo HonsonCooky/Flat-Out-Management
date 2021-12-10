@@ -1,7 +1,7 @@
 import {app} from "../index";
 import {
     groupCreate,
-    groupGet,
+    groupGet, groupGetAll,
     groupLogin,
     groupLoginAuto,
     groupRemove,
@@ -50,5 +50,11 @@ export function initializeGroupInterface() {
         groupGet(req.params)
             .then((group: SanitizedGroup) => res.status(200).send(group))
             .catch(e => next(e))
+    })
+
+    app.get('/get/group-names', (req, res, next) => {
+        groupGetAll()
+          .then((groupNames: string[]) => res.status(200).send(groupNames))
+          .catch(e => next(e))
     })
 }
