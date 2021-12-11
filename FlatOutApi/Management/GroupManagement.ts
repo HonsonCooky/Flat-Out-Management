@@ -137,7 +137,7 @@ export async function groupUpdate(body: UpdateGroup): Promise<SanitizedGroup> {
     await validateGroup(newGroup)
 
     // Passing validation, update the MongoDB instance
-    await GroupModel.findOneAndUpdate({groupName: oldKey}, newGroup, {new: true, upsert: false})
+    await GroupModel.findOneAndUpdate({groupName: oldKey}, newGroup, {new: true, upsert: false, runValidators: true})
     return sanitizeGroup(newGroup)
 }
 

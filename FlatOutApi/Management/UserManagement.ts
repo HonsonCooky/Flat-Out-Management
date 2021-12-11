@@ -74,7 +74,7 @@ export async function userUpdate(body: UpdateUser): Promise<SanitizedUser> {
     await validateUser(newUser)
 
     // Passing validation, update the MongoDB instance
-    await UserModel.findOneAndUpdate({email: oldKey}, newUser, {new: true, upsert: false})
+    await UserModel.findOneAndUpdate({email: oldKey}, newUser, {new: true, upsert: false, runValidators: true})
     return sanitizeUser(newUser)
 }
 

@@ -48,7 +48,7 @@ export async function listUpdate(body: List): Promise<List>{
     await validateList(newList)
 
     // Passing validation, update the MongoDB instance
-    await ListModel.findOneAndUpdate({key: oldKey}, newList, {new: true, upsert: false})
+    await ListModel.findOneAndUpdate({key: oldKey}, newList, {new: true, upsert: false, runValidators: true})
     return newList
 }
 
