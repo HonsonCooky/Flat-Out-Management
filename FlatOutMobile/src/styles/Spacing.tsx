@@ -9,6 +9,7 @@ export default {
     marginHorizontal: "5%",
     paddingHorizontal: "5%",
     marginUnderHeader: "20%",
+    marginTopOrBottom: "10%",
     contentGap: "10%",
     width: "100%",
     height: "100%",

@@ -8,9 +8,9 @@ import Spacing from "../styles/Spacing";
 import Font from "../styles/Font";
 
 interface buttonProps extends IOverrideStyle {
+  text: string
   onPress: () => void
   icon?: any
-  text: string
 }
 
 export default function ButtonText(props: buttonProps): JSX.Element {

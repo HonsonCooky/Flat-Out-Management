@@ -16,7 +16,7 @@ export default function LoadingPage(props: loadingPageProps): JSX.Element {
     image: {
       width: Spacing.width,
       height: Spacing.height,
-      backgroundColor: Theme.palette.primaryLight,
+      backgroundColor: Theme.palette.primary,
     },
     animation: {
       width: Spacing.width,
@@ -28,7 +28,6 @@ export default function LoadingPage(props: loadingPageProps): JSX.Element {
     text: {
       textAlign: "center",
       fontSize: Font.size.SM,
-      fontFamily: Font.family(Font.fontFamilies.scpR)
     }
   })
 

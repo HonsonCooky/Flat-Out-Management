@@ -7,7 +7,7 @@ import {ThemeContext} from "../oraganisms/ThemeProvider";
 interface dropDownProps extends IOverrideStyle {
   onValueChange: (itemValue: string, itemIndex: number) => void,
   selectedValue: string,
-  groups: [{ groupName: string }]
+  items: string[]
 }
 
 export default function DropDown(props: dropDownProps): JSX.Element {
@@ -26,7 +26,7 @@ export default function DropDown(props: dropDownProps): JSX.Element {
       onValueChange={props.onValueChange}
       style={combineStyles(defaultStyles.picker, props.styleView)}
     >
-      {props.groups.map(group => (<Picker.Item label={group.groupName} value={group.groupName}/>))}
+      {props.items && props.items.map(item => (<Picker.Item label={item} value={item} key={item}/>))}
     </Picker>
   )
 }
