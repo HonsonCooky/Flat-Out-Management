@@ -8,6 +8,7 @@ import {ThemeContext} from "../oraganisms/ThemeProvider";
 import Spacing from "../styles/Spacing";
 import NavigationPages from "./NavigationPages";
 import CreateGroup from "../pages/Auth/CreateGroup";
+import GroupLoginPage from "../pages/Auth/GroupLoginPage";
 
 /** ------------------------------------------------------------------------------------------------------------------
  * Setup
@@ -33,6 +34,7 @@ export default function AuthStack(): JSX.Element {
       <Stack.Screen name={NavigationPages.login} component={LoginPage}/>
       <Stack.Screen name={NavigationPages.createUser} component={CreateUser}/>
       <Stack.Screen name={NavigationPages.createGroup} component={CreateGroup}/>
+      <Stack.Screen name={NavigationPages.groupLogin} component={GroupLoginPage}/>
     </Stack.Navigator>
   )
 }

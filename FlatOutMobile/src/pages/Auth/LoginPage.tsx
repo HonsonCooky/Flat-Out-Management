@@ -21,7 +21,7 @@ export default function LoginPage(props: Props): JSX.Element {
    ------------------------------------------------------------------------------------------------------------------*/
 
   return (
-    <ThemedPageCentered icon={'person-circle-outline'}>
+    <ThemedPageCentered icon={'log-in-outline'}>
       <FloatingCard cardTitle={"Login"}>
         <Input // Username
           placeholder={"Email / Username"}

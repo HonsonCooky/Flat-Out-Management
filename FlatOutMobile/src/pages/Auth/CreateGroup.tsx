@@ -10,10 +10,11 @@ import Palette from "../../styles/Palette";
 import Spacing from "../../styles/Spacing";
 import ButtonText from "../../atoms/ButtonText";
 import Input from "../../atoms/Input";
+import NavigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function CreateGroup({}: Props): JSX.Element {
+export default function CreateGroup({navigation}: Props): JSX.Element {
   /** ------------------------------------------------------------------------------------------------------------------
    * Setup
    ------------------------------------------------------------------------------------------------------------------*/
@@ -41,7 +42,7 @@ export default function CreateGroup({}: Props): JSX.Element {
   useEffect(
     () => {
       getGroupNames().then(res => {
-        if (res.length > 0) setGroups(res)
+        if (res.length > 0) setGroups(["\< Select Group\>", ...res])
         else setGroups(["No groups exist"])
       })
     }, []
@@ -54,10 +55,10 @@ export default function CreateGroup({}: Props): JSX.Element {
   return (
     <ThemedPageCentered icon={"people-circle-outline"}>
       <FloatingCard
-        cardTitle={"Join Flat"}
+        cardTitle={"Join Group"}
         styleView={{marginBottom: "10%"}}
       >
-        <Text style={defaultStyles.subtitle}>Join a pre-existing flat?</Text>
+        <Text style={defaultStyles.subtitle}>Join a pre-existing group</Text>
         <>
           <DropDown
             selectedValue={groups[selectedGroup]}
@@ -65,18 +66,18 @@ export default function CreateGroup({}: Props): JSX.Element {
             items={groups}
           />
           <ButtonText
-            onPress={() => console.log("Join Flat")}
+            onPress={() => navigation.navigate(NavigationPages.groupLogin)}
             text={"Join"}
             icon={'add-outline'}
-            styleView={{marginTop: "10%"}}
+            styleView={{marginTop: "5%"}}
           />
         </>
       </FloatingCard>
       <FloatingCard
-        cardTitle={"Create Flat"}
+        cardTitle={"Create Group"}
         styleView={{marginBottom: "20%"}}
       >
-        <Text style={defaultStyles.subtitle}>Create a new flat</Text>
+        <Text style={defaultStyles.subtitle}>Create a new group</Text>
         <Input // Groupname
           placeholder={"Group Name"}
           onChangeText={(s) => console.log(s)}
@@ -91,8 +92,9 @@ export default function CreateGroup({}: Props): JSX.Element {
           onChangeText={(s) => console.log(s)}/>
 
         <ButtonText
-          text={"Create Group"}
+          text={"Create"}
           onPress={() => console.log("Create Group")}
+          icon={"folder-outline"}
           styleView={{marginTop: "10%"}}/>
       </FloatingCard>
 

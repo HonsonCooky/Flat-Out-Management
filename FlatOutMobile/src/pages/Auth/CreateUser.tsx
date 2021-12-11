@@ -16,7 +16,7 @@ export default function CreateUser(props: Props): JSX.Element {
    * Component
    ------------------------------------------------------------------------------------------------------------------*/
   return (
-    <ThemedPageCentered icon={'create-outline'}>
+    <ThemedPageCentered icon={'person-circle-outline'}>
       <FloatingCard cardTitle={"Create User"}>
         <Input // Email
           placeholder={"Email"}
