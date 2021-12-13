@@ -47,11 +47,11 @@ export default function WelcomePage({navigation}: Props): JSX.Element {
       <ButtonText
         text={"Login"}
         styleView={{marginTop: "10%"}}
-        onPress={() => navigation.navigate(NavigationPages.login)}/>
+        onPress={() => navigation.navigate(NavigationPages.userLogin)}/>
       <ButtonText
         text={"Create Account"}
         styleView={{backgroundColor: Theme.palette.base}}
-        onPress={() => navigation.navigate(NavigationPages.createUser)}/>
+        onPress={() => navigation.navigate(NavigationPages.userCreate)}/>
     </ScrollView>
   )
 }

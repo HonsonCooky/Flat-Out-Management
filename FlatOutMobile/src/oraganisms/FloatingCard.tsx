@@ -42,7 +42,7 @@ export default function FloatingCard(props: floatingCardProps): JSX.Element {
    ------------------------------------------------------------------------------------------------------------------*/
   return (
     <View style={combineStyles(defaultStyles.view, props.styleView)}>
-      <Title styleText={defaultStyles.text}>
+      <Title styleText={combineStyles(defaultStyles.text, props.styleText)}>
         {props.cardTitle}
       </Title>
       {props.children}

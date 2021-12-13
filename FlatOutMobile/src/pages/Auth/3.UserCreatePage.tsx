@@ -10,7 +10,7 @@ import navigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function CreateUser(props: Props): JSX.Element {
+export default function UserCreatePage(props: Props): JSX.Element {
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
@@ -39,11 +39,11 @@ export default function CreateUser(props: Props): JSX.Element {
         <ButtonText
           text={"Next"}
           icon={"chevron-forward-outline"}
-          onPress={() => props.navigation.navigate(NavigationPages.createGroup)}
+          onPress={() => props.navigation.navigate(NavigationPages.welcomeNewUser)}
           styleView={{marginTop: "10%"}}
         />
 
-        <WrongScreenButton linkPage={navigationPages.login} nav={props}>
+        <WrongScreenButton linkPage={navigationPages.userLogin} nav={props}>
           Login?
         </WrongScreenButton>
       </FloatingCard>

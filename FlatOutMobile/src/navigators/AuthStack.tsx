@@ -1,14 +1,15 @@
 import React, {useContext} from "react";
 import {createStackNavigator} from "@react-navigation/stack";
-import LoginPage from "../pages/Auth/LoginPage";
-import WelcomePage from "../pages/Auth/WelcomePage";
-import CreateUser from "../pages/Auth/CreateUser";
 import {View} from "react-native";
 import {ThemeContext} from "../oraganisms/ThemeProvider";
 import Spacing from "../styles/Spacing";
 import NavigationPages from "./NavigationPages";
-import CreateGroup from "../pages/Auth/CreateGroup";
-import GroupLoginPage from "../pages/Auth/GroupLoginPage";
+import WelcomePage from "../pages/Auth/1.WelcomePage";
+import UserLoginPage from "../pages/Auth/2.UserLoginPage";
+import UserCreatePage from "../pages/Auth/3.UserCreatePage";
+import WelcomeNewUserPage from "../pages/Auth/4.WelcomeNewUserPage";
+import GroupLoginPage from "../pages/Auth/5.GroupLoginPage";
+import GroupCreatePage from "../pages/Auth/6.GroupCreatePage";
 
 /** ------------------------------------------------------------------------------------------------------------------
  * Setup
@@ -31,9 +32,10 @@ export default function AuthStack(): JSX.Element {
       initialRouteName={NavigationPages.welcome}
       screenOptions={{headerShown: false, cardOverlay: overlay}}>
       <Stack.Screen name={NavigationPages.welcome} component={WelcomePage}/>
-      <Stack.Screen name={NavigationPages.login} component={LoginPage}/>
-      <Stack.Screen name={NavigationPages.createUser} component={CreateUser}/>
-      <Stack.Screen name={NavigationPages.createGroup} component={CreateGroup}/>
+      <Stack.Screen name={NavigationPages.userLogin} component={UserLoginPage}/>
+      <Stack.Screen name={NavigationPages.userCreate} component={UserCreatePage}/>
+      <Stack.Screen name={NavigationPages.welcomeNewUser} component={WelcomeNewUserPage}/>
+      <Stack.Screen name={NavigationPages.groupCreate} component={GroupCreatePage}/>
       <Stack.Screen name={NavigationPages.groupLogin} component={GroupLoginPage}/>
     </Stack.Navigator>
   )

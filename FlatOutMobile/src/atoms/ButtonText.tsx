@@ -35,15 +35,14 @@ export default function ButtonText(props: buttonProps): JSX.Element {
       elevation: Spacing.elevation,
     },
     text: {
-      flex: 1,
       textAlign: 'center',
-      paddingRight: props.icon ? "20%" : 0,
       fontSize: Font.size.L,
       fontFamily: Font.family(Font.fontFamilies.latoB),
       color: Theme.palette.text
     },
     icon: {
-      paddingHorizontal: Spacing.paddingHorizontal,
+      position: "absolute",
+      left: Spacing.paddingLeft,
     }
   })
 

@@ -8,6 +8,7 @@ export default {
     paddingVertical: "3%",
     marginHorizontal: "5%",
     paddingHorizontal: "5%",
+    paddingLeft: "10%",
     marginUnderHeader: "20%",
     marginTopOrBottom: "10%",
     contentGap: "10%",

@@ -1,8 +1,11 @@
 export default {
-  welcome: "Welcome",
-  login: "Login",
-  createUser: "CreateUser",
-  createGroup: "CreateGroup",
-  groupLogin: "GroupLogin",
+  //Auth
+  welcome: "WelcomePage",
+  userLogin: "LoginPage",
+  userCreate: "UserCreatePage",
+  welcomeNewUser: "WelcomeNewUserPage",
+  groupCreate: "GroupCreatePage",
+  groupLogin: "GroupLoginPage",
+
   home: "Home",
 }

@@ -9,7 +9,7 @@ import navigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function LoginPage(props: Props): JSX.Element {
+export default function UserLoginPage(props: Props): JSX.Element {
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Functionality
@@ -39,7 +39,7 @@ export default function LoginPage(props: Props): JSX.Element {
           onPress={() => console.log("HERE")}
           styleView={{marginTop: "10%"}}
         />
-        <WrongScreenButton linkPage={navigationPages.createUser} nav={props}>
+        <WrongScreenButton linkPage={navigationPages.userCreate} nav={props}>
           Create Account?
         </WrongScreenButton>
       </FloatingCard>

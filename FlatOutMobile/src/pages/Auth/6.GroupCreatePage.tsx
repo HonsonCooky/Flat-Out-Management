@@ -1,20 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import ThemedPageCentered from "../../oraganisms/ThemedPageCentered";
 import FloatingCard from "../../oraganisms/FloatingCard";
-import DropDown from "../../atoms/DropDown";
-import {getGroupNames} from "../../services/GroupManagement";
-import {StyleSheet, Text} from "react-native";
+import {StyleSheet} from "react-native";
 import Font from "../../styles/Font";
 import Palette from "../../styles/Palette";
 import Spacing from "../../styles/Spacing";
 import ButtonText from "../../atoms/ButtonText";
 import Input from "../../atoms/Input";
-import NavigationPages from "../../navigators/NavigationPages";
 
 type Props = NativeStackScreenProps<any>;
 
-export default function CreateGroup({navigation}: Props): JSX.Element {
+export default function GroupCreatePage({navigation}: Props): JSX.Element {
   /** ------------------------------------------------------------------------------------------------------------------
    * Setup
    ------------------------------------------------------------------------------------------------------------------*/
@@ -35,18 +32,6 @@ export default function CreateGroup({navigation}: Props): JSX.Element {
   /** ------------------------------------------------------------------------------------------------------------------
    * Functionality
    ------------------------------------------------------------------------------------------------------------------*/
-  const [groups, setGroups] = useState(["Loading Groups..."])
-  const [selectedGroup, setSelectedGroup] = useState(0)
-
-  // Get the pre-existing groups
-  useEffect(
-    () => {
-      getGroupNames().then(res => {
-        if (res.length > 0) setGroups(["\< Select Group\>", ...res])
-        else setGroups(["No groups exist"])
-      })
-    }, []
-  )
 
   /** ------------------------------------------------------------------------------------------------------------------
    * Component
@@ -55,29 +40,8 @@ export default function CreateGroup({navigation}: Props): JSX.Element {
   return (
     <ThemedPageCentered icon={"people-circle-outline"}>
       <FloatingCard
-        cardTitle={"Join Group"}
-        styleView={{marginBottom: "10%"}}
-      >
-        <Text style={defaultStyles.subtitle}>Join a pre-existing group</Text>
-        <>
-          <DropDown
-            selectedValue={groups[selectedGroup]}
-            onValueChange={(itemValue, itemIndex) => setSelectedGroup(itemIndex)}
-            items={groups}
-          />
-          <ButtonText
-            onPress={() => navigation.navigate(NavigationPages.groupLogin)}
-            text={"Join"}
-            icon={'add-outline'}
-            styleView={{marginTop: "5%"}}
-          />
-        </>
-      </FloatingCard>
-      <FloatingCard
         cardTitle={"Create Group"}
-        styleView={{marginBottom: "20%"}}
       >
-        <Text style={defaultStyles.subtitle}>Create a new group</Text>
         <Input // Groupname
           placeholder={"Group Name"}
           onChangeText={(s) => console.log(s)}
