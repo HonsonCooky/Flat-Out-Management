@@ -4,11 +4,13 @@ import IWithChildren from "../utils/IWithChildren";
 /** ----------------------------------------------------------------------------------------------------------------
  * Setup
  ---------------------------------------------------------------------------------------------------------------- */
-interface User {
+export interface User {
+  online: boolean
   authenticated: boolean,
 }
 
 export const UserContext = createContext({
+  online: false,
   authenticated: false,
 })
 
@@ -18,6 +20,7 @@ export const UserContext = createContext({
 export default function UserProvider(props: IWithChildren): JSX.Element {
 
   const defaultUser: User = {
+    online: false,
     authenticated: false
   }
 

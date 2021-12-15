@@ -9,7 +9,6 @@ import Spacing from "../styles/Spacing";
  * Interface
  ------------------------------------------------------------------------------------------------------------------*/
 interface inputProps extends IOverrideStyle {
-  value?: string,
   placeholder: string,
   onChangeText: (s: string) => void,
   secureTextEntry?: boolean
