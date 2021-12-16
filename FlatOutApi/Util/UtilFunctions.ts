@@ -15,13 +15,13 @@ import {ErrorRequestHandler} from "express";
  ----------------------------------------------------------------------------------------------------------------- */
 let sessionLogs: string[] = []
 export const getLogs = () => {
-    return [...sessionLogs]
+  return [...sessionLogs]
 }
 export const addLogs = (...logs: string[]) => {
-    sessionLogs = sessionLogs.concat(logs)
+  sessionLogs = sessionLogs.concat(logs)
 }
 export const isDbConnected = () => {
-    return mongoose.connection.readyState === 1
+  return mongoose.connection.readyState === 1
 }
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -29,11 +29,11 @@ export const isDbConnected = () => {
  * Crypto functions to provide some UUID, hashing and salting, also validation of hashes.
  ----------------------------------------------------------------------------------------------------------------- */
 export function saltAndHash(input: string): string {
-    return bcrypt.hashSync(input, bcrypt.genSaltSync())
+  return bcrypt.hashSync(input, bcrypt.genSaltSync())
 }
 
 export function compareHashes(nonHash: string, hash: string): boolean {
-    return bcrypt.compareSync(nonHash, hash)
+  return bcrypt.compareSync(nonHash, hash)
 }
 
 
@@ -43,14 +43,20 @@ export function compareHashes(nonHash: string, hash: string): boolean {
  * This removes computation on the client side, as the information is already calculated here on the server side.
  ----------------------------------------------------------------------------------------------------------------- */
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
-    let msg: string = err.message
-    addLogs(`${JSON.stringify(req.body)} ==> ${msg}`)
-    if (msg.startsWith('400') || msg.startsWith('Validation failed')) res.status(400).send(`${msg.replace(/.*400:/g,
-     '')}`)
-    else if (msg.startsWith('500')) res.status(500).send(`${msg.replace(/500:/g, '')}`)
-    else if (msg.includes('duplicate')) res.status(400).send(`Unfortunately, a document with these credentials` +
-        ` already exists.\n:${msg}`)
-    else if (err) {
-        res.status(500).send("Opps! I don't know what happened *shrugs*. Whatever you tried to do, didn't work. Try again?")
-    }
+  let msg: string = err.message
+  addLogs(`${JSON.stringify(req.body)} ==> ${msg}`)
+  if (msg.startsWith('400') || msg.startsWith('Validation failed')) res.status(400).send({
+    message: `${msg.replace(/.*400:/g,'')}`
+  })
+  else if (msg.startsWith('500')) res.status(500).send({
+    message: `${msg.replace(/500:/g, '')}`
+  })
+  else if (msg.includes('duplicate')) res.status(400).send({
+    message: `Unfortunately, a document with these credentials already exists.\n:${msg}`
+  })
+  else if (err) {
+    res.status(500).send({
+      message: "Opps! I don't know what happened *shrugs*. Whatever you tried to do, didn't work. Try again?"
+    })
+  }
 }
