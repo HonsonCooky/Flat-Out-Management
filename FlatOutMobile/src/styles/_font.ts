@@ -30,9 +30,8 @@ const FontFamilies = {
   latoBlI: LATO.Lato_900Black_Italic,
 }
 
-export const loadFonts = () => {
-  return useFonts(FontFamilies)
-}
+export const loadFonts = () => useFonts(FontFamilies)
+export const family = (font: number) => Object.keys(FontFamilies)[font - FontFamilies.scpXL]
 
 export default {
   size: {
@@ -45,5 +44,4 @@ export default {
     XXL: 52,
   },
   fontFamilies: FontFamilies,
-  family: (font: number) => Object.keys(FontFamilies)[font - FontFamilies.scpXL]
 }

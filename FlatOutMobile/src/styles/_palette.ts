@@ -18,7 +18,7 @@ interface IPalette {
   constant: any,
 }
 
-const Palette: IPalette = {
+const _palette: IPalette = {
   light: {
     primary: "#8c9eff",
     primaryLight: "#c0cfff",
@@ -50,4 +50,4 @@ const Palette: IPalette = {
     failure: "#f44336",
   },
 }
-export default Palette
+export default _palette
