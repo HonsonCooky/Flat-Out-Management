@@ -1,6 +1,6 @@
 import {app} from "../index";
-import {userGet, userLogin, userRemove, userCreate, userUpdate} from "../Management/UserManagement";
-import {SanitizedUser} from "../Util/Schemas";
+import {userCreate} from "../Management/UserManagement";
+import {SanitizedUser} from "../Schemas/UserSchema";
 
 /**
  * UserInterface: Not to be confused with a UI, the UserInterface.ts contains one function for calling and handling
@@ -10,31 +10,10 @@ import {SanitizedUser} from "../Util/Schemas";
 export function initializeUserInterface() {
     app.post("/post/user/create", (req, res, next) => {
         userCreate(req.body)
-            .then((user: SanitizedUser) => res.status(200).send(user))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/user/login', (req, res, next) => {
-        userLogin(req.body)
-            .then((user: SanitizedUser) => res.status(200).send(user))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/user/update', (req, res, next) => {
-        userUpdate(req.body)
-            .then((user: SanitizedUser) => res.status(200).send(user))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/user/remove', (req, res, next) => {
-        userRemove(req.body)
-            .then((user: SanitizedUser) => res.status(200).send(user))
-            .catch(e => next(e))
-    })
-
-    app.get('/get/user/:i&:p', (req, res, next) => {
-        userGet(req.params)
-            .then((user: SanitizedUser) => res.status(200).send(user))
+            .then((user: SanitizedUser) => {
+                console.log(user)
+                res.status(200).send(user)
+            })
             .catch(e => next(e))
     })
 }

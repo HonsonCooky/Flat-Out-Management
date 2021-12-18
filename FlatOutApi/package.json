@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts",
-    "dev": "npm i && nodemon -x ts-node index.ts"
+    "dev": "nodemon -x ts-node index.ts"
   },
   "license": "MIT",
   "dependencies": {

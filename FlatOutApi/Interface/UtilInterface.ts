@@ -9,8 +9,4 @@ export const initializeUtilInterface = () => {
   app.get("/get/logs", (req, res) => {
     res.status(200).send(JSON.stringify(getLogs()))
   })
-
-  app.get("/get/wakeup", (req, res) => {
-    res.status(200).send({connected: isDbConnected()})
-  })
 }

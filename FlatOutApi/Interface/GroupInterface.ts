@@ -1,13 +1,6 @@
 import {app} from "../index";
-import {
-    groupCreate,
-    groupGet, groupGetAll,
-    groupLogin,
-    groupLoginAuto,
-    groupRemove,
-    groupUpdate
-} from "../Management/GroupManagement";
-import {SanitizedGroup} from "../Util/Schemas";
+import {groupCreate} from "../Management/GroupManagement";
+import {SanitizedGroup} from "../Schemas/GroupSchema";
 
 
 /**
@@ -20,41 +13,5 @@ export function initializeGroupInterface() {
         groupCreate(req.body)
             .then((group: SanitizedGroup) => res.status(200).send(group))
             .catch(e => next(e))
-    })
-
-    app.post('/post/group/login', (req, res, next) => {
-        groupLogin(req.body)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/group/autologin', (req, res, next) => {
-        groupLoginAuto(req.body)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/group/update', (req, res, next) => {
-        groupUpdate(req.body)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
-    })
-
-    app.post('/post/group/remove', (req, res, next) => {
-        groupRemove(req.body)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
-    })
-
-    app.get('/get/group/:i&:p', (req, res, next) => {
-        groupGet(req.params)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
-    })
-
-    app.get('/get/group-names', (req, res, next) => {
-        groupGetAll()
-          .then((groupNames: string[]) => res.status(200).send(groupNames))
-          .catch(e => next(e))
     })
 }

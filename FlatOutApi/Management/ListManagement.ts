@@ -1,8 +1,8 @@
 /** ----------------------------------------------------------------------------------------------------------------
  * UTIL FUNCTIONS
  ------------------------------------------------------------------------------------------------------------------- */
-import {List, ListModel} from "../Util/Schemas";
 import {saltAndHash} from "../Util/UtilFunctions";
+import {List, ListModel} from "../Schemas/ListSchema";
 
 async function authAndGetList(identifier: string): Promise<List> {
     // Check if list exists, simply having the key is enough for access

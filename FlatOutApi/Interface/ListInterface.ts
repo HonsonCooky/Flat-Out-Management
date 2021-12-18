@@ -1,6 +1,6 @@
 import {app} from "../index";
 import {listCreate, listGet, listUpdate} from "../Management/ListManagement";
-import {List} from "../Util/Schemas";
+import {List} from "../Schemas/ListSchema";
 
 export function initializeListInterface(){
     app.post('/post/list/create', (req, res, next) => {

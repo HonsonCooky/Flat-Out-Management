@@ -52,7 +52,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
     message: `${msg.replace(/500:/g, '')}`
   })
   else if (msg.includes('duplicate')) res.status(400).send({
-    message: `Unfortunately, a document with these credentials already exists.\n:${msg}`
+    message: `Unfortunately, a document with these credentials already exists.`
   })
   else if (err) {
     res.status(500).send({
