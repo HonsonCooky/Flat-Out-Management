@@ -1,24 +1,12 @@
 import {app} from "../index";
-import {listCreate, listGet, listUpdate} from "../Management/ListManagement";
-import {List} from "../Schemas/ListSchema";
 
+
+/**
+ * ListInterface: The ListInterface.ts contains one function for calling and handling (parsing handling to
+ * middleware) ListManagement functions. In a nutshell, it is the EXPRESS interface setup relaying calls to the
+ * Mongoose backend in /Management/ListManagement.ts
+ */
 export function initializeListInterface(){
     app.post('/post/list/create', (req, res, next) => {
-        listCreate(req.body)
-            .then((list: List) => res.status(200).send(list))
-            .catch(e => next(e))
-    })
-
-
-    app.post('/post/list/update', (req, res, next) => {
-        listUpdate(req.body)
-            .then((list: List) => res.status(200).send(list))
-            .catch(e => next(e))
-    })
-
-    app.get('/get/list/:k*', (req, res, next) => {
-        listGet(req.params)
-            .then((list: List) => res.status(200).send(list))
-            .catch(e => next(e))
     })
 }

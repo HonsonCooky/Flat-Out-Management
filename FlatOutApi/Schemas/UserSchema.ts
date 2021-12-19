@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {idValidator, IIdValidator, nameValidator, Update} from "./Validators";
+import {GroupId, ListId, Name, Password, ReqUserId, Update} from "./SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -18,21 +18,15 @@ export interface User {
 
 export type SanitizedUser = Omit<User, "password"> // Don't give the user their password
 export type UpdateUser = Omit<Update, 'update'> & { update: User }
-export const userId = {...IIdValidator, validate: idValidator('U')}
 
 export const UserSchema = new Schema({
-  // uuid: Used to identify the user.
-  id: userId,
-  // name: The name which an application will use.
-  name: {type: String, required: [true, 'Missing name'], validate: nameValidator},
-  // password: Can't be unique, else two users can't have the same password hash+salt mix
-  password: {type: String, required: [true, 'Missing password']},
-  // group: The flat group which this user is a member of
-  group: String,
-  // groupsByAssociation: The flat groups you have an association with (ones that you
-  groupsByAssociation: [String],
-  // Can't be unique, multiple users can point to the same lists
-  lists: [{type: String, lowercase: true}],
+  id: ReqUserId,
+  name: Name,
+  password: Password,
+  group: GroupId,
+  groupsByAssociation: [GroupId],
+  lists: [ListId],
+  onLeave: [Date],
 }, {timestamps: true})
 
 export const UserModel = mongoose.model("Users", UserSchema)

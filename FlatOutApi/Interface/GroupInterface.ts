@@ -1,6 +1,4 @@
 import {app} from "../index";
-import {groupCreate} from "../Management/GroupManagement";
-import {SanitizedGroup} from "../Schemas/GroupSchema";
 
 
 /**
@@ -10,8 +8,5 @@ import {SanitizedGroup} from "../Schemas/GroupSchema";
  */
 export function initializeGroupInterface() {
     app.post('/post/group/create', (req, res, next) => {
-        groupCreate(req.body)
-            .then((group: SanitizedGroup) => res.status(200).send(group))
-            .catch(e => next(e))
     })
 }

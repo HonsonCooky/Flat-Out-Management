@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
-import {Item, ItemSchema} from "./ItemSchema";
-import {nameValidator, Update} from "./Validators";
+import {Item, ItemSchema} from "./ChildSchemas";
+import {ListId, Name, Update} from "./SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LIST SCHEMA:
@@ -10,20 +10,17 @@ import {nameValidator, Update} from "./Validators";
  * and held with a group or several users.
  --------------------------------------------------------------------------------------------------------------- */
 export interface List {
-  key: string,
+  id: string,
   listName: string,
-  listItems: Item[]
+  listItems?: Item[]
 }
 
 export type UpdateList = Omit<Update, 'update'> & { update: List }
 
 const ListSchema = new Schema({
-  uid: {type: String, required: [true, 'Lists require a unique key'], unique: true, lowercase: true},
-  listName: {type: String, required: [true, 'Lists require a name'], validate: nameValidator},
-  listItems: {
-    type: [ItemSchema],
-    required: [true, 'Lists require a list... silly']
-  }
+  id: ListId,
+  listName: Name,
+  listItems: [ItemSchema]
 }, {timestamps: true})
 
 export const ListModel = mongoose.model("Lists", ListSchema)

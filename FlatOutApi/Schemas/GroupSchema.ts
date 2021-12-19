@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
-import {Item, ItemSchema} from "./ItemSchema";
-import {nameValidator, Update} from "./Validators";
+import {GameSchema, Item, ItemSchema} from "./ChildSchemas";
+import {ListId, Name, Password, ReqGroupId, Update, UserId} from "./SchemaTypes";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,62 +10,35 @@ import {nameValidator, Update} from "./Validators";
  --------------------------------------------------------------------------------------------------------------- */
 
 export interface Group {
+  id: string,
   groupName: string,
   password: string,
-  users: string[],
-  lists: string[],
-  chores: Item[],
-  choresAutoFill: boolean,
-  choresLoop: boolean,
+  leader?: string,
+  users?: string[],
+  lists?: string[],
+  chores?: Item[],
+  choresAutoFill?: boolean,
+  choresLoop?: boolean,
   createdAt: string,
   updatedAt: string,
 }
 
-export type SanitizedGroup = {
-  groupName: string,
-  users: string[],
-  lists: string[],
-  chores: Item[],
-  choresAutoFill: boolean,
-  choresLoop: boolean,
-  createdAt: string,
-  updatedAt: string,
-}
-
-
+export type SanitizedGroup = Omit<Group, "password">
 export type UpdateGroup = Omit<Update, 'update'> & { update: Group }
 
+
 const GroupSchema = new Schema({
-  groupName: {
-    type: String,
-    required: [true, 'Groups require a name'],
-    unique: true,
-    lowercase: true,
-    validate: nameValidator
-  },
-  password: {type: String, required: [true, 'Groups require a password']},
-  // A user can't be in more than one group
-  users: {
-    type: [{
-      type: String,
-      unique: true,
-      lowercase: true,
-    }],
-  },
-  // A group list cannot span across multiple groups
-  lists: {
-    type: [{
-      type: String,
-      lowercase: true,
-    }],
-    required: [true, 'Groups require AT LEAST an empty list for other lists'],
-  },
-  chores: {
-    type: [ItemSchema],
-    required: [true, 'Groups require AT LEAST an empty list for chores'],
-  },
-  choresAutoFill: {type: Boolean, required: [true, 'Group needs to know whether to auto fill or not']},
-  choresLoop: {type: Boolean, required: [true, 'Group needs to know whether to auto fill or not']}
+  id: ReqGroupId,
+  groupName: Name,
+  password: Password,
+  leader: UserId,
+  users: [UserId],
+  lists: [ListId],
+  messages: [ListId],
+  chores: [ItemSchema],
+  games: [GameSchema],
+  choresAutoFill: Boolean,
+  choresLoop: Boolean,
 }, {timestamps: true})
 
 export const GroupModel = mongoose.model("Groups", GroupSchema)
