@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs'
 import mongoose from "mongoose";
 import {ErrorRequestHandler} from "express";
+import {randomUUID} from "crypto";
+import {Tag} from "./Constants";
 
 /**
  * This file contains global objects and helper functions which are reasonably generic and self explanatory.
@@ -36,6 +38,9 @@ export function compareHashes(nonHash: string, hash: string): boolean {
   return bcrypt.compareSync(nonHash, hash)
 }
 
+export function generateIdWithTag(tag: Tag): string {
+  return tag + "-" + randomUUID()
+}
 
 /** -----------------------------------------------------------------------------------------------------------------
  * EXPRESS ERROR HANDLER:
@@ -46,7 +51,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
   let msg: string = err.message
   addLogs(`${JSON.stringify(req.body)} ==> ${msg}`)
   if (msg.startsWith('400') || msg.startsWith('Validation failed')) res.status(400).send({
-    message: `${msg.replace(/.*400:/g,'')}`
+    message: `${msg.replace(/400:|.*validation failed: /g, '')}`
   })
   else if (msg.startsWith('500')) res.status(500).send({
     message: `${msg.replace(/500:/g, '')}`

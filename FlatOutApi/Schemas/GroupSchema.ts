@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {GameSchema, Item, ItemSchema} from "./ChildSchemas";
-import {ListId, Name, Password, ReqGroupId, Update, UserId} from "./SchemaTypes";
+import {ListId, Name, Password, ReqGroupId, Update, UserId} from "./_SchemaTypes";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -15,8 +14,10 @@ export interface Group {
   password: string,
   leader?: string,
   users?: string[],
-  lists?: string[],
-  chores?: Item[],
+  games?: string[],
+  chores?: string[],
+  messages?: string[],
+  extraLists?: string[],
   choresAutoFill?: boolean,
   choresLoop?: boolean,
   createdAt: string,
@@ -26,17 +27,16 @@ export interface Group {
 export type SanitizedGroup = Omit<Group, "password">
 export type UpdateGroup = Omit<Update, 'update'> & { update: Group }
 
-
 const GroupSchema = new Schema({
   id: ReqGroupId,
   groupName: Name,
   password: Password,
   leader: UserId,
   users: [UserId],
-  lists: [ListId],
+  games: [ListId],
+  chores: [ListId],
   messages: [ListId],
-  chores: [ItemSchema],
-  games: [GameSchema],
+  extraLists: [ListId],
   choresAutoFill: Boolean,
   choresLoop: Boolean,
 }, {timestamps: true})

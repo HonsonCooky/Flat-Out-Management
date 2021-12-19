@@ -10,10 +10,7 @@ import {SanitizedUser} from "../Schemas/UserSchema";
 export function initializeUserInterface() {
     app.post("/post/user/create", (req, res, next) => {
         userCreate(req.body)
-            .then((user: SanitizedUser) => {
-                console.log(user)
-                res.status(200).send(user)
-            })
+            .then((user: SanitizedUser) => res.status(200).send(user))
             .catch(e => next(e))
     })
 }

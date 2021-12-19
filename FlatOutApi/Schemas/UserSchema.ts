@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {GroupId, ListId, Name, Password, ReqUserId, Update} from "./SchemaTypes";
+import {GroupId, ListId, Name, Password, ReqUserId, Update} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:

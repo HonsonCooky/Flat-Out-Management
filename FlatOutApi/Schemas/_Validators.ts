@@ -1,3 +1,5 @@
+import {Tag} from "../Util/Constants";
+
 /** ---------------------------------------------------------------------------------------------------------------
  * NAME VALIDATOR: Ensure that a name is between 3 and 20 chars, also ensure that a name starts with a char
  --------------------------------------------------------------------------------------------------------------- */
@@ -8,7 +10,7 @@ export const nameValidator = [nameValid, "400:Names need to be 3-20 characters l
  * ID VALIDATOR: Ensure that a ID's have unique identifiers, and start with their needed type
  --------------------------------------------------------------------------------------------------------------- */
 const idValid = (key: string, v: string) => v.startsWith(key)
-export const idValidator = (key: string) => [(v: string) => idValid(key, v), "400:Given incorrect type of ID"]
+export const idValidator = (key: Tag) => [(v: string) => idValid(key, v), "400:Incorrect ID type"]
 
 /** ---------------------------------------------------------------------------------------------------------------
  * POPULATED LIST VALIDATOR: Ensure that a list has at least one item in it
