@@ -1,7 +1,7 @@
 import {UserModel} from "../Schemas/UserSchema";
 import {generateIdWithTag, saltAndHash} from "../Util/Crypto";
 import {Tag} from "../Util/Constants";
-import {checkTokens, createSession, sanitizeObj} from "./ManagementUtils";
+import {checkTokens, createSession, sanitizeObj, validateModel} from "./ManagementUtils";
 
 async function checkUserTokens(user: any) {
     await checkTokens([user.group, ...user.groupsByAssociation, ...user.lists])
@@ -23,7 +23,7 @@ export async function userCreate(body: any): Promise<any> {
     user.id = generateIdWithTag(Tag.User)
 
     // Validate the creation based on incoming information
-    user.validateSync()
+    validateModel(user, UserModel)
 
     // Salt and Hash the user password
     user.password = saltAndHash(body.password)
@@ -35,8 +35,9 @@ export async function userCreate(body: any): Promise<any> {
     user.session = await createSession()
 
     // Save to DB and return to user
-    user.validateSync() // Check one last time before saving
-    // await user.save()
+    validateModel(user, UserModel) // Check one last time before saving
+
+    await user.save()
     return sanitizeObj(user)
 }
 

@@ -22,7 +22,7 @@ export const ItemId = {...Id, validate: idValidator(Tag.Item)}
 export const ReqItemId = {...ItemId, ...ReqId}
 
 export const SessionId = {...Id, validate: idValidator(Tag.Session)}
-export const ReqSessionId = {...ItemId, ...ReqId}
+export const ReqSessionId = {...SessionId, ...ReqId}
 
 // Names:
 export const Name = {

@@ -5,6 +5,12 @@ import {ListModel} from "../Schemas/ListSchema";
 import {ItemModel} from "../Schemas/ItemSchema";
 import {generateIdWithTag} from "../Util/Crypto";
 import {SessionModel} from "../Schemas/SessionTokenSchema";
+import {Model} from "mongoose"
+
+export function validateModel(obj: any, model: Model<any>){
+  let err = new model(obj).validateSync()
+  if (err) throw new Error(err.message)
+}
 
 /**
  * Ensure consistent error messages
