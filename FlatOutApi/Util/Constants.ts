@@ -3,6 +3,5 @@ export enum Tag {
   Group = 'G',
   List = 'L',
   Item = 'I',
-  GroupToken = 'GT',
-  ListToken = 'LT',
+  Session = 'S'
 }

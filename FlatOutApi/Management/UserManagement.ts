@@ -1,27 +1,49 @@
-import {generateIdWithTag, saltAndHash} from "../Util/UtilFunctions";
-import {SanitizedUser, User, UserModel} from "../Schemas/UserSchema";
+import {UserModel} from "../Schemas/UserSchema";
+import {generateIdWithTag, saltAndHash} from "../Util/Crypto";
 import {Tag} from "../Util/Constants";
-import {validateModel} from "./ManagementUtils";
+import {checkTokens, createSession, sanitizeObj} from "./ManagementUtils";
 
-/** ----------------------------------------------------------------------------------------------------------------
- * UTIL FUNCTIONS
- ------------------------------------------------------------------------------------------------------------------- */
-function sanitizeUser({id, name, group, groupsByAssociation, lists}: SanitizedUser): SanitizedUser {
-    return {id, name, group, groupsByAssociation, lists}
+async function checkUserTokens(user: any) {
+    await checkTokens([user.group, ...user.groupsByAssociation, ...user.lists])
 }
+
 
 /** ----------------------------------------------------------------------------------------------------------------
  * API FUNCTIONS
  ------------------------------------------------------------------------------------------------------------------- */
-
 /**
  * CREATE: Create a User document
  * @param body: User
  */
-export async function userCreate(body: User): Promise<SanitizedUser> {
-    body.id = generateIdWithTag(Tag.User)
-    body.password = saltAndHash(body.password)
-    validateModel(body, UserModel)
-    await new UserModel(body).save()
-    return sanitizeUser(body)
+export async function userCreate(body: any): Promise<any> {
+    // Setup user object
+    let user: any = new UserModel(body)
+
+    // Generate the required id first (overwrite)
+    user.id = generateIdWithTag(Tag.User)
+
+    // Validate the creation based on incoming information
+    user.validateSync()
+
+    // Salt and Hash the user password
+    user.password = saltAndHash(body.password)
+
+    // Check each token provided by the user is a valid token
+    await checkUserTokens(user)
+
+    // Successful session started
+    user.session = await createSession()
+
+    // Save to DB and return to user
+    user.validateSync() // Check one last time before saving
+    // await user.save()
+    return sanitizeObj(user)
+}
+
+/**
+ * LOGIN: Authenticate a user, either by id, or by
+ * @param body
+ */
+export async function userLogin(body: any): Promise<any> {
+
 }

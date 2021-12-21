@@ -2,10 +2,11 @@ import express from "express";
 import mongoose, {MongooseOptions} from "mongoose";
 import {config} from "dotenv";
 import {initializeUserInterface} from "./Interface/UserInterface";
-import {initializeUtilInterface} from "./Interface/UtilInterface";
-import {addLogs, errorHandler} from "./Util/UtilFunctions";
+import {initializeUtilInterface} from "./Interface/InterfaceUtils";
 import {initializeGroupInterface} from "./Interface/GroupInterface";
 import {initializeListInterface} from "./Interface/ListInterface";
+import {addLogs} from "./Util/Logging";
+import {errorHandler} from "./Util/ErrorHandling";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -40,9 +41,9 @@ export const app = express()
 app.use(express.json())
 
 // Initialize interfaces, grouped by interactions with MongoDB collections
+initializeUserInterface()
 initializeGroupInterface()
 initializeListInterface()
-initializeUserInterface()
 initializeUtilInterface()
 
 // Middleware AFTER requests
