@@ -8,9 +8,14 @@ async function checkUserTokens(user: any) {
     await checkTokens([user.group, ...user.groupsByAssociation, ...user.lists])
 }
 
+async function newUserSession(user: any){
+    user.session = await createSession()
+    user.save()
+}
+
 function sanitizeUser(user: any) {
-    delete user.password
-    return user
+    const {password, ...sanitized} = user
+    return sanitized
 }
 
 /** ----------------------------------------------------------------------------------------------------------------
@@ -23,19 +28,12 @@ function sanitizeUser(user: any) {
 export async function userCreate(body: any): Promise<any> {
     // Setup user object
     let user: any = new UserModel(body)
-    // Generate the required id first (overwrite)
     user.id = generateIdWithTag(Tag.User)
-    // Validate the creation based on incoming information
-    await user.validate()
-    // Salt and Hash the user password
     user.password = saltAndHash(body.password)
+
     // Check each token provided by the user is a valid token
     await checkUserTokens(user)
-    // Successful session started
-    user.session = await createSession()
-    // Validate the final outcome and save to DB, returning contents to the requester
-    await user.validate()
-    await user.save()
+    await newUserSession(user)
     return sanitizeUser(user)
 }
 
@@ -46,8 +44,6 @@ export async function userCreate(body: any): Promise<any> {
 export async function userLogin(body: any): Promise<any> {
     let user: any = body.session ? await sessionAuth(body.session) : await credentialAuth(body.name, body.password)
     await SessionModel.findOneAndRemove({id: user.session})
-    user.session = await createSession()
-    user.save()
     // TODO: Update group session
     return user
 }
