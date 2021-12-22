@@ -5,12 +5,6 @@ import {ListModel} from "../Schemas/ListSchema";
 import {ItemModel} from "../Schemas/ItemSchema";
 import {generateIdWithTag} from "../Util/Crypto";
 import {SessionModel} from "../Schemas/SessionTokenSchema";
-import {Model} from "mongoose"
-
-export function validateModel(obj: any, model: Model<any>){
-  let err = new model(obj).validateSync()
-  if (err) throw new Error(err.message)
-}
 
 /**
  * Ensure consistent error messages
@@ -60,19 +54,6 @@ export async function createSession(): Promise<string> {
   let sessionToken = generateIdWithTag(Tag.Session)
   let expiration = new Date()
   expiration.setMonth(expiration.getMonth() + 1)
-  await new SessionModel({token: sessionToken, expiresAt: expiration}).save()
+  await new SessionModel({id: sessionToken, expires: expiration}).save()
   return sessionToken
 }
-
-/**
- * Remove "password" field from some object. This is needed when returning values back to the user. Although parsing
- * the password back to the user would not be too detrimental (salt+hash); BUT passing this to the user is an
- * unnecessary risk.
- * @param obj
- */
-export function sanitizeObj(obj: any) {
-  const newObj = {...obj._doc}
-  delete newObj.password
-  return newObj
-}
-

@@ -6,8 +6,8 @@ export const missingStr = (item: string) => `Missing ${item}`
 const idValid = (key: string, v: string) => v.startsWith(key)
 export const idValidator = (key: Tag) => [(v: string) => idValid(key, v), "Incorrect ID type"]
 
-const Id = {type: String, unique: true}
-const ReqId = {required: [true, missingStr("Id")]}
+const Id = {type: String}
+const ReqId = {required: [true, missingStr("Id")], unique: true}
 
 export const UserId = {...Id, validate: idValidator(Tag.User)}
 export const ReqUserId = {...UserId, ...ReqId}
@@ -39,4 +39,17 @@ export const Password = {
   type: String,
   required: [true, missingStr('Password')],
   minLength: 12,
+}
+
+// Roles: A level of authority for a user in a group
+export const Role = {
+  type: String,
+  enum: ['admin', 'flatmate', 'associate'],
+  default: 'associate'
+}
+
+// Default boolean to true
+export const DefaultTrue = {
+  type: Boolean,
+  default: true,
 }

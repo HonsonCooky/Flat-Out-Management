@@ -13,8 +13,8 @@ export const UserSchema = new Schema({
   password: Password,
   group: GroupId,
   groupsByAssociation: [GroupId],
-  onLeave: [Date],
   lists: [ListId],
+  onLeave: [Date],
   session: SessionId
 }, {timestamps: true})
 

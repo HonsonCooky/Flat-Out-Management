@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {Name, ReqItemId, UserId} from "./_SchemaTypes";
+import {GroupId, Name, ReqItemId, UserId} from "./_SchemaTypes";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -12,11 +12,11 @@ import {Name, ReqItemId, UserId} from "./_SchemaTypes";
  --------------------------------------------------------------------------------------------------------------- */
 const ItemSchema = new Schema({
   id: ReqItemId,
-  itemName: Name,
-  itemDesc: String,
-  itemValue: Number,
+  name: Name,
+  desc: String,
+  value: Number,
   multiplier: Number,
-  associations: [UserId],
+  associations: [UserId || GroupId]
 }, {timestamps: true})
 
 
