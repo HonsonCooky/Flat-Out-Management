@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {GroupId, ItemId, Name, ReqListId, SessionId, UserId} from "./_SchemaTypes";
+import {GroupId, ItemId, Name, ReqListId, UserId} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LIST SCHEMA:
@@ -9,8 +9,7 @@ const ListSchema = new Schema({
   id: ReqListId,
   name: Name,
   items: [ItemId],
-  associations: [UserId || GroupId],
-  sessions: [SessionId]
+  associations: [UserId || GroupId]
 }, {timestamps: true})
 
 export const ListModel = mongoose.model("Lists", ListSchema)

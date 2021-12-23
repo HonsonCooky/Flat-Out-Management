@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {GroupId, ListId, Name, Password, ReqUserId, SessionId} from "./_SchemaTypes";
+import {GroupId, ListId, Name, Password, ReqUserId} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -14,8 +14,11 @@ export const UserSchema = new Schema({
   group: GroupId,
   groupsByAssociation: [GroupId],
   lists: [ListId],
-  onLeave: [Date],
-  session: SessionId
+  onLeave: [Date]
 }, {timestamps: true})
+
+UserSchema.pre('save', async function () {
+  console.log(this)
+})
 
 export const UserModel = mongoose.model("Users", UserSchema)

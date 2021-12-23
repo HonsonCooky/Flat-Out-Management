@@ -3,8 +3,6 @@ import {UserModel} from "../Schemas/UserSchema";
 import {GroupModel} from "../Schemas/GroupSchema";
 import {ListModel} from "../Schemas/ListSchema";
 import {ItemModel} from "../Schemas/ItemSchema";
-import {generateIdWithTag} from "../Util/Crypto";
-import {SessionModel} from "../Schemas/SessionTokenSchema";
 
 /**
  * Ensure consistent error messages
@@ -17,7 +15,7 @@ function invalidTokenMsg(token: string, association: string) {
  * Check that some id being used is to link objects, is a valid, pre-existing object.
  * @param tokens
  */
-export async function checkTokens(tokens: string[]) {
+export async function checkIds(tokens: string[]) {
   // Remove non-truthy values
   const filtered = tokens.filter(Boolean)
 
@@ -45,15 +43,4 @@ export async function checkTokens(tokens: string[]) {
         throw new Error(`Provided an unknown token ${token}`)
     }
   }
-}
-
-/**
- * Generate a new session.
- */
-export async function createSession(): Promise<string> {
-  let sessionToken = generateIdWithTag(Tag.Session)
-  let expiration = new Date()
-  expiration.setMonth(expiration.getMonth() + 1)
-  await new SessionModel({id: sessionToken, expires: expiration}).save()
-  return sessionToken
 }
