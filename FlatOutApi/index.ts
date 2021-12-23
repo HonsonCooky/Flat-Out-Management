@@ -14,15 +14,14 @@ import {errorHandler} from "./Util/ErrorHandling";
  * public Git repository.
  */
 config()
-export const secret = process.env.TOKEN_SECRET
-const port = process.env.PORT || "3200"
-const mongoUri = process.env.MONGO_URI
+export const secret: string = process.env.TOKEN_SECRET || 'err'
+if (secret === 'err') throw new Error("Can't find secret")
+const port: string = process.env.PORT || "3200"
+const mongoUri: string = process.env.MONGO_URI || '' // Will throw an error
 const mongoOptions: MongooseOptions = {
     useUnifiedTopology: true,
     useNewUrlParser: true,
 }
-
-if (!secret || !port || !mongoUri) throw new Error(`Something went wrong. Secret: ${!!secret}. Port: ${!!port}. Uri: ${!!mongoUri}`)
 
 /**
  * MONGODB:

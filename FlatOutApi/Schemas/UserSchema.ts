@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import {GroupId, ListId, Name, Password, ReqUserId} from "./_SchemaTypes";
+import {saltAndHash} from "../Util/Crypto";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -18,7 +19,8 @@ export const UserSchema = new Schema({
 }, {timestamps: true})
 
 UserSchema.pre('save', async function () {
-  console.log(this)
+  const user: any = this
+  user.password = saltAndHash(user.password)
 })
 
 export const UserModel = mongoose.model("Users", UserSchema)

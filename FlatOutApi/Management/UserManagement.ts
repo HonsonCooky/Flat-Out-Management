@@ -27,5 +27,6 @@ export async function userCreate(body: any): Promise<any> {
 
     // Check each token provided by the user is a valid token
     await checkUserTokens(user)
-    return sanitizeUser(user)
+    await user.save()
+    return sanitizeUser(user._doc)
 }

@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import {DefaultTrue, ListId, Name, Password, ReqGroupId, ReqUserId, Role} from "./_SchemaTypes";
+import {saltAndHash} from "../Util/Crypto";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -28,5 +29,10 @@ const GroupSchema = new Schema({
   messages: [ListId],
   extraLists: [ListId]
 }, {timestamps: true})
+
+GroupSchema.pre('save', function () {
+  const group: any = this
+  group.password = saltAndHash(group.password)
+})
 
 export const GroupModel = mongoose.model("Groups", GroupSchema)

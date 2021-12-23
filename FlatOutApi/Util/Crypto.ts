@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken'
 import {Tag} from "./Constants";
 import {randomUUID} from "crypto";
+import {secret} from "../index";
 
 /** -----------------------------------------------------------------------------------------------------------------
  * CRYPTO:
@@ -17,4 +19,9 @@ export function compareHashes(nonHash: string, hash: string): boolean {
 
 export function generateIdWithTag(tag: Tag): string {
   return tag + "-" + randomUUID()
+}
+
+export function generateAccessToken(name: string){
+  if (!name) throw new Error('400: Invalid input for access token')
+  return jwt.sign(name, secret)
 }
