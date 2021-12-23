@@ -21,6 +21,10 @@ export function generateIdWithTag(tag: Tag): string {
   return tag + "-" + randomUUID()
 }
 
+export async function authenticateToken(token: string){
+
+}
+
 export function generateAccessToken(name: string){
   if (!name) throw new Error('400: Invalid input for access token')
   return jwt.sign(name, secret)

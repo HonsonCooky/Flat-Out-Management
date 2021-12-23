@@ -1,5 +1,5 @@
 import {UserModel} from "../Schemas/UserSchema";
-import {generateIdWithTag, saltAndHash} from "../Util/Crypto";
+import {generateAccessToken, generateIdWithTag, saltAndHash} from "../Util/Crypto";
 import {checkIds} from "./ManagementUtils";
 import {Tag} from "../Util/Constants";
 
@@ -24,9 +24,15 @@ export async function userCreate(body: any): Promise<any> {
     let user: any = new UserModel(body)
     user.id = generateIdWithTag(Tag.User)
     user.password = saltAndHash(body.password)
+    console.log(generateAccessToken(user.name))
 
     // Check each token provided by the user is a valid token
     await checkUserTokens(user)
     await user.save()
     return sanitizeUser(user._doc)
+}
+
+export async function userLogin(body: any): Promise<any> {
+    // console.log("HERE", body)
+    return {}
 }
