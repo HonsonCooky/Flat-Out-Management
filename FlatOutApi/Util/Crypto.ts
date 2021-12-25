@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken'
+import jwt, {JwtPayload} from 'jsonwebtoken'
 import {Tag} from "./Constants";
 import {secret} from "../index";
 import {v4} from 'uuid';
@@ -21,11 +21,12 @@ export function generateIdWithTag(tag: Tag): string {
   return tag + "-" + v4()
 }
 
-export async function authenticateToken(token: string){
-
+export function generateAccessToken(unsignedToken: string): string{
+  if (!unsignedToken) throw new Error('400: Invalid param for generating access token')
+  return jwt.sign(unsignedToken, secret)
 }
 
-export function generateAccessToken(name: string){
-  if (!name) throw new Error('400: Invalid input for access token')
-  return jwt.sign(name, secret)
+export async function decomposeAccessToken(token: string): Promise<string | JwtPayload>{
+  if (!token) throw new Error('400: Invalid param for decoding access token')
+  return jwt.verify(token, secret)
 }
