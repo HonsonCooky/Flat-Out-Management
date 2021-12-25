@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken'
 import {Tag} from "./Constants";
-import {randomUUID} from "crypto";
 import {secret} from "../index";
+import {v4} from 'uuid';
 
 /** -----------------------------------------------------------------------------------------------------------------
  * CRYPTO:
@@ -18,7 +18,7 @@ export function compareHashes(nonHash: string, hash: string): boolean {
 }
 
 export function generateIdWithTag(tag: Tag): string {
-  return tag + "-" + randomUUID()
+  return tag + "-" + v4()
 }
 
 export async function authenticateToken(token: string){
