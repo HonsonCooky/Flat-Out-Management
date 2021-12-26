@@ -6,7 +6,7 @@ export const missingStr = (item: string) => `Missing ${item}`
 const idValid = (key: string, v: string) => v.startsWith(key)
 export const idValidator = (key: Tag) => [(v: string) => idValid(key, v), "Incorrect ID type"]
 
-const Id = {type: String}
+const Id = {type: String, sparse: true}
 const ReqId = {required: [true, missingStr("Id")], unique: true}
 
 export const UserId = {...Id, validate: idValidator(Tag.User)}
@@ -34,7 +34,14 @@ export const Name = {
 // Password: Not unique, else Hash+Salt doesn't work
 export const Password = {
   type: String,
-  required: [true, missingStr('Password')]
+  required: [true, missingStr('Password')],
+  minLength: 12,
+}
+
+export const Session = {
+  type: String,
+  unique: true,
+  sparse: true
 }
 
 // Roles: A level of authority for a user in a group
