@@ -13,6 +13,18 @@ function sanitizeUser(user: any) {
   return sanitized
 }
 
+async function getUser(findFilter: any): Promise<any> {
+  let user: any = await UserModel.findOne(findFilter)
+  if (!user) throw new Error(`400: Cannot find user with '${findFilter}'`)
+  return user
+}
+
+async function updateUserSession(user: any): Promise<any> {
+  user.sessionToken = saltAndHash(user.id + secret)
+  await user.save()
+  return sanitizeUser(user)
+}
+
 /** ----------------------------------------------------------------------------------------------------------------
  * API FUNCTIONS
  ------------------------------------------------------------------------------------------------------------------- */
@@ -30,7 +42,7 @@ export async function userCreate(body: any): Promise<string> {
   // Check each token provided by the user is a valid token
   await checkUserTokens(user)
   await user.save()
-  return user.id
+  return updateUserSession(user)
 }
 
 /**
@@ -39,16 +51,37 @@ export async function userCreate(body: any): Promise<string> {
  */
 export async function userCredLogin(body: any): Promise<any> {
   // Find the user by id
-  let user: any = await UserModel.findOne({name: body.name})
-  if (!user) throw new Error(`400: Cannot find user '${body.name}'`)
+  let user: any = await getUser({name: body.name})
   if (!compareHashes(body.password, user.password)) throw new Error('400: Incorrect Password')
-
-  // User validated
-  user.sessionToken = saltAndHash(user.id + secret)
-  await user.updateOne()
-  return sanitizeUser(user)
+  return updateUserSession(user)
 }
 
-export async function userSessionLogin(body: any): Promise<any> {
-
+/**
+ * SESSION LOGIN: Using a session token, authenticate the user. Session tokens are provided on successful login.
+ * @param body
+ */
+export async function userTokenLogin(body: any): Promise<any> {
+  let user: any = await getUser({id: body.id})
+  if (body.sessionToken != user.sessionToken) throw new Error('400: Incorrect session token')
+  return updateUserSession(user)
 }
+
+/**
+ * UPDATE USER: One call, to update the stored user data. Localized computation will dictate if this data is
+ * correct. The validation features will catch anything that is blatantly wrong. Other features will depend on
+ * client implementations.
+ * @param body
+ */
+export async function userUpdate(body: any): Promise<any> {
+  // Authenticate the user first. Ensure actions are done with the authority to do so.
+  const {id, sessionToken, ...rest} = body
+  let user: any = await getUser({id: body.id})
+  if (body.sessionToken != user.sessionToken) throw new Error('400: Incorrect session token')
+
+  // Check for valid components
+  Object.keys(rest).forEach((key) => user[key] = rest[key])
+  await checkUserTokens(user)
+  return updateUserSession(user)
+}
+
+

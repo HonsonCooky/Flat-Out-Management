@@ -1,5 +1,5 @@
 import {app} from "../index";
-import {userCreate, userCredLogin} from "../Management/UserManagement";
+import {userCreate, userCredLogin, userTokenLogin, userUpdate} from "../Management/UserManagement";
 
 /**
  * UserInterface: Not to be confused with a UI, the UserInterface.ts contains one function for calling and handling
@@ -20,5 +20,14 @@ export function initializeUserInterface() {
   })
 
   app.post("/post/user/login/token", (req: any, res: any, next: any) => {
+    userTokenLogin(req.body)
+    .then((user) => res.status(200).send(user))
+    .catch(e => next(e))
+  })
+
+  app.post("/post/user/update", (req: any, res: any, next: any) => {
+    userUpdate(req.body)
+    .then((user) => res.status(200).send(user))
+    .catch(e => next(e))
   })
 }
