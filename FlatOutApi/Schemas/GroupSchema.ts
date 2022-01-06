@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {DefaultTrue, ListId, Name, Password, ReqGroupId, ReqUserId, Role} from "./_SchemaTypes";
+import {DefaultTrue, ListId, Password, ReqGroupId, ReqUserId, Role, UniName} from "./_SchemaTypes";
 import {saltAndHash} from "../Util/Crypto";
 
 
@@ -20,13 +20,13 @@ const ChoreConfig = new Schema({
 
 const GroupSchema = new Schema({
   id: ReqGroupId,
-  name: Name,
+  name: UniName,
   password: Password,
   users: [UserAndRole],
-  chores: [ListId],
+  chores: ListId,
   choreConfig: ChoreConfig,
+  messages: ListId,
   games: [ListId],
-  messages: [ListId],
   extraLists: [ListId]
 }, {timestamps: true})
 

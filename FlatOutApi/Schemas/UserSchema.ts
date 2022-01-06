@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
-import {GroupId, ListId, Name, Password, ReqUserId, Session} from "./_SchemaTypes";
+import {ListId, Password, ReqGroupId, ReqUserId, Session, UniName} from "./_SchemaTypes";
+import {checkIds} from "../Management/_ManagementUtils";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -9,13 +10,17 @@ import {GroupId, ListId, Name, Password, ReqUserId, Session} from "./_SchemaType
  --------------------------------------------------------------------------------------------------------------- */
 export const UserSchema = new Schema({
   id: ReqUserId,
-  name: Name,
+  sessionToken: Session,
+  name: UniName,
   password: Password,
-  group: GroupId,
-  groupsByAssociation: [GroupId],
+  groups: [ReqGroupId],
   lists: [ListId],
-  onLeave: [Date],
-  sessionToken: Session
+  onLeave: [Date]
 }, {timestamps: true})
+
+UserSchema.pre('save', async function(){
+  let user: any = this
+  await checkIds([...user.groups, ...user.lists])
+})
 
 export const UserModel = mongoose.model("Users", UserSchema)

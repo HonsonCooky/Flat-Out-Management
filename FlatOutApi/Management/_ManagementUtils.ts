@@ -20,8 +20,8 @@ export async function checkIds(tokens: string[]) {
   const filtered = tokens.filter(Boolean)
 
   // For all tokens provided, check their existence
-  for (let i = 0; i < filtered.length; i++) {
 
+  for (let i = 0; i < filtered.length; i++) {
     // Extract the token
     const token = tokens[i]
 

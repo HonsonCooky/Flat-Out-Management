@@ -1,29 +1,78 @@
 import {UserModel} from "../Schemas/UserSchema";
 import {compareHashes, generateIdWithTag, saltAndHash} from "../Util/Crypto";
-import {checkIds} from "./ManagementUtils";
 import {Tag} from "../Util/Constants";
 import {secret} from "../index";
+import {FOMAuth, FOMReq} from "./_ManagementTypes";
 
-async function checkUserTokens(user: any) {
-  await checkIds([user.group, ...user.groupsByAssociation, ...user.lists])
+/** -------------------------------------------------------------------------------------------------------------------
+ * HELPERS: Functions which remove duplicate functionality from management methods.
+ ------------------------------------------------------------------------------------------------------------------- */
+
+/**
+ * GET: Get the user by some form of identifier (name || id)
+ * @param auth: FOMAuth (doesn't use secret)
+ */
+async function get(auth: FOMAuth): Promise<any> {
+  let user: any = await UserModel.findOne({id: auth.identifier})
+  if (!user) user = await UserModel.findOne({name: auth.identifier})
+  if (!user) throw new Error(`400: Cannot find user by given identifier`)
+  return user
 }
 
-function sanitizeUser(user: any) {
+/**
+ * VALIDATE: Given a particular instance of user, validate that the provided secret (token || password) matches its
+ * counterpart.
+ * @param user: Instance of MongoDB user
+ * @param auth: FOMAuth (doesn't use identifier)
+ */
+async function validate(user: any, auth: FOMAuth){
+  let valid = auth.secret === user.sessionToken
+  if (!valid) valid = compareHashes(auth.secret, user.password)
+  if (!valid) throw new Error(`400: Failed to authenticate user '${user.name}'`)
+}
+
+/**
+ * AUTHENTICATE: String together the 'get' and 'validate' methods. Ensuring that some provided FOMAuth object
+ * contains the correct information. Get back the
+ * @param auth: FOMAuth
+ */
+export async function authenticate(auth: FOMAuth): Promise<any> {
+  // Validate incoming message
+  if (!auth) throw new Error('400: Missing required authentication information')
+  if (!auth.identifier) throw new Error('400: Missing user identifier')
+  if (!auth.secret) throw new Error('400: Missing user secret')
+
+  // Get the user from DB, and validate that the shared secret is valid
+  let user: any = await get(auth)
+  await validate(user, auth)
+  return user
+}
+
+/**
+ * SANITIZE: Remove the stored password from the user. Sanitizing for client consumption.
+ * @param user: Instance of MongoDB user
+ */
+function sanitize(user: any) {
   const {password, ...sanitized} = user._doc
   return sanitized
 }
 
-async function getUser(findFilter: any): Promise<any> {
-  let user: any = await UserModel.findOne(findFilter)
-  if (!user) throw new Error(`400: Cannot find user with '${findFilter}'`)
-  return user
+/**
+ * SAVE: Saves all updated information about user (also calls validation middleware).
+ * @param user: Instance of MongoDB user
+ * @param snhPassword: Does the password need to be salt and hashed
+ * @param snhToken: Does the user require a new token
+ */
+async function save(user: any, snhPassword: boolean, snhToken: boolean): Promise<any> {
+  // Update the user's session token (allowing for a new automatic login)
+  if (snhPassword) user.password = saltAndHash(user.password)
+  if (snhToken) user.sessionToken = saltAndHash(user.id + secret)
+
+  // Save the updated user to MongoDB, and return a safe version of the user object.
+  await user.save()
+  return sanitize(user)
 }
 
-async function updateUserSession(user: any): Promise<any> {
-  user.sessionToken = saltAndHash(user.id + secret)
-  await user.save()
-  return sanitizeUser(user)
-}
 
 /** ----------------------------------------------------------------------------------------------------------------
  * API FUNCTIONS
@@ -32,56 +81,38 @@ async function updateUserSession(user: any): Promise<any> {
  * CREATE: Create a User document
  * @param body: User (ID will be overridden)
  */
-export async function userCreate(body: any): Promise<string> {
+export async function userCreate(body: FOMReq): Promise<string> {
   // Setup user object
-  let user: any = new UserModel(body)
+  let user: any = new UserModel(body.msg)
   user.id = generateIdWithTag(Tag.User)
-  user.password = saltAndHash(user.password)
-  user.sessionToken = saltAndHash(user.id + secret)
-
-  // Check each token provided by the user is a valid token
-  await checkUserTokens(user)
-  await user.save()
-  return updateUserSession(user)
+  return save(user, true, true)
 }
 
 /**
- * CREDENTIAL LOGIN: Validate the user with a username and password.
- * @param body: {id: string, password: string, rememberMe: boolean}
- */
-export async function userCredLogin(body: any): Promise<any> {
-  // Find the user by id
-  let user: any = await getUser({name: body.name})
-  if (!compareHashes(body.password, user.password)) throw new Error('400: Incorrect Password')
-  return updateUserSession(user)
-}
-
-/**
- * SESSION LOGIN: Using a session token, authenticate the user. Session tokens are provided on successful login.
+ * LOGIN: Authenticate, then return a sanitized version of the user
  * @param body
  */
-export async function userTokenLogin(body: any): Promise<any> {
-  let user: any = await getUser({id: body.id})
-  if (body.sessionToken != user.sessionToken) throw new Error('400: Incorrect session token')
-  return updateUserSession(user)
+export async function userLogin(body: FOMReq): Promise<any> {
+  return sanitize(authenticate(body.auth))
 }
 
 /**
- * UPDATE USER: One call, to update the stored user data. Localized computation will dictate if this data is
+ * UPDATE: One call, to update the stored user data. Localized computation will dictate if this data is
  * correct. The validation features will catch anything that is blatantly wrong. Other features will depend on
  * client implementations.
  * @param body
  */
-export async function userUpdate(body: any): Promise<any> {
-  // Authenticate the user first. Ensure actions are done with the authority to do so.
-  const {id, sessionToken, ...rest} = body
-  let user: any = await getUser({id: body.id})
-  if (body.sessionToken != user.sessionToken) throw new Error('400: Incorrect session token')
+export async function userUpdate(body: FOMReq): Promise<any> {
+  // Authenticate the updates taking place
+  const user = await authenticate(body.auth)
+  const staticId = user.id
 
-  // Check for valid components
-  Object.keys(rest).forEach((key) => user[key] = rest[key])
-  await checkUserTokens(user)
-  return updateUserSession(user)
+  Object.keys(body.msg).forEach(key => user[key] = body.msg[key])
+  user.id = staticId // Ensure that the id remains the same
+
+  if (body.msg.onLeave) {
+    // TODO: Check all dates are valid dates
+  }
+
+  return save(user, !!body.msg.password, true);
 }
-
-

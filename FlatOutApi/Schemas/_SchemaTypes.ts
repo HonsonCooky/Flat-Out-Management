@@ -25,10 +25,14 @@ export const ReqItemId = {...ItemId, ...ReqId}
 export const Name = {
   type: String,
   required: [true, missingStr('Name')],
-  unique: true,
   minLength: 3,
   maxLength: 20,
   trim: true
+}
+
+export const UniName = {
+  ...Name,
+  unique: true,
 }
 
 // Password: Not unique, else Hash+Salt doesn't work
@@ -38,6 +42,7 @@ export const Password = {
   minLength: 12,
 }
 
+// Session: A means of authentication without need for name and password, must be unique
 export const Session = {
   type: String,
   unique: true,
