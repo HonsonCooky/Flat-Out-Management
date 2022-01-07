@@ -1,6 +1,5 @@
 import {UserModel} from "../Schemas/UserSchema";
-import {compareHashes, generateIdWithTag, saltAndHash} from "../Util/Crypto";
-import {Tag} from "../Util/Constants";
+import {compareHashes, saltAndHash} from "../Util/Crypto";
 import {secret} from "../index";
 import {FOMAuth, FOMReq} from "./_ManagementTypes";
 
@@ -25,7 +24,7 @@ async function get(auth: FOMAuth): Promise<any> {
  * @param user: Instance of MongoDB user
  * @param auth: FOMAuth (doesn't use identifier)
  */
-async function validate(user: any, auth: FOMAuth){
+async function validate(auth: FOMAuth, user: any) {
   let valid = auth.secret === user.sessionToken
   if (!valid) valid = compareHashes(auth.secret, user.password)
   if (!valid) throw new Error(`400: Failed to authenticate user '${user.name}'`)
@@ -44,17 +43,8 @@ export async function authenticate(auth: FOMAuth): Promise<any> {
 
   // Get the user from DB, and validate that the shared secret is valid
   let user: any = await get(auth)
-  await validate(user, auth)
+  await validate(auth, user)
   return user
-}
-
-/**
- * SANITIZE: Remove the stored password from the user. Sanitizing for client consumption.
- * @param user: Instance of MongoDB user
- */
-function sanitize(user: any) {
-  const {password, ...sanitized} = user._doc
-  return sanitized
 }
 
 /**
@@ -70,7 +60,16 @@ async function save(user: any, snhPassword: boolean, snhToken: boolean): Promise
 
   // Save the updated user to MongoDB, and return a safe version of the user object.
   await user.save()
-  return sanitize(user)
+  return user
+}
+
+/**
+ * SANITIZE: Remove the stored password from the user. Sanitizing for client consumption.
+ * @param user: Instance of MongoDB user
+ */
+function sanitize(user: any) {
+  const {password, ...sanitized} = user._doc
+  return sanitized
 }
 
 
@@ -84,8 +83,7 @@ async function save(user: any, snhPassword: boolean, snhToken: boolean): Promise
 export async function userCreate(body: FOMReq): Promise<string> {
   // Setup user object
   let user: any = new UserModel(body.msg)
-  user.id = generateIdWithTag(Tag.User)
-  return save(user, true, true)
+  return sanitize(await save(user, true, true))
 }
 
 /**
@@ -93,7 +91,7 @@ export async function userCreate(body: FOMReq): Promise<string> {
  * @param body
  */
 export async function userLogin(body: FOMReq): Promise<any> {
-  return sanitize(authenticate(body.auth))
+  return sanitize(await save(await authenticate(body.auth), false, true))
 }
 
 /**
@@ -105,14 +103,8 @@ export async function userLogin(body: FOMReq): Promise<any> {
 export async function userUpdate(body: FOMReq): Promise<any> {
   // Authenticate the updates taking place
   const user = await authenticate(body.auth)
-  const staticId = user.id
-
+  // Keep the same user object for mongoose 'save' function
   Object.keys(body.msg).forEach(key => user[key] = body.msg[key])
-  user.id = staticId // Ensure that the id remains the same
-
-  if (body.msg.onLeave) {
-    // TODO: Check all dates are valid dates
-  }
-
-  return save(user, !!body.msg.password, true);
+  // Return the updated user, only Salt and Hash the password if it's updated
+  return sanitize(await save(user, !!body.msg.password, true))
 }

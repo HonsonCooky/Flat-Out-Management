@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {DefaultTrue, ListId, Password, ReqGroupId, ReqUserId, Role, UniName} from "./_SchemaTypes";
-import {saltAndHash} from "../Util/Crypto";
+import {DefaultTrue, Id, Name, Password, Role, UniName} from "./_SchemaTypes";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -9,8 +8,9 @@ import {saltAndHash} from "../Util/Crypto";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 const UserAndRole = new Schema({
-  user: ReqUserId,
+  user: Name,
   role: Role,
+  onLeave: [Date]
 })
 
 const ChoreConfig = new Schema({
@@ -19,20 +19,14 @@ const ChoreConfig = new Schema({
 })
 
 const GroupSchema = new Schema({
-  id: ReqGroupId,
   name: UniName,
   password: Password,
   users: [UserAndRole],
-  chores: ListId,
+  chores: Id,
   choreConfig: ChoreConfig,
-  messages: ListId,
-  games: [ListId],
-  extraLists: [ListId]
+  messages: Id,
+  games: [Id],
+  extraLists: [Id]
 }, {timestamps: true})
-
-GroupSchema.pre('save', function () {
-  const group: any = this
-  group.password = saltAndHash(group.password)
-})
 
 export const GroupModel = mongoose.model("Groups", GroupSchema)

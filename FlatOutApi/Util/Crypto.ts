@@ -1,6 +1,4 @@
 import bcrypt from "bcryptjs";
-import {Tag} from "./Constants";
-import {v4} from 'uuid';
 
 /** -----------------------------------------------------------------------------------------------------------------
  * CRYPTO:
@@ -12,9 +10,6 @@ export function saltAndHash(input: string): string {
 }
 
 export function compareHashes(nonHash: string, hash: string): boolean {
+  if (!nonHash || !hash) return false
   return bcrypt.compareSync(nonHash, hash)
-}
-
-export function generateIdWithTag(tag: Tag): string {
-  return tag + "-" + v4()
 }

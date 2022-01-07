@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {GroupId, Name, ReqItemId, UserId} from "./_SchemaTypes";
-
+import {Id, Name} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * ITEM SCHEMA:
@@ -11,12 +10,12 @@ import {GroupId, Name, ReqItemId, UserId} from "./_SchemaTypes";
  * This is essentially, a datalake
  --------------------------------------------------------------------------------------------------------------- */
 const ItemSchema = new Schema({
-  id: ReqItemId,
+  id: Id,
   name: Name,
   desc: String,
   value: Number,
   multiplier: Number,
-  associations: [UserId || GroupId]
+  associations: [Id]
 }, {timestamps: true})
 
 

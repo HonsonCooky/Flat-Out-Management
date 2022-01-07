@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {ListId, Password, ReqGroupId, ReqUserId, Session, UniName} from "./_SchemaTypes";
-import {checkIds} from "../Management/_ManagementUtils";
+import {Id, Name, Password, Session, UniName} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -9,18 +8,15 @@ import {checkIds} from "../Management/_ManagementUtils";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 export const UserSchema = new Schema({
-  id: ReqUserId,
-  sessionToken: Session,
   name: UniName,
   password: Password,
-  groups: [ReqGroupId],
-  lists: [ListId],
-  onLeave: [Date]
+  sessionToken: Session,
+  groups: [Name],
+  lists: [Id]
 }, {timestamps: true})
 
 UserSchema.pre('save', async function(){
   let user: any = this
-  await checkIds([...user.groups, ...user.lists])
 })
 
 export const UserModel = mongoose.model("Users", UserSchema)
