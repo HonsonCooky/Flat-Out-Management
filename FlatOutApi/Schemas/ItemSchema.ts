@@ -19,7 +19,7 @@ const ItemSchema = new Schema({
   associations: [Id]
 }, {timestamps: true})
 
-ItemSchema.pre('save', async function (){
+ItemSchema.pre('save', async function () {
   const item: any = this
   await checkIds(UserModel, ...item.associations)
 })

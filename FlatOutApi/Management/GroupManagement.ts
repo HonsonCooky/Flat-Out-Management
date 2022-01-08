@@ -1,10 +1,22 @@
+import {FOMReq} from "./_ManagementTypes";
+import {sanitize, save} from "./_Utils";
+import {GroupModel} from "../Schemas/GroupSchema";
+import {authenticate} from "./_Authentication";
+
+
+/** ----------------------------------------------------------------------------------------------------------------
+ * HELPERS
+ ------------------------------------------------------------------------------------------------------------------- */
+
+/** ----------------------------------------------------------------------------------------------------------------
+ * API FUNCTIONS
+ ------------------------------------------------------------------------------------------------------------------- */
 /**
- * JOIN: Attempt to join a group. Groups are password protected. This means that only those with knowledge of the
- * group can log in. If the user logs in, they are stored as a member of the group (and will no longer need to login).
+ * CREATE: Create a new Group document.
  * @param body
  */
-export async function groupJoin(body: any): Promise<any> {
-
+export async function groupCreate(body: FOMReq): Promise<any> {
+  return sanitize(await save(new GroupModel(body.msg), true))
 }
 
 /**
@@ -12,7 +24,16 @@ export async function groupJoin(body: any): Promise<any> {
  * verify that they are committing the action, then (and only then) will the followin
  * @param body
  */
-export async function groupLogin(body: any): Promise<any> {
+export async function groupLogin(body: FOMReq): Promise<any> {
+  return sanitize(await save(await authenticate(body.auth, GroupModel), false))
+}
+
+/**
+ * JOIN: Attempt to join a group. Groups are password protected. This means that only those with knowledge of the
+ * group can log in. If the user logs in, they are stored as a member of the group (and will no longer need to login).
+ * @param body
+ */
+export async function groupJoin(body: FOMReq): Promise<any> {
 
 }
 

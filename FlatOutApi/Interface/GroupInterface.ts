@@ -1,4 +1,5 @@
 import {app} from "../index";
+import {groupCreate} from "../Management/GroupManagement";
 
 
 /**
@@ -8,5 +9,8 @@ import {app} from "../index";
  */
 export function initializeGroupInterface() {
     app.post('/post/group/create', (req, res, next) => {
+        groupCreate(req.body)
+          .then(group => res.status(200).send(group))
+          .catch(e => next(e))
     })
 }

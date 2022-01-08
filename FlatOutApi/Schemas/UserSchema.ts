@@ -15,7 +15,8 @@ export const UserSchema = new Schema({
   password: Password,
   sessionToken: Session,
   groups: [Id],
-  lists: [Id]
+  lists: [Id],
+  onLeave: [Date]
 }, {timestamps: true})
 
 UserSchema.pre('save', async function(){

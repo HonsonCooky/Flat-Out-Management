@@ -11,9 +11,8 @@ import {ListModel} from "./ListSchema";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 const UserAndRole = new Schema({
-  user: Name,
+  user: Id,
   role: Role,
-  onLeave: [Date]
 })
 
 const ChoreConfig = new Schema({
@@ -36,6 +35,11 @@ GroupSchema.pre('save', async function (){
   const group: any = this
   await checkIds(UserModel, ...group.users.map((uar: any) => uar.user))
   await checkIds(ListModel, group.chores, group.messages, ...group.games, ...group.extraLists)
+})
+
+GroupSchema.post('save', async function (){
+  const group: any = this
+  if (group.users.length === 0) group.deleteOne()
 })
 
 export const GroupModel = mongoose.model("Groups", GroupSchema)

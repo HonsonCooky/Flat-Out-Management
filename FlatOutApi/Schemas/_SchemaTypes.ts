@@ -1,11 +1,9 @@
+import {Schema} from "mongoose";
+
 export const missingStr = (item: string) => `Missing ${item}`
 
 // Names:
-export const Id = {
-  type: String,
-  sparse: true,
-  required: [true, missingStr('id')]
-}
+export const Id = {type: Schema.Types.ObjectId, sparse: true}
 
 export const Name = {
   type: String,
