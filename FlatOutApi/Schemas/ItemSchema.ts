@@ -1,5 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import {Id, Name} from "./_SchemaTypes";
+import {checkIds} from "../Util/IdChecks";
+import {UserModel} from "./UserSchema";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * ITEM SCHEMA:
@@ -10,7 +12,6 @@ import {Id, Name} from "./_SchemaTypes";
  * This is essentially, a datalake
  --------------------------------------------------------------------------------------------------------------- */
 const ItemSchema = new Schema({
-  id: Id,
   name: Name,
   desc: String,
   value: Number,
@@ -18,5 +19,9 @@ const ItemSchema = new Schema({
   associations: [Id]
 }, {timestamps: true})
 
+ItemSchema.pre('save', async function (){
+  const item: any = this
+  await checkIds(UserModel, ...item.associations)
+})
 
 export const ItemModel = mongoose.model("Items", ItemSchema)

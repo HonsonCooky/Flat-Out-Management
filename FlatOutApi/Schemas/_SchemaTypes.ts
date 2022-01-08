@@ -1,7 +1,11 @@
 export const missingStr = (item: string) => `Missing ${item}`
 
 // Names:
-export const Id = {type: String, sparse: true}
+export const Id = {
+  type: String,
+  sparse: true,
+  required: [true, missingStr('id')]
+}
 
 export const Name = {
   type: String,
@@ -9,11 +13,6 @@ export const Name = {
   minLength: 3,
   maxLength: 20,
   trim: true
-}
-
-export const UniName = {
-  ...Name,
-  unique: true,
 }
 
 // Password: Not unique, else Hash+Salt doesn't work

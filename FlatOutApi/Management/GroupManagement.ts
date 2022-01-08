@@ -1,11 +1,4 @@
 /**
- * NAMES: Get all the group names. Group names are publicly known to show users what groups already exist.
- */
-export async function groupNames(): Promise<any> {
-
-}
-
-/**
  * JOIN: Attempt to join a group. Groups are password protected. This means that only those with knowledge of the
  * group can log in. If the user logs in, they are stored as a member of the group (and will no longer need to login).
  * @param body
@@ -20,5 +13,12 @@ export async function groupJoin(body: any): Promise<any> {
  * @param body
  */
 export async function groupLogin(body: any): Promise<any> {
+
+}
+
+/**
+ * NAMES: Get all the group names. Group names are publicly known to show users what groups already exist.
+ */
+export async function groupNames(): Promise<any> {
 
 }

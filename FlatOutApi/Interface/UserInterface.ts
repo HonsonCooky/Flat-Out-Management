@@ -13,13 +13,13 @@ export function initializeUserInterface() {
       .catch(e => next(e))
   })
 
-  app.post("/post/user/login", (req: any, res: any, next: any) => {
+  app.post("/post/user/login", (req, res, next) => {
     userLogin(req.body)
     .then((user) => res.status(200).send(user))
     .catch(e => next(e))
   })
 
-  app.post("/post/user/update", (req: any, res: any, next: any) => {
+  app.post("/post/user/update", (req, res, next) => {
     userUpdate(req.body)
     .then((user) => res.status(200).send(user))
     .catch(e => next(e))

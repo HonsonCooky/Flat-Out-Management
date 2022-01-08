@@ -1,5 +1,8 @@
 import mongoose, {Schema} from "mongoose";
-import {Id, Name, Password, Session, UniName} from "./_SchemaTypes";
+import {Id, Name, Password, Session} from "./_SchemaTypes";
+import {GroupModel} from "./GroupSchema";
+import {checkIds} from "../Util/IdChecks";
+import {ListModel} from "./ListSchema";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -8,15 +11,17 @@ import {Id, Name, Password, Session, UniName} from "./_SchemaTypes";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 export const UserSchema = new Schema({
-  name: UniName,
+  name: Name,
   password: Password,
   sessionToken: Session,
-  groups: [Name],
+  groups: [Id],
   lists: [Id]
 }, {timestamps: true})
 
 UserSchema.pre('save', async function(){
   let user: any = this
+  await checkIds(GroupModel, ...user.groups)
+  await checkIds(ListModel, ...user.lists)
 })
 
 export const UserModel = mongoose.model("Users", UserSchema)
