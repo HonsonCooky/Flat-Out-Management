@@ -1,7 +1,5 @@
 import mongoose, {Schema} from "mongoose";
 import {Id, Name} from "./_SchemaTypes";
-import {checkIds} from "../Util/IdChecks";
-import {ItemModel} from "./ItemSchema";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LIST SCHEMA:
@@ -14,7 +12,6 @@ const ListSchema = new Schema({
 
 ListSchema.pre('save', async function (){
   const list: any = this
-  await checkIds(ItemModel, ...list.items)
 })
 
 export const ListModel = mongoose.model("Lists", ListSchema)

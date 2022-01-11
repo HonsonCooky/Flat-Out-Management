@@ -1,12 +1,8 @@
 import {FOMReq} from "./_ManagementTypes";
 import {sanitize, save} from "./_Utils";
 import {GroupModel} from "../Schemas/GroupSchema";
-import {authenticate} from "./_Authentication";
-
-
-/** ----------------------------------------------------------------------------------------------------------------
- * HELPERS
- ------------------------------------------------------------------------------------------------------------------- */
+import {authenticate, get} from "./_Authentication";
+import {UserModel} from "../Schemas/UserSchema";
 
 /** ----------------------------------------------------------------------------------------------------------------
  * API FUNCTIONS
@@ -34,7 +30,10 @@ export async function groupLogin(body: FOMReq): Promise<any> {
  * @param body
  */
 export async function groupJoin(body: FOMReq): Promise<any> {
+  let group: any = await authenticate(body.auth, GroupModel)
+  let user: any = await get(body.msg.id, UserModel)
 
+  console.log(group, user)
 }
 
 /**

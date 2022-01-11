@@ -1,8 +1,6 @@
 import mongoose, {Schema} from "mongoose";
-import {Id, Name, Password, Session} from "./_SchemaTypes";
-import {GroupModel} from "./GroupSchema";
-import {checkIds} from "../Util/IdChecks";
-import {ListModel} from "./ListSchema";
+import {Id, Name, Password, SchemaType, Session} from "./_SchemaTypes";
+import {cleanDocumentConnections} from "../Util/IdChecks";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -20,9 +18,7 @@ export const UserSchema = new Schema({
 }, {timestamps: true})
 
 UserSchema.pre('save', async function(){
-  let user: any = this
-  await checkIds(GroupModel, ...user.groups)
-  await checkIds(ListModel, ...user.lists)
+  await cleanDocumentConnections(this, SchemaType.User)
 })
 
 export const UserModel = mongoose.model("Users", UserSchema)

@@ -1,8 +1,5 @@
 import mongoose, {Schema} from "mongoose";
 import {DefaultTrue, Id, Name, Password, Role} from "./_SchemaTypes";
-import {checkIds} from "../Util/IdChecks";
-import {UserModel} from "./UserSchema";
-import {ListModel} from "./ListSchema";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -33,8 +30,6 @@ const GroupSchema = new Schema({
 
 GroupSchema.pre('save', async function (){
   const group: any = this
-  await checkIds(UserModel, ...group.users.map((uar: any) => uar.user))
-  await checkIds(ListModel, group.chores, group.messages, ...group.games, ...group.extraLists)
 })
 
 GroupSchema.post('save', async function (){

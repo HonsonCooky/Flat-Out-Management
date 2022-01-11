@@ -7,23 +7,12 @@ import {Model} from "mongoose";
  * @param auth: FOMAuth (doesn't use secret)
  * @param model
  */
-async function get(auth: FOMAuth, model: Model<any>): Promise<any> {
-  let document = null
+export async function get(auth: FOMAuth, model: Model<any>): Promise<any> {
   try {
-    await model.findOne({
-      $or: [
-        {name: auth.identifier},
-        {_id: auth.identifier}
-      ]
-    })
-      .exec(function (error, result) {
-        if (result) document = result
-      })
-  } catch (e) {
-    
-  }
-  if (!document) throw new Error(`400: Cannot find user by given identifier`)
-  return document
+    let document = await model.findOne({_id: auth.identifier})
+    if (document) return document
+  } catch (e) {}
+  throw new Error(`400: Unable to find document '${auth.identifier}'`)
 }
 
 /**
@@ -35,7 +24,7 @@ async function get(auth: FOMAuth, model: Model<any>): Promise<any> {
 async function validate(auth: FOMAuth, document: any) {
   let valid = auth.secret === document.sessionToken
   if (!valid) valid = compareHashes(auth.secret, document.password)
-  if (!valid) throw new Error(`400: Failed to authenticate user '${document.name}'`)
+  if (!valid) throw new Error(`400: Failed to authenticate document '${document.name}'`)
 }
 
 /**

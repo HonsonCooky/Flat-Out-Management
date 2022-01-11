@@ -1,5 +1,12 @@
 import {Schema} from "mongoose";
 
+export enum SchemaType {
+  User = "User",
+  Group = "Group",
+  List = "List",
+  Item = "Item",
+}
+
 export const missingStr = (item: string) => `Missing ${item}`
 
 // Names:
