@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {Id, Name, Password, SchemaType, Session} from "./_SchemaTypes";
-import {cleanDocumentConnections} from "../Util/IdChecks";
+import {Id, Name, Password, Session} from "./_SchemaTypes";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -16,9 +15,5 @@ export const UserSchema = new Schema({
   lists: [Id],
   onLeave: [Date]
 }, {timestamps: true})
-
-UserSchema.pre('save', async function(){
-  await cleanDocumentConnections(this, SchemaType.User)
-})
 
 export const UserModel = mongoose.model("Users", UserSchema)

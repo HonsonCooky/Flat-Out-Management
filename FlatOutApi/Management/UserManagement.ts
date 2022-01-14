@@ -28,8 +28,10 @@ export async function userLogin(body: FOMReq): Promise<any> {
 export async function userUpdate(body: FOMReq): Promise<any> {
   // Authenticate the updates taking place
   const user = await authenticate(body.auth, UserModel)
+  // Ensure id and token are not altered
+  const {_id, sessionToken, ...rest} = body.msg
   // Keep the same user object for mongoose 'save' function
-  Object.keys(body.msg).forEach(key => user[key] = body.msg[key])
+  Object.keys(rest).forEach(key => user[key] = rest[key])
   // Return the updated user, only Salt and Hash the password if it's updated
   return sanitize(await save(user, !!body.msg.password))
 }

@@ -10,8 +10,4 @@ const ListSchema = new Schema({
   items: [Id]
 }, {timestamps: true})
 
-ListSchema.pre('save', async function (){
-  const list: any = this
-})
-
 export const ListModel = mongoose.model("Lists", ListSchema)

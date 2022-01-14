@@ -28,13 +28,4 @@ const GroupSchema = new Schema({
   extraLists: [Id]
 }, {timestamps: true})
 
-GroupSchema.pre('save', async function (){
-  const group: any = this
-})
-
-GroupSchema.post('save', async function (){
-  const group: any = this
-  if (group.users.length === 0) group.deleteOne()
-})
-
 export const GroupModel = mongoose.model("Groups", GroupSchema)

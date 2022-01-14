@@ -17,8 +17,4 @@ const ItemSchema = new Schema({
   associations: [Id]
 }, {timestamps: true})
 
-ItemSchema.pre('save', async function () {
-  const item: any = this
-})
-
 export const ItemModel = mongoose.model("Items", ItemSchema)
