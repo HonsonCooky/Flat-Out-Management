@@ -15,13 +15,15 @@ const UserAndRole = new Schema({
 const ChoreConfig = new Schema({
   choresAutoFill: DefaultTrue,
   choresLoop: DefaultTrue,
+  choresLastUpdate: Date,
 })
 
 const GroupSchema = new Schema({
   name: Name,
   password: Password,
   users: [UserAndRole],
-  chores: Id,
+  joinRequests: [UserAndRole],
+  chores: [Id],
   choreConfig: ChoreConfig,
   messages: Id,
   games: [Id],

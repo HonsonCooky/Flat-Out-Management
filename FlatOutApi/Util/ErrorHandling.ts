@@ -1,10 +1,12 @@
 import {ErrorRequestHandler} from "express";
 import {addLogs} from "./Logging";
+import {FOMRes} from "../Management/_ManagementTypes";
 
 const known400ErrorMessages = [
   '400',
   'duplicate',
   'validation failed',
+  'Cast to ObjectId failed'
 ]
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -12,8 +14,8 @@ const known400ErrorMessages = [
  * Error handler (express middleware) that sends error messages which can be directly displayed by the client.
  * This removes computation on the client side, as the information is already calculated here on the server side.
  ----------------------------------------------------------------------------------------------------------------- */
-const jsonError = (msg: string) => {
-  return {message: msg}
+function jsonError(msg: string): FOMRes {
+  return {msg: msg}
 }
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {

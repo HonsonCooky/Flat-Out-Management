@@ -1,22 +1,37 @@
 import {UserModel} from "../Schemas/UserSchema";
-import {FOMReq} from "./_ManagementTypes";
+import {FOMReq, FOMRes} from "./_ManagementTypes";
 import {authenticate} from "./_Authentication";
 import {sanitize, save} from "./_Utils";
+import {checkIds} from "../Util/idChecker";
+import {GroupModel} from "../Schemas/GroupSchema";
+import {ListModel} from "../Schemas/ListSchema";
+
+async function checkUserIds(user: any) {
+  if (user.groups) await checkIds(GroupModel, ...user.groups)
+  if (user.lists) await checkIds(ListModel, ...user.lists)
+}
 
 /**
  * CREATE: Create a User document
  * @param body
  */
-export async function userCreate(body: FOMReq): Promise<string> {
-  return sanitize(await save(new UserModel(body.msg), true))
+export async function userCreate(body: FOMReq): Promise<FOMRes> {
+  await checkUserIds(body.content)
+  return {
+    item: sanitize(await save(new UserModel(body.content), true)),
+    msg: `Successfully created user`
+  }
 }
 
 /**
  * LOGIN: Authenticate, then return a sanitized version of the user
  * @param body
  */
-export async function userLogin(body: FOMReq): Promise<any> {
-  return sanitize(await save(await authenticate(body.auth, UserModel), false))
+export async function userLogin(body: FOMReq): Promise<FOMRes> {
+  return {
+    item: sanitize(await save(await authenticate(body.userAuth, UserModel), false)),
+    msg: `Successful user login`
+  }
 }
 
 /**
@@ -25,13 +40,14 @@ export async function userLogin(body: FOMReq): Promise<any> {
  * client implementations.
  * @param body
  */
-export async function userUpdate(body: FOMReq): Promise<any> {
-  // Authenticate the updates taking place
-  const user = await authenticate(body.auth, UserModel)
-  // Ensure id and token are not altered
-  const {_id, sessionToken, ...rest} = body.msg
-  // Keep the same user object for mongoose 'save' function
+export async function userUpdate(body: FOMReq): Promise<FOMRes> {
+  const user = await authenticate(body.userAuth, UserModel)
+  const {_id, sessionToken, ...rest} = body.content
+
   Object.keys(rest).forEach(key => user[key] = rest[key])
-  // Return the updated user, only Salt and Hash the password if it's updated
-  return sanitize(await save(user, !!body.msg.password))
+  await checkUserIds(rest)
+  return {
+    item: sanitize(await save(user, !!body.content.password)),
+    msg: `Successfully updated used ${_id}`
+  }
 }

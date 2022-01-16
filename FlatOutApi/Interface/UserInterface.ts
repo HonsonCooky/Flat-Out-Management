@@ -1,5 +1,6 @@
 import {app} from "../index";
 import {userCreate, userLogin, userUpdate} from "../Management/UserManagement";
+import {FOMRes} from "../Management/_ManagementTypes";
 
 /**
  * UserInterface: Not to be confused with a UI, the UserInterface.ts contains one function for calling and handling
@@ -9,19 +10,19 @@ import {userCreate, userLogin, userUpdate} from "../Management/UserManagement";
 export function initializeUserInterface() {
   app.post("/post/user/create", (req, res, next) => {
     userCreate(req.body)
-      .then((id) => res.status(200).send(id))
+      .then((fomRes: FOMRes) => res.status(200).send(fomRes))
       .catch(e => next(e))
   })
 
   app.post("/post/user/login", (req, res, next) => {
     userLogin(req.body)
-    .then((user) => res.status(200).send(user))
+    .then((fomRes: FOMRes) => res.status(200).send(fomRes))
     .catch(e => next(e))
   })
 
   app.post("/post/user/update", (req, res, next) => {
     userUpdate(req.body)
-    .then((user) => res.status(200).send(user))
+    .then((fomRes: FOMRes) => res.status(200).send(fomRes))
     .catch(e => next(e))
   })
 }

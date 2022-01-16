@@ -1,29 +1,27 @@
-import {FOMAuth} from "./_ManagementTypes";
+import {Authentication} from "./_ManagementTypes";
 import {compareHashes} from "../Util/Crypto";
 import {Model} from "mongoose";
 
 /**
  * GET: Get the user by some form of identifier (name || id)
- * @param auth: FOMAuth (doesn't use secret)
+ * @param identifier
  * @param model
  */
-export async function get(auth: FOMAuth, model: Model<any>): Promise<any> {
-  try {
-    let document = await model.findOne({_id: auth.identifier})
-    if (document) return document
-  } catch (e) {}
-  throw new Error(`400: Unable to find document '${auth.identifier}'`)
+export async function get(identifier: string, model: Model<any>): Promise<any> {
+  let document = await model.findOne({_id: identifier})
+  if (!document) throw new Error(`400: Unable to find document '${identifier}'`)
+  return document
 }
 
 /**
  * VALIDATE: Given a particular instance of user, validate that the provided secret (token || password) matches its
  * counterpart.
+ * @param secret
  * @param document: Instance of MongoDB user
- * @param auth: FOMAuth (doesn't use identifier)
  */
-async function validate(auth: FOMAuth, document: any) {
-  let valid = auth.secret === document.sessionToken
-  if (!valid) valid = compareHashes(auth.secret, document.password)
+async function validate(secret: string, document: any) {
+  let valid = secret === document.sessionToken
+  if (!valid) valid = compareHashes(secret, document.password)
   if (!valid) throw new Error(`400: Failed to authenticate document '${document.name}'`)
 }
 
@@ -33,14 +31,14 @@ async function validate(auth: FOMAuth, document: any) {
  * @param auth: FOMAuth
  * @param model
  */
-export async function authenticate(auth: FOMAuth, model: Model<any>): Promise<any> {
+export async function authenticate(auth: Authentication, model: Model<any>): Promise<any> {
   // Validate incoming message
   if (!auth) throw new Error('400: Missing required authentication information')
   if (!auth.identifier) throw new Error('400: Missing identifier')
   if (!auth.secret) throw new Error('400: Missing secret')
 
   // Get the user from DB, and validate that the shared secret is valid
-  let document: any = await get(auth, model)
-  await validate(auth, document)
+  let document: any = await get(auth.identifier, model)
+  await validate(auth.secret, document)
   return document
 }

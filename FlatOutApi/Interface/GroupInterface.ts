@@ -1,5 +1,6 @@
 import {app} from "../index";
-import {groupCreate, groupJoin, groupLogin} from "../Management/GroupManagement";
+import {groupLogin, groupCreate, groupJoin, groupNames} from "../Management/GroupManagement";
+import {FOMRes} from "../Management/_ManagementTypes";
 
 
 /**
@@ -10,19 +11,25 @@ import {groupCreate, groupJoin, groupLogin} from "../Management/GroupManagement"
 export function initializeGroupInterface() {
     app.post('/post/group/create', (req, res, next) => {
         groupCreate(req.body)
-          .then(group => res.status(200).send(group))
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
           .catch(e => next(e))
     })
 
     app.post('/post/group/login', (req, res, next) => {
         groupLogin(req.body)
-          .then(group => res.status(200).send(group))
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
           .catch(e => next(e))
     })
 
     app.post('/post/group/join', (req, res, next) => {
         groupJoin(req.body)
-          .then(group => res.status(200).send(group))
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
+          .catch(e => next(e))
+    })
+
+    app.get('/get/group/names', (req, res, next) => {
+        groupNames()
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
           .catch(e => next(e))
     })
 }
