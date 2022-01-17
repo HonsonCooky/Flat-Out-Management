@@ -1,5 +1,12 @@
 import {app} from "../index";
-import {groupLogin, groupCreate, groupJoin, groupNames} from "../Management/GroupManagement";
+import {
+    groupLogin,
+    groupCreate,
+    groupJoin,
+    groupNames,
+    groupJoinRequest,
+    groupJoinAccept
+} from "../Management/GroupManagement";
 import {FOMRes} from "../Management/_ManagementTypes";
 
 
@@ -23,6 +30,18 @@ export function initializeGroupInterface() {
 
     app.post('/post/group/join', (req, res, next) => {
         groupJoin(req.body)
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
+          .catch(e => next(e))
+    })
+
+    app.post('/post/group/join_request', (req, res, next) => {
+        groupJoinRequest(req.body)
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
+          .catch(e => next(e))
+    })
+
+    app.post('/post/group/accept_request', (req, res, next) => {
+        groupJoinAccept(req.body)
           .then((fomRes: FOMRes) => res.status(200).send(fomRes))
           .catch(e => next(e))
     })

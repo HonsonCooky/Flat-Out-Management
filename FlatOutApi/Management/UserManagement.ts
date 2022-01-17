@@ -42,7 +42,8 @@ export async function userLogin(body: FOMReq): Promise<FOMRes> {
  */
 export async function userUpdate(body: FOMReq): Promise<FOMRes> {
   const user = await authenticate(body.userAuth, UserModel)
-  const {_id, sessionToken, ...rest} = body.content
+  // Can't update _id, sessionToken or groups
+  const {_id, sessionToken, groups, ...rest} = body.content
 
   Object.keys(rest).forEach(key => user[key] = rest[key])
   await checkUserIds(rest)
