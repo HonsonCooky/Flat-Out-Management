@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import {DefaultTrue, Id, Name, Password, Role} from "./_SchemaTypes";
+import {checkGroupIds} from "../Management/GroupManagement";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -29,5 +30,10 @@ const GroupSchema = new Schema({
   games: [Id],
   extraLists: [Id]
 }, {timestamps: true})
+
+GroupSchema.pre('save', async function (){
+  const group = this;
+  await checkGroupIds(group)
+})
 
 export const GroupModel = mongoose.model("Groups", GroupSchema)

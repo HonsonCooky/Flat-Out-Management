@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import {Id, Name, Password, Session} from "./_SchemaTypes";
+import {checkUserIds} from "../Management/UserManagement";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -15,5 +16,10 @@ export const UserSchema = new Schema({
   lists: [Id],
   onLeave: [Date]
 }, {timestamps: true})
+
+UserSchema.pre('save', async function () {
+  const user = this;
+  await checkUserIds(user)
+})
 
 export const UserModel = mongoose.model("Users", UserSchema)

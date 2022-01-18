@@ -5,7 +5,7 @@ import {
     groupJoin,
     groupNames,
     groupJoinRequest,
-    groupJoinAccept
+    groupJoinAccept, groupUpdate
 } from "../Management/GroupManagement";
 import {FOMRes} from "../Management/_ManagementTypes";
 
@@ -42,6 +42,12 @@ export function initializeGroupInterface() {
 
     app.post('/post/group/accept_request', (req, res, next) => {
         groupJoinAccept(req.body)
+          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
+          .catch(e => next(e))
+    })
+
+    app.post('/post/group/update', (req, res, next) => {
+        groupUpdate(req.body)
           .then((fomRes: FOMRes) => res.status(200).send(fomRes))
           .catch(e => next(e))
     })
