@@ -6,14 +6,31 @@ import {UserModel} from "../Schemas/UserSchema";
 import {checkIds} from "../Util/idChecker";
 import {ListModel} from "../Schemas/ListSchema";
 
+/** ----------------------------------------------------------------------------------------------------------------
+ * PRE SAVE FUNCTIONS
+ ------------------------------------------------------------------------------------------------------------------- */
+
 /**
  * CHECK GROUP IDS: Check the relevant id fields stored in the Group Object. Ensure they are real ids.
  * @param group
  */
 export async function checkGroupIds(group: any) {
   await checkIds(UserModel, ...group.users.map((uar: any) => uar.user), ...group.joinRequests.map((uar: any) => uar.user))
-  await checkIds(ListModel, group.messages, ...group.chores, ...group.games, ...group.extraLists)
+  await checkIds(ListModel, group.messages, group.chores, ...group.games, ...group.extraLists)
 }
+
+
+export function regulateChores(group: any){
+  // Check if group actually wants to change chore lists
+  if (!group.choreConfig.choresAutoFill){
+
+  }
+}
+
+/** ----------------------------------------------------------------------------------------------------------------
+ * HELPER FUNCTIONS
+ ------------------------------------------------------------------------------------------------------------------- */
+
 
 /**
  * USER IN GROUP: Users are stored as UserAndRole objects. This checks through to find the UAR associated with some

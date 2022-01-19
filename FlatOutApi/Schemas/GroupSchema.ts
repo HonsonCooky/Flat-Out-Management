@@ -24,7 +24,7 @@ const GroupSchema = new Schema({
   password: Password,
   users: [UserAndRole],
   joinRequests: [UserAndRole],
-  chores: [Id],
+  chores: Id,
   choreConfig: ChoreConfig,
   messages: Id,
   games: [Id],
