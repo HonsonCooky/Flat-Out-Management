@@ -1,6 +1,6 @@
 import {app} from "../index";
 import {groupLogin, groupCreate} from "../Management/GroupManagement";
-import {FOMRes} from "../Management/_ManagementTypes";
+import {FOMRes} from "../_Interfaces";
 
 
 /**
