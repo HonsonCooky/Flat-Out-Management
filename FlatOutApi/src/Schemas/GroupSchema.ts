@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
-import {DefaultTrue, Id, Name, Password, Role} from "./_SchemaTypes";
-import {checkGroupIds} from "../Management/GroupManagement";
+import {DateFromToday, DefaultTrue, EntityAndRole, Id, Name, Password} from "./_SchemaTypes";
+import {cleanIds} from "./_IdChecker";
+import {ModelType} from "../_Interfaces";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -8,32 +9,23 @@ import {checkGroupIds} from "../Management/GroupManagement";
  * The Group Schema contains an object, which provides access to a group. Is its essence, a group is a hub. A central
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
-const UserAndRole = new Schema({
-  user: Id,
-  role: Role,
-})
 
-const ChoreConfig = new Schema({
+const ChoreConfig = {
+  related: Id(ModelType.Lists),
   choresAutoFill: DefaultTrue,
   choresLoop: DefaultTrue,
-  choresLastUpdate: Date,
-})
+  startingDate: DateFromToday,
+}
 
 const GroupSchema = new Schema({
   name: Name,
   password: Password,
-  users: [UserAndRole],
-  joinRequests: [UserAndRole],
-  chores: Id,
-  choreConfig: ChoreConfig,
-  messages: Id,
-  games: [Id],
-  extraLists: [Id]
+  users: [EntityAndRole(ModelType.Users)],
+  chores: ChoreConfig,
+  messages: Id(ModelType.Lists),
+  lists: [Id(ModelType.Lists)]
 }, {timestamps: true})
 
-GroupSchema.pre('save', async function (){
-  const group = this;
-  await checkGroupIds(group)
-})
+GroupSchema.pre('save', () => cleanIds(this, ModelType.Groups))
 
-export const GroupModel = mongoose.model("Groups", GroupSchema)
+export const GroupModel = mongoose.model(ModelType.Groups, GroupSchema)

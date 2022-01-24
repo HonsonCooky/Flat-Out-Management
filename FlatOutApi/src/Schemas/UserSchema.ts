@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
-import {Id, Name, Password, Session} from "./_SchemaTypes";
-import {checkUserIds} from "../Management/UserManagement";
+import {DateFromToday, EntityAndRole, Id, Name, Password, Session} from "./_SchemaTypes";
+import {cleanIds} from "./_IdChecker";
+import {ModelType} from "../_Interfaces";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -8,18 +9,15 @@ import {checkUserIds} from "../Management/UserManagement";
  * Password. Each user will be associated to some Group (their flat), and may contain several lists. Groups
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
-export const UserSchema = new Schema({
+const UserSchema = new Schema({
   name: Name,
   password: Password,
   sessionToken: Session,
-  groups: [Id],
-  lists: [Id],
-  onLeave: [Date]
+  groups: [EntityAndRole(ModelType.Groups)],
+  lists: [Id(ModelType.Lists)],
+  onLeave: [DateFromToday]
 }, {timestamps: true})
 
-UserSchema.pre('save', async function () {
-  const user = this;
-  await checkUserIds(user)
-})
+UserSchema.pre('save', () => cleanIds(this, ModelType.Users))
 
-export const UserModel = mongoose.model("Users", UserSchema)
+export const UserModel = mongoose.model(ModelType.Users, UserSchema)

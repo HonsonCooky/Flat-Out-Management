@@ -1,10 +1,14 @@
 import {Schema} from "mongoose";
+import {ModelType, RoleEnum} from "../_Interfaces";
 
 export const missingStr = (item: string) => `Missing ${item}`
 
-// Names:
-export const Id = {type: Schema.Types.ObjectId, sparse: true}
+// ID: A unique means of identifying an external document
+export const Id = (ref: ModelType) => {
+  return {type: Schema.Types.ObjectId, sparse: true, ref: ref}
+}
 
+// Name: Non-unique means of representing the user
 export const Name = {
   type: String,
   required: [true, missingStr('Name')],
@@ -27,11 +31,17 @@ export const Session = {
   sparse: true
 }
 
+// Date: For future planning and automatically informing the group of your absence
+export const DateFromToday = {
+  type: Date,
+  min: Date.now()
+}
+
 // Roles: A level of authority for a user in a group
 export const Role = {
   type: String,
-  enum: ['admin', 'flatmate', 'associate'],
-  default: 'associate'
+  enum: RoleEnum,
+  default: RoleEnum.JOIN_REQ
 }
 
 // Default boolean to true
@@ -39,3 +49,8 @@ export const DefaultTrue = {
   type: Boolean,
   default: true,
 }
+// Entity and Role (associations between groups and users, with their given roles)
+export const EntityAndRole = (ref: ModelType) => new Schema({
+  entity: Id(ref),
+  role: Role,
+})

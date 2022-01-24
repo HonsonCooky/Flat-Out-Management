@@ -1,12 +1,5 @@
 import {app} from "../index";
-import {
-    groupLogin,
-    groupCreate,
-    groupJoin,
-    groupNames,
-    groupJoinRequest,
-    groupJoinAccept, groupUpdate
-} from "../Management/GroupManagement";
+import {groupLogin, groupCreate} from "../Management/GroupManagement";
 import {FOMRes} from "../Management/_ManagementTypes";
 
 
@@ -29,32 +22,17 @@ export function initializeGroupInterface() {
     })
 
     app.post('/post/group/join', (req, res, next) => {
-        groupJoin(req.body)
-          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
-          .catch(e => next(e))
     })
 
     app.post('/post/group/join_request', (req, res, next) => {
-        groupJoinRequest(req.body)
-          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
-          .catch(e => next(e))
     })
 
     app.post('/post/group/accept_request', (req, res, next) => {
-        groupJoinAccept(req.body)
-          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
-          .catch(e => next(e))
     })
 
     app.post('/post/group/update', (req, res, next) => {
-        groupUpdate(req.body)
-          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
-          .catch(e => next(e))
     })
 
     app.get('/get/group/names', (req, res, next) => {
-        groupNames()
-          .then((fomRes: FOMRes) => res.status(200).send(fomRes))
-          .catch(e => next(e))
     })
 }

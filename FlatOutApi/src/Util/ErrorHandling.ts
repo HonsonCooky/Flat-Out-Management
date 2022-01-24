@@ -1,6 +1,17 @@
 import {ErrorRequestHandler} from "express";
 import {addLogs} from "./Logging";
-import {FOMRes} from "../Management/_ManagementTypes";
+import {FOMRes} from "../_Interfaces";
+
+
+/** -----------------------------------------------------------------------------------------------------------------
+ * EXPRESS ERROR HANDLER:
+ * Error handler (express middleware) that sends error messages which can be directly displayed by the client.
+ * This removes computation on the client side, as the information is already calculated here on the server side.
+ ----------------------------------------------------------------------------------------------------------------- */
+
+function jsonError(msg: string): FOMRes {
+  return {msg: msg}
+}
 
 const known400ErrorMessages = [
   '400',
@@ -8,15 +19,6 @@ const known400ErrorMessages = [
   'validation failed',
   'Cast to ObjectId failed'
 ]
-
-/** -----------------------------------------------------------------------------------------------------------------
- * EXPRESS ERROR HANDLER:
- * Error handler (express middleware) that sends error messages which can be directly displayed by the client.
- * This removes computation on the client side, as the information is already calculated here on the server side.
- ----------------------------------------------------------------------------------------------------------------- */
-function jsonError(msg: string): FOMRes {
-  return {msg: msg}
-}
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
   let msg: string = err.message

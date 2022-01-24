@@ -1,6 +1,6 @@
 import {app} from "../index";
-import {userCreate, userLogin, userUpdate} from "../Management/UserManagement";
-import {FOMRes} from "../Management/_ManagementTypes";
+import {userCreate, userDelete, userLogin, userUpdate} from "../Management/UserManagement";
+import {FOMRes} from "../_Interfaces";
 
 /**
  * UserInterface: Not to be confused with a UI, the UserInterface.ts contains one function for calling and handling
@@ -24,5 +24,11 @@ export function initializeUserInterface() {
     userUpdate(req.body)
     .then((fomRes: FOMRes) => res.status(200).send(fomRes))
     .catch(e => next(e))
+  })
+
+  app.post("/post/user/delete", (req, res, next) => {
+    userDelete(req.body)
+      .then((fomRes: FOMRes) => res.status(200).send(fomRes))
+      .catch(e => next(e))
   })
 }

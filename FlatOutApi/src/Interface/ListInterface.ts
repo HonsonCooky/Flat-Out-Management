@@ -1,6 +1,5 @@
 import {app} from "../index";
 
-
 /**
  * ListInterface: The ListInterface.ts contains one function for calling and handling (parsing handling to
  * middleware) ListManagement functions. In a nutshell, it is the EXPRESS interface setup relaying calls to the
