@@ -1,6 +1,6 @@
 import {ErrorRequestHandler} from "express";
 import {addLogs} from "./Logging";
-import {FOMRes} from "../_Interfaces";
+import {FOMRes} from "../Interfaces/UtilInterfaces";
 
 
 /** -----------------------------------------------------------------------------------------------------------------

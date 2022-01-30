@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
-import {DateFromToday, DefaultTrue, EntityAndRole, Id, Name, Password} from "./_SchemaTypes";
-import {ModelType} from "../_Interfaces";
+import {DateFromToday, DefaultTrue, GenerateEntityAndRole, GenerateId, Name, Password} from "./_SchemaTypes";
+import {ModelType} from "../Interfaces/UtilInterfaces";
+import {ChoreConfig, Group} from "../Interfaces/GroupInterface";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -9,21 +10,21 @@ import {ModelType} from "../_Interfaces";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-const ChoreConfig = {
-  related: Id(ModelType.Lists),
+const Config = new Schema<ChoreConfig>({
+  related: GenerateId(ModelType.Lists),
   choresAutoFill: DefaultTrue,
   choresLoop: DefaultTrue,
   startingDate: DateFromToday,
-}
+})
 
-const GroupSchema = new Schema({
+const GroupSchema = new Schema<Group>({
   name: Name,
   password: Password,
-  users: [EntityAndRole(ModelType.Users)],
-  chores: ChoreConfig,
-  messages: Id(ModelType.Lists),
-  lists: [Id(ModelType.Lists)]
+  users: [GenerateEntityAndRole(ModelType.Users)],
+  chores: Config,
+  messages: GenerateId(ModelType.Lists),
+  lists: [GenerateId(ModelType.Lists)]
 }, {timestamps: true})
 
 
-export const GroupModel = mongoose.model(ModelType.Groups, GroupSchema)
+export const GroupModel = mongoose.model<Group>(ModelType.Groups, GroupSchema)

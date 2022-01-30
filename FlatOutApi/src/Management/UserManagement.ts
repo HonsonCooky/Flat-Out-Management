@@ -1,7 +1,7 @@
 import {UserModel} from "../Schemas/UserSchema";
 import {authGetDocuments} from "./_Authentication";
 import {safeUpdate, sanitize, save} from "./_Utils";
-import {FOMReq, FOMRes} from "../_Interfaces";
+import {FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
 
 /**
  * CREATE: Create a User document

@@ -1,6 +1,6 @@
 import {secret} from "../index";
 import {saltAndHash} from "./_Authentication";
-import {FOMReq} from "../_Interfaces";
+import {FOMReq} from "../Interfaces/UtilInterfaces";
 
 /**
  * SAVE: Saves all updated information about user (also calls validation middleware).
@@ -12,8 +12,8 @@ export async function save(document: any, newSession: boolean = false, snhPasswo
   if (!document) throw new Error('500: Unable to save an unknown document')
 
   // Update the user's session token (allowing for a new automatic login)
-  if (snhPassword && document.password) document.password = saltAndHash(document.password)
-  if (newSession && document.sessionToken) document.sessionToken = saltAndHash(secret)
+  if (snhPassword) document.password = saltAndHash(document.password)
+  if (newSession) document.sessionToken = saltAndHash(secret)
 
   // Save the updated user to MongoDB, and return a safe version of the user object.
   await document.save()

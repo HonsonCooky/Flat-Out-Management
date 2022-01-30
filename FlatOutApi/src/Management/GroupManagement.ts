@@ -1,34 +1,12 @@
 import {safeUpdate, sanitize, save} from "./_Utils";
 import {GroupModel} from "../Schemas/GroupSchema";
 import {authGetDocuments} from "./_Authentication";
-import {FOMReq, FOMRes, RoleEnum} from "../_Interfaces";
+import {FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
 
 
 /** ----------------------------------------------------------------------------------------------------------------
  * LOCAL HELPER FUNCTIONS
  ------------------------------------------------------------------------------------------------------------------- */
-
-/**
- * GET GROUP ADMINS: Returns a list of User Id's that have the 'admin' role associated with them.
- * @param group: The group to find admins for.
- */
-function getGroupAdmins(group: any): string[] {
-  if (!group) throw new Error('500: Unable to run "getGroupAdmins" without a group document')
-  return group.users.filter((uar: any) => uar.role === 'admin').map((uar: any) => uar.user)
-}
-
-/**
- * CONNECT USER: Save the user to the group. If the user is being linked to the group, they are being added as a
- * user. Else they are sending a join request.
- * @param group
- * @param user
- * @param role
- * @param link: Should the user be linked to this group? If not, then this is a join request.
- */
-async function connectUser(group: any, user: any, role: RoleEnum, link: boolean = false) {
-
-  await save(group, false)
-}
 
 /** ----------------------------------------------------------------------------------------------------------------
  * API FUNCTIONS
@@ -54,23 +32,5 @@ export async function groupLogin(body: FOMReq): Promise<FOMRes> {
   return {
     item: sanitize((await authGetDocuments(body)).group.item),
     msg: `Successful group login`
-  }
-}
-
-/**
- * JOIN: In order for the user to join a group, they must be able to authenticate themselves, and authenticate the
- * group. These two credentials means we can ensure that said user has made an attempt to join said group. It also
- * means that from this point onwards, the user simply has to identify themselves in order to access the group
- * information.
- * @param body
- */
-export async function groupJoin(body: FOMReq): Promise<FOMRes> {
-  // Set up the joining
-  let auth = (await authGetDocuments(body))
-  let user = auth.user.item, group = auth.group.item
-  let role = body.content?.role ? body.content.role : RoleEnum.ASSOCIATE
-  return {
-    item: sanitize(group),
-    msg: `Successfully joined group ${group.name}`
   }
 }

@@ -2,7 +2,7 @@ import {Model, Schema} from "mongoose";
 import {UserModel} from "../Schemas/UserSchema";
 import {GroupModel} from "../Schemas/GroupSchema";
 import bcrypt from "bcryptjs";
-import {Authentication, AuthGetRes, FOMReq, FOMRes} from "../_Interfaces";
+import {Authentication, AuthRes, FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ export function compareHashes(nonHash: string, hash: string): boolean {
  * VALIDATION:
  * Authentication functions to ensure that actions taken are done in the structured order intended by the API.
  ----------------------------------------------------------------------------------------------------------------- */
+
 /**
  * AUTHENTICATE USER: Find the user document, and validate the secret against either a password or session token.
  * @param userAuth
@@ -100,7 +101,7 @@ async function authenticateOther(content: any, user: any, group: any, contentMod
  * @param body
  * @param model
  */
-export async function authGetDocuments(body: FOMReq, model?: Model<any>): Promise<AuthGetRes> {
+export async function authGetDocuments(body: FOMReq, model?: Model<any>): Promise<AuthRes> {
   // Authenticate the user (as that is always required)
   let user = await authenticateUser(body.userAuth)
   if (!user.item) throw new Error(user.msg)

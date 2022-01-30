@@ -1,63 +1,90 @@
 import {connection, Schema} from "mongoose";
-import {ModelType, RoleEnum} from "../_Interfaces";
+import {ModelType, RoleEnum} from "../Interfaces/UtilInterfaces";
+import {EntityAndRole} from "../Interfaces/_FOMObjects";
 
-export const missingStr = (item: string) => `Missing ${item}`
-
-// ID: A unique means of identifying an external document
-export const Id = (ref: ModelType) => {
-  return {
-    type: Schema.Types.ObjectId,
-    sparse: true,
-    ref: ref,
-    validate: async (val: any) => {
-      return (await connection.db.collection(ref).countDocuments({_id: val})) === 1
-    }
-  }
-}
-
-// Name: Non-unique means of representing the user
+/**
+ * NAME: A required string value that represents the shown title of the document.
+ */
 export const Name = {
   type: String,
-  required: [true, missingStr('Name')],
+  required: [true, `Missing 'Name' from construction`],
   minLength: 3,
   maxLength: 20,
   trim: true
 }
 
-// Password: Not unique, else Hash+Salt doesn't work
+/**
+ * PASSWORD: A required string value that represents the secret that enables authentication to some document
+ * information.
+ */
 export const Password = {
   type: String,
-  required: [true, missingStr('Password')],
+  required: [true, `Missing 'Password' from construction`],
   minLength: 12,
 }
 
-// Session: A means of authentication without need for name and password, must be unique
+/**
+ * SESSION: A string that represents a secret between the Server and the Client. Knowing this secret, enables
+ * automatic login.
+ */
 export const Session = {
   type: String,
   unique: true,
   sparse: true
 }
 
-// Date: For future planning and automatically informing the group of your absence
-export const DateFromToday = {
-  type: Date,
-  min: Date.now()
+/**
+ * DATE FROM TODAY: A Date value, where the minimum value can only be today (anything beforehand is deemed irrelevant)
+ */
+const getCurrentDay = () => {
+  let now = new Date(Date.now())
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate())
 }
 
-// Roles: A level of authority for a user in a group
+export const DateFromToday = {
+  type: Date,
+  min: getCurrentDay()
+}
+
+/**
+ * ROLE: A string value where it can only be one of several enum values.
+ */
 export const Role = {
   type: String,
   enum: RoleEnum,
   default: RoleEnum.JOIN_REQ
 }
 
-// Default boolean to true
+/**
+ * DEFAULT TRUE: A boolean value, where it's true by default (without interaction)
+ */
 export const DefaultTrue = {
   type: Boolean,
   default: true,
 }
-// Entity and Role (associations between groups and users, with their given roles)
-export const EntityAndRole = (ref: ModelType) => new Schema({
-  entity: Id(ref),
+
+/**
+ * GENERATE ID: A function to create an ID (Types.ObjectId), with a reference to a specific Model.
+ * @param ref: ModelType enum, that represent which Model this id refers to
+ * @constructor
+ */
+export const GenerateId = (ref: ModelType) => {
+  return {
+    type: Schema.Types.ObjectId,
+    sparse: true,
+    ref: ref,
+    validate: async (val: any) => {
+      return (await connection.db.collection(ref).countDocuments({_id: val})) > 0
+    }
+  }
+}
+
+/**
+ * GENERATE ENTITY AND ROLE: A function to create an ID (Types.ObjectId), with a link to a specific authorization.
+ * @param ref: ModelType enum, that represent which Model this id refers to
+ * @constructor
+ */
+export const GenerateEntityAndRole = (ref: ModelType) => new Schema<EntityAndRole>({
+  entity: GenerateId(ref),
   role: Role,
 })

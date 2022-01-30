@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose, {MongooseOptions} from "mongoose";
 import {config} from "dotenv";
-import {initializeUserInterface} from "./Interface/UserInterface";
-import {initializeUtilInterface} from "./Interface/InterfaceUtils";
-import {initializeGroupInterface} from "./Interface/GroupInterface";
-import {initializeListInterface} from "./Interface/ListInterface";
+import {initializeUserInterface} from "./Api/UserApiCalls";
+import {initializeUtilInterface} from "./Api/_Utils";
+import {initializeGroupInterface} from "./Api/GroupApiCalls";
+import {initializeListInterface} from "./Api/ListApiCalls";
 import {addLogs} from "./Util/Logging";
 import {errorHandler} from "./Util/ErrorHandling";
 
@@ -35,14 +35,14 @@ mongoose.connect(mongoUri, mongoOptions).then(() => addLogs("MongoDB connected")
 /**
  * EXPRESS:
  * Instantiate the express interface. The order of instantiation is important here. Middleware declared before the API
- * interfaces run BEFORE each HTTP request. Middleware declared after the API interface run AFTER each HTTP request.
+ * Interfaces run BEFORE each HTTP request. Middleware declared after the API interface run AFTER each HTTP request.
  */
 export const app = express()
 
 // Middleware BEFORE requests
 app.use(express.json())
 
-// Initialize interfaces, grouped by interactions with MongoDB collections
+// Initialize Interfaces, grouped by interactions with MongoDB collections
 initializeUserInterface()
 initializeGroupInterface()
 initializeListInterface()

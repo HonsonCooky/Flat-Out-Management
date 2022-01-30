@@ -1,21 +1,22 @@
 import mongoose, {Schema} from "mongoose";
-import {Id, Name} from "./_SchemaTypes";
-import {ModelType} from "../_Interfaces";
+import {GenerateId, Name} from "./_SchemaTypes";
+import {ModelType} from "../Interfaces/UtilInterfaces";
+import {Item, List} from "../Interfaces/ListInterface";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LIST SCHEMA:
  * The List Schema is a front for an array of items. Items (
  --------------------------------------------------------------------------------------------------------------- */
-export const Item = new Schema({
+const Item = new Schema<Item>({
   name: Name,
   desc: String,
-  mentions: [Id(ModelType.Users) || Id(ModelType.Groups)]
+  associations: [GenerateId(ModelType.Users) || GenerateId(ModelType.Groups)]
 })
 
-const ListSchema = new Schema({
+const ListSchema = new Schema<List>({
   name: Name,
-  associations: [Id(ModelType.Users) || Id(ModelType.Groups)],
+  associations: [GenerateId(ModelType.Users) || GenerateId(ModelType.Groups)],
   items: [Item]
 }, {timestamps: true})
 
-export const ListModel = mongoose.model(ModelType.Lists, ListSchema)
+export const ListModel = mongoose.model<List>(ModelType.Lists, ListSchema)
