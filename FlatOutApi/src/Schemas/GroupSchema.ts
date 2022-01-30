@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
 import {DateFromToday, DefaultTrue, EntityAndRole, Id, Name, Password} from "./_SchemaTypes";
-import {cleanIds} from "./_IdChecker";
 import {ModelType} from "../_Interfaces";
 
 
@@ -26,6 +25,5 @@ const GroupSchema = new Schema({
   lists: [Id(ModelType.Lists)]
 }, {timestamps: true})
 
-GroupSchema.pre('save', () => cleanIds(this, ModelType.Groups))
 
 export const GroupModel = mongoose.model(ModelType.Groups, GroupSchema)

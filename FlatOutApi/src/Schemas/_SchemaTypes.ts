@@ -1,11 +1,18 @@
-import {Schema} from "mongoose";
+import {connection, Schema} from "mongoose";
 import {ModelType, RoleEnum} from "../_Interfaces";
 
 export const missingStr = (item: string) => `Missing ${item}`
 
 // ID: A unique means of identifying an external document
 export const Id = (ref: ModelType) => {
-  return {type: Schema.Types.ObjectId, sparse: true, ref: ref}
+  return {
+    type: Schema.Types.ObjectId,
+    sparse: true,
+    ref: ref,
+    validate: async (val: any) => {
+      return (await connection.db.collection(ref).countDocuments({_id: val})) === 1
+    }
+  }
 }
 
 // Name: Non-unique means of representing the user

@@ -1,6 +1,5 @@
 import mongoose, {Schema} from "mongoose";
 import {DateFromToday, EntityAndRole, Id, Name, Password, Session} from "./_SchemaTypes";
-import {cleanIds} from "./_IdChecker";
 import {ModelType} from "../_Interfaces";
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -17,7 +16,5 @@ const UserSchema = new Schema({
   lists: [Id(ModelType.Lists)],
   onLeave: [DateFromToday]
 }, {timestamps: true})
-
-UserSchema.pre('save', () => cleanIds(this, ModelType.Users))
 
 export const UserModel = mongoose.model(ModelType.Users, UserSchema)

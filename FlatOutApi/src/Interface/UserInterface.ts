@@ -9,6 +9,7 @@ import {FOMRes} from "../_Interfaces";
  */
 export function initializeUserInterface() {
   app.post("/post/user/create", (req, res, next) => {
+    console.log("HERE")
     userCreate(req.body)
       .then((fomRes: FOMRes) => res.status(200).send(fomRes))
       .catch(e => next(e))

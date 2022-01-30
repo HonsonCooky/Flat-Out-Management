@@ -18,31 +18,6 @@ function getGroupAdmins(group: any): string[] {
 }
 
 /**
- * FILTER USER FROM GROUP: Remove all instances of the user from the group.
- * @param group
- * @param user
- */
-function filterUserFromGroup(group: any, user: any) {
-  // Remove user from group users and join requests
-  group.users = group.users.filter((uar: any) => user._id.equals(uar.user))
-  group.joinRequests = group.joinRequests.filter((uar: any) => user._id.equals(uar.user))
-
-  // Remove group from user and join requests
-  user.groups = user.groups.filter((gid: any) => group._id.equals(gid))
-  user.joinRequests = user.joinRequests.filter((gid: any) => group._id.equals(gid))
-}
-
-/**
- *
- * @param group
- * @param user
- * @param role
- */
-function addUserToGroup(group: any, user: any, role: RoleEnum) {
-
-}
-
-/**
  * CONNECT USER: Save the user to the group. If the user is being linked to the group, they are being added as a
  * user. Else they are sending a join request.
  * @param group

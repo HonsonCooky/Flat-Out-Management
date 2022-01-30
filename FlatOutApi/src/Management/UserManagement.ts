@@ -3,17 +3,13 @@ import {authGetDocuments} from "./_Authentication";
 import {safeUpdate, sanitize, save} from "./_Utils";
 import {FOMReq, FOMRes} from "../_Interfaces";
 
-export async function checkUserIds(user: any) {
-  console.log(Object.keys(user._doc).filter((key: string) => key != '_id').map(key => user[key])[0])
-}
-
 /**
  * CREATE: Create a User document
  * @param body
  */
 export async function userCreate(body: FOMReq): Promise<FOMRes> {
   return {
-    item: sanitize(await save(new UserModel(safeUpdate(body)), true)),
+    item: sanitize(await save(new UserModel(safeUpdate(body)), true, true)),
     msg: `Successfully created user`
   }
 }
@@ -24,7 +20,7 @@ export async function userCreate(body: FOMReq): Promise<FOMRes> {
  */
 export async function userLogin(body: FOMReq): Promise<FOMRes> {
   return {
-    item: sanitize(await save((await authGetDocuments(body)).user.item)),
+    item: sanitize(await save((await authGetDocuments(body)).user.item, true)),
     msg: `Successful user login`
   }
 }
@@ -38,14 +34,14 @@ export async function userLogin(body: FOMReq): Promise<FOMRes> {
 export async function userUpdate(body: FOMReq): Promise<FOMRes> {
   let user = (await authGetDocuments(body)).user.item
 
-  // These are the only things that can be updated on a user. More dynamic methods exist, but that requires cleaning
-  // the incoming message (more expensive).
+  // These are the only things that can be updated on a user. More dynamic methods exist, but that expensive
+  // computations
   user.name = body.content?.name ? body.content.name : user.name
   user.password = body.content?.password ? body.content.password : user.password
   user.onLeave = body.content?.onLeave ? body.content.onLeave : user.onLeave
 
   return {
-    item: sanitize(await save(user, !!body.content?.password)),
+    item: sanitize(await save(user, true, !!body.content?.password)),
     msg: `Successfully updated user ${user.name}`
   }
 }

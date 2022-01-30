@@ -6,13 +6,14 @@ import {FOMReq} from "../_Interfaces";
  * SAVE: Saves all updated information about user (also calls validation middleware).
  * @param document: Instance of MongoDB user
  * @param snhPassword: Does the password need to be salt and hashed
+ * @param newSession
  */
-export async function save(document: any, snhPassword: boolean = false): Promise<any> {
+export async function save(document: any, newSession: boolean = false, snhPassword: boolean = false): Promise<any> {
   if (!document) throw new Error('500: Unable to save an unknown document')
 
   // Update the user's session token (allowing for a new automatic login)
   if (snhPassword && document.password) document.password = saltAndHash(document.password)
-  document.sessionToken = saltAndHash(secret)
+  if (newSession && document.sessionToken) document.sessionToken = saltAndHash(secret)
 
   // Save the updated user to MongoDB, and return a safe version of the user object.
   await document.save()
