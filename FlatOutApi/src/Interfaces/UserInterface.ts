@@ -1,7 +1,7 @@
-import {EntityAndRole, FOMObjectTimeStamped, FOMObjectWithName} from "./_FOMObjects";
+import {EntityAndRole, TimeStampedDocument, NamedDocument} from "./_FOMObjects";
 import {Types} from "mongoose";
 
-export interface User extends FOMObjectWithName, FOMObjectTimeStamped {
+export interface User extends NamedDocument, TimeStampedDocument {
   password: string,
   sessionToken: string,
   groups: EntityAndRole[],

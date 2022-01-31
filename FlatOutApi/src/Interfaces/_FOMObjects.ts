@@ -4,28 +4,28 @@ import {RoleEnum} from "./UtilInterfaces";
 /**
  * FOM OBJECT: Flat Out Management Object.
  */
-export interface FOMObject {
+export interface Document {
   _id: Types.ObjectId
 }
 
 /**
  * FOM OBJECT WITH NAME: Flat Out Management Object with a name.
  */
-export interface FOMObjectWithName extends FOMObject {
+export interface NamedDocument extends Document {
   name: string
 }
 
 /**
  * FOM OBJECT LINK: Flat Out Management Object Link has a connection to another object(s).
  */
-export interface FOMObjectWithLinks extends FOMObject {
+export interface LinkedDocument extends Document {
   associations: Types.ObjectId[]
 }
 
 /**
  * FOM OBJECT TIME STAMPED: Flat Out Management Object with time stamps enabled.
  */
-export interface FOMObjectTimeStamped extends FOMObject {
+export interface TimeStampedDocument extends Document {
   createdAt: Date,
   updatedAt: Date
 }
@@ -33,7 +33,27 @@ export interface FOMObjectTimeStamped extends FOMObject {
 /**
  * ENTITY AND ROLE: A link to some document, where some level of authorization is connected.
  */
-export interface EntityAndRole extends FOMObject {
+export interface EntityAndRole extends Document {
   entity: Types.ObjectId,
   role: RoleEnum
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

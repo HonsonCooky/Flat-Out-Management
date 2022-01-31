@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {DateFromToday, DefaultTrue, GenerateEntityAndRole, GenerateId, Name, Password} from "./_SchemaTypes";
+import {DefaultTrue, GenerateEntityAndRole, GenerateId, Name, Password} from "./_SchemaTypes";
 import {ModelType} from "../Interfaces/UtilInterfaces";
 import {ChoreConfig, Group} from "../Interfaces/GroupInterface";
 
@@ -11,10 +11,10 @@ import {ChoreConfig, Group} from "../Interfaces/GroupInterface";
  --------------------------------------------------------------------------------------------------------------- */
 
 const Config = new Schema<ChoreConfig>({
-  related: GenerateId(ModelType.Lists),
+  associations: [GenerateId(ModelType.Lists)],
   choresAutoFill: DefaultTrue,
   choresLoop: DefaultTrue,
-  startingDate: DateFromToday,
+  predictions: [GenerateId(ModelType.Lists)]
 })
 
 const GroupSchema = new Schema<Group>({

@@ -1,9 +1,9 @@
-import {FOMObjectWithLinks, FOMObjectWithName} from "./_FOMObjects";
+import {LinkedDocument, NamedDocument, TimeStampedDocument} from "./_FOMObjects";
 
-export interface Item extends FOMObjectWithName, FOMObjectWithLinks {
+export interface Item extends NamedDocument, LinkedDocument {
   desc: string
 }
 
-export interface List extends FOMObjectWithName, FOMObjectWithLinks {
-
+export interface List extends NamedDocument, LinkedDocument, TimeStampedDocument {
+  items: Item[]
 }
