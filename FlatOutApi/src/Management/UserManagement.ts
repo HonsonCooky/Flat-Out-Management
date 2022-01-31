@@ -1,5 +1,5 @@
 import {UserModel} from "../Schemas/UserSchema";
-import {authGetDocuments} from "./_Authentication";
+import {bodyToFomObjects} from "./_Authentication";
 import {safeUpdate, sanitize, save} from "./_Utils";
 import {FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
 
@@ -20,7 +20,7 @@ export async function userCreate(body: FOMReq): Promise<FOMRes> {
  */
 export async function userLogin(body: FOMReq): Promise<FOMRes> {
   return {
-    item: sanitize(await save((await authGetDocuments(body)).user.item, true)),
+    item: sanitize(await save((await bodyToFomObjects(body)).user, true)),
     msg: `Successful user login`
   }
 }
@@ -32,17 +32,10 @@ export async function userLogin(body: FOMReq): Promise<FOMRes> {
  * @param body
  */
 export async function userUpdate(body: FOMReq): Promise<FOMRes> {
-  let user = (await authGetDocuments(body)).user.item
-
-  // These are the only things that can be updated on a user. More dynamic methods exist, but that expensive
-  // computations
-  user.name = body.content?.name ? body.content.name : user.name
-  user.password = body.content?.password ? body.content.password : user.password
-  user.onLeave = body.content?.onLeave ? body.content.onLeave : user.onLeave
+  let {user: User} = await bodyToFomObjects(body)
 
   return {
-    item: sanitize(await save(user, true, !!body.content?.password)),
-    msg: `Successfully updated user ${user.name}`
+    msg: "Unimplemented"
   }
 }
 
@@ -51,7 +44,7 @@ export async function userUpdate(body: FOMReq): Promise<FOMRes> {
  * @param body
  */
 export async function userDelete(body: FOMReq): Promise<FOMRes> {
-  const user = await authGetDocuments(body)
+  const user = await bodyToFomObjects(body)
 
   // Unlink from other lists and groups
 

@@ -1,6 +1,5 @@
 import {safeUpdate, sanitize, save} from "./_Utils";
 import {GroupModel} from "../Schemas/GroupSchema";
-import {authGetDocuments} from "./_Authentication";
 import {FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
 
 
@@ -30,7 +29,6 @@ export async function groupCreate(body: FOMReq): Promise<FOMRes> {
  */
 export async function groupLogin(body: FOMReq): Promise<FOMRes> {
   return {
-    item: sanitize((await authGetDocuments(body)).group.item),
     msg: `Successful group login`
   }
 }

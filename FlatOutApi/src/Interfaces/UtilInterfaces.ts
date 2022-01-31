@@ -1,6 +1,10 @@
 /**
  * MODEL TYPE: Used to reference documents
  */
+import {User} from "./UserInterface";
+import {Group} from "./GroupInterface";
+import {Item, List} from "./ListInterface";
+
 export enum ModelType {
   Users = 'Users',
   Groups = 'Groups',
@@ -18,12 +22,16 @@ export enum RoleEnum {
 }
 
 /**
- * AUTH RES: Authentication result, the object outline being parsed back from authGetDocuments
+ * REQUEST EXTRACTIONS: Authentication result, the object outline being parsed back from authGetDocuments
  */
-export type AuthRes = {
-  user: any,
-  group: any,
-  other: any,
+
+// An object which can be any other document type (aside from User and Group).
+export type Other = List | Item
+
+export type RequestExtractions = {
+  user?: User,
+  group?: Group,
+  other?: Other,
 }
 
 /**
@@ -31,16 +39,16 @@ export type AuthRes = {
  */
 export type Authentication = {
   identifier: string,
-  secret: string,
+  secret?: string,
 }
 
 /**
  * FOMREQ: Flat Out Management Request, outlines the contract that some request to the API must adhere to.
  */
 export type FOMReq = {
-  userAuth: Authentication,
-  groupAuth: Authentication
-  content: any
+  userAuth?: Authentication,
+  groupAuth?: Authentication
+  content?: any
 }
 
 /**
