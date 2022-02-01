@@ -1,7 +1,7 @@
-import mongoose, {Schema} from "mongoose";
-import {DateFromToday, GenerateEntityAndRole, GenerateId, Name, Password, Session} from "./_SchemaTypes";
-import {ModelType} from "../Interfaces/UtilInterfaces";
-import {User} from "../Interfaces/UserInterface";
+import mongoose, {Schema, Document} from "mongoose";
+import {DateFromToday, EntityRoleAndRefType, Name, Password, Token} from "./_SchemaTypes";
+import {ModelEnum} from "../Interfaces/_Enums";
+import {Named, Linked, TimeStamped} from "../Interfaces/_FOMObjects";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -9,13 +9,19 @@ import {User} from "../Interfaces/UserInterface";
  * Password. Each user will be associated to some Group (their flat), and may contain several lists. Groups
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
+
+export interface User extends Document, Named, Linked, TimeStamped {
+  password: string,
+  token: string,
+  onLeave: Date[]
+}
+
 const UserSchema = new Schema<User>({
   name: Name,
   password: Password,
-  sessionToken: Session,
-  groups: [GenerateEntityAndRole(ModelType.Groups)],
-  lists: [GenerateId(ModelType.Lists)],
+  token: Token,
+  groups: [EntityRoleAndRefType],
   onLeave: [DateFromToday]
 }, {timestamps: true})
 
-export const UserModel = mongoose.model<User>(ModelType.Users, UserSchema)
+export const UserModel = mongoose.model<User>(ModelEnum.Users, UserSchema)

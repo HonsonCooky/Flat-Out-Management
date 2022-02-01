@@ -1,6 +1,4 @@
 import {app} from "../index";
-import {groupCreate, groupLogin} from "../Management/GroupManagement";
-import {handlePostCall} from "./_ApiCallHandler";
 
 
 /**
@@ -9,23 +7,12 @@ import {handlePostCall} from "./_ApiCallHandler";
  * Mongoose backend in /Management/GroupManagement.ts
  */
 export function initializeGroupInterface() {
-    app.post('/post/group/create',
-      (req, res, next) =>
-        handlePostCall(groupCreate, req, res, next))
-
-    app.post('/post/group/login',
-      (req, res, next) =>
-        handlePostCall(groupLogin, req, res, next))
-
+    app.post('/post/group/create')
+    app.post('/post/group/login')
     app.post('/post/group/join')
-
     app.post('/post/group/join_request')
-
     app.post('/post/group/accept_request')
-
     app.post('/post/group/update')
-
     app.post('/post/group/delete')
-
     app.get('/get/group/names')
 }

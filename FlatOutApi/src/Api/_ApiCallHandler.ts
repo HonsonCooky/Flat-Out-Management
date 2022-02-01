@@ -1,4 +1,4 @@
-import {FOMReq, FOMRes} from "../Interfaces/UtilInterfaces";
+import {FOMReq, FOMRes} from "../Interfaces/_Enums";
 
 export function handlePostCall(fn: (body: FOMReq) => Promise<FOMRes>, req: any, res: any, next: any) {
   fn(req.body)

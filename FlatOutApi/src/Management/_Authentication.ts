@@ -1,10 +1,9 @@
-import {Model, Types} from "mongoose";
+import {connection, Types} from "mongoose";
 import {UserModel} from "../Schemas/UserSchema";
 import {GroupModel} from "../Schemas/GroupSchema";
 import bcrypt from "bcryptjs";
-import {Authentication, FOMReq, Other, RequestExtractions, RoleEnum} from "../Interfaces/UtilInterfaces";
-import {User} from "../Interfaces/UserInterface";
-import {Group} from "../Interfaces/GroupInterface";
+import {Authentication} from "../Interfaces/_Utils";
+import {RoleEnum} from "../Interfaces/_Enums";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -30,9 +29,12 @@ export function compareHashes(nonHash: string, hash: string): boolean {
  * AUTHENTICATE USER: Find the user, and if a secret is supplied, then validate the secret. Return the user found if
  * that is all that is required.
  * @param userAuth
+ * @param requiresAuthentication
  */
-async function authenticateUser(userAuth: Authentication | undefined): Promise<User | undefined> {
+async function authenticateUser(userAuth: Authentication | undefined, requiresAuthentication: boolean = true): Promise<User | undefined> {
   if (!userAuth) return undefined
+
+  if (requiresAuthentication && !userAuth.secret) throw new Error(`400: Missing user secret for authentication`)
 
   // Get the user
   let user: User | null = await UserModel.findOne({_id: userAuth.identifier})
@@ -40,7 +42,7 @@ async function authenticateUser(userAuth: Authentication | undefined): Promise<U
 
   // Validate the user
   if (userAuth.secret) {
-    let valid = userAuth.secret === user.sessionToken || compareHashes(userAuth.secret, user.password)
+    let valid = userAuth.secret === user.token || compareHashes(userAuth.secret, user.password)
     if (!valid) throw new Error(`400: Invalid login for user ${user.name}`)
   }
 
@@ -52,9 +54,9 @@ async function authenticateUser(userAuth: Authentication | undefined): Promise<U
  * userAuth came before, then check to see if the user id exists in the group already.
  * @param groupAuth
  * @param userId: A user id from a document which has ALREADY been validated.
+ * @param requiresAuthentication
  */
-async function authenticateGroup(groupAuth: Authentication | undefined,
-                                 userId?: Types.ObjectId): Promise<Group | undefined> {
+async function authenticateGroup(groupAuth: Authentication | undefined, userId: Types.ObjectId | undefined, requiresAuthentication: boolean = true): Promise<Group | undefined> {
   if (!groupAuth) return undefined
 
   // Get the group
@@ -62,14 +64,14 @@ async function authenticateGroup(groupAuth: Authentication | undefined,
   if (!group) throw new Error(`400: Unable to find group with identifier ${groupAuth.identifier}`)
 
   // Validate the group
-  if (groupAuth.secret) {
+  if (requiresAuthentication) {
     // Valid via password
     let validPassword = (groupAuth.secret && compareHashes(groupAuth.secret, group.password))
 
     // Valid via pre-existence in group
     let validUser = userId && group.users.some((uar: any) =>
       uar.user.equals(userId)
-      && uar.role != RoleEnum.JOIN_REQ
+      && uar.role != RoleEnum.UNDEFINED
       && uar.role != RoleEnum.ASSOCIATE)
 
     if (!validPassword && !validUser) throw new Error(`400: Unable to authorize action in group ${group.name}`)
@@ -83,21 +85,20 @@ async function authenticateGroup(groupAuth: Authentication | undefined,
  * When a user and group have been authenticated, it's merely a matter of finding out what the association is.
  * Else, simply find the object and return it
  */
-async function authenticateOther(content: any,
-                                 userId?: Types.ObjectId,
-                                 groupId?: Types.ObjectId,
-                                 contentModel?: Model<Other>): Promise<Other | undefined> {
-  if (!contentModel || !content) return undefined
+async function authenticateOther(content: any, userId?: Types.ObjectId, groupId?: Types.ObjectId, requiresAuthentication: boolean = true): Promise<Other | undefined> {
+  if (!content || !content.identifier || !content.ref) return undefined
+
+  let contentModel: any = await connection.db.collection<Other>(content.ref)
 
   // First, get the object
   let document: Other | null = await contentModel.findOne({_id: content.identifier})
   if (!document) throw new Error(`400: Unable to find document ${content.identifier} in collection ${contentModel.name}`)
 
-  if (document.associations) {
-    let association = document.associations.some((id: Types.ObjectId) =>
-      (userId && id.equals(userId)) ||
-      (groupId && id.equals(groupId))
-    )
+  if (requiresAuthentication) {
+    let association =
+      userId ? document.associations.users?.some(id => id.equals(userId)) :
+        groupId ? document.associations.users?.some(id => id.equals(groupId)) :
+          undefined
 
     if (!association) throw new Error(`400: Authentication to document ${document.name} denied with user ${userId} or group ${groupId}`)
   }
@@ -106,15 +107,13 @@ async function authenticateOther(content: any,
 }
 
 /**
- * AUTH GET DOCUMENTS: This generic method attempts to retrieve all objects from the body of a request. Documents
- * are either linked to a user, or to a group. User authentication is done via specific
+ * BODY TO FOM OBJECTS: Given a request body, extract the Flat Out Management documents from the DB.
  * @param body
- * @param model
+ * @param permissions: Providing any 'false' permissions is done with intention.
  */
-export async function bodyToFomObjects(body: FOMReq, model?: Model<Other>): Promise<RequestExtractions> {
-  let user = await authenticateUser(body.userAuth)
-  let group = await authenticateGroup(body.groupAuth, user?._id)
-  let other = await authenticateOther(body.content, user?._id, group?._id, model)
-  if (!other) other = body.content
+export async function bodyToFomObjects(body: FOMReq, permissions?: Permissions): Promise<RequestExtractions> {
+  let user = await authenticateUser(body.userAuth, permissions?.user)
+  let group = await authenticateGroup(body.groupAuth, user?._id, permissions?.group)
+  let other = await authenticateOther(body.content, user?._id, group?._id, permissions?.other)
   return {user, group, other}
 }

@@ -7,6 +7,6 @@ import {app} from "../index";
  */
 export function initializeListInterface(){
     app.post('/post/list/create')
-    app.post('/post/list/update')
+    app.post('/post/list/connect')
     app.post('/post/list/delete')
 }

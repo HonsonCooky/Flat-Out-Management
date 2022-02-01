@@ -1,59 +1,41 @@
-import {Types} from "mongoose";
-import {RoleEnum} from "./UtilInterfaces";
+import {Authentication, EntityRoleAndRef} from "./_Utils";
 
 /**
- * FOM OBJECT: Flat Out Management Object.
+ * BASE: Outlines the base features for every document in the Flat Out Management DB.
  */
-export interface Document {
-  _id: Types.ObjectId
-}
-
-/**
- * FOM OBJECT WITH NAME: Flat Out Management Object with a name.
- */
-export interface NamedDocument extends Document {
+export interface Named {
   name: string
 }
 
 /**
- * FOM OBJECT LINK: Flat Out Management Object Link has a connection to another object(s).
+ * LINKED: An extension to the base document, this document also has associations to other documents.
  */
-export interface LinkedDocument extends Document {
-  associations: Types.ObjectId[]
+export interface Linked {
+  associations: EntityRoleAndRef[]
 }
 
 /**
- * FOM OBJECT TIME STAMPED: Flat Out Management Object with time stamps enabled.
+ * TIME STAMPED: An extension to the base document, this document also has createdAt, and updatedAt information.
  */
-export interface TimeStampedDocument extends Document {
+export interface TimeStamped {
   createdAt: Date,
   updatedAt: Date
 }
 
 /**
- * ENTITY AND ROLE: A link to some document, where some level of authorization is connected.
+ * FOMREQ: Flat Out Management Request, outlines the contract that some request to the API must adhere to.
  */
-export interface EntityAndRole extends Document {
-  entity: Types.ObjectId,
-  role: RoleEnum
+export type FOMReq = {
+  auth?: Authentication,
+  content?: any
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * FOMRES: Flat Out Management Result, outlines the contract that the API will adhere to, sending anything back to
+ * the client.
+ */
+export type FOMRes = {
+  item?: any,
+  msg: string
+}
 

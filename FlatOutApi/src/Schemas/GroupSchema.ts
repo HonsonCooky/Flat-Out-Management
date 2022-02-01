@@ -1,7 +1,8 @@
-import mongoose, {Schema} from "mongoose";
-import {DefaultTrue, GenerateEntityAndRole, GenerateId, Name, Password} from "./_SchemaTypes";
-import {ModelType} from "../Interfaces/UtilInterfaces";
-import {ChoreConfig, Group} from "../Interfaces/GroupInterface";
+import mongoose, {Schema, Document} from "mongoose";
+import {DefaultTrue, EntityRoleAndRefType, Id, Name, Password} from "./_SchemaTypes";
+import {ModelEnum} from "../Interfaces/_Enums";
+import {Linked, Named, TimeStamped} from "../Interfaces/_FOMObjects";
+import {List} from "./ListSchema";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,21 +11,33 @@ import {ChoreConfig, Group} from "../Interfaces/GroupInterface";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
+export interface ChoreConfig extends List {
+  name: "Chores",
+  choresAutoFill: boolean,
+  choresLoop: boolean,
+}
+
+export interface Group extends Document, Named, Linked, TimeStamped {
+  password: string,
+  tokens: string[],
+  chores: ChoreConfig,
+}
+
 const Config = new Schema<ChoreConfig>({
-  associations: [GenerateId(ModelType.Lists)],
+  associations: [EntityRoleAndRefType],
   choresAutoFill: DefaultTrue,
   choresLoop: DefaultTrue,
-  predictions: [GenerateId(ModelType.Lists)]
+  predictions: [EntityRoleAndRefType]
 })
 
 const GroupSchema = new Schema<Group>({
   name: Name,
   password: Password,
-  users: [GenerateEntityAndRole(ModelType.Users)],
+  users: [EntityRoleAndRefType(ModelEnum.Users)],
   chores: Config,
-  messages: GenerateId(ModelType.Lists),
-  lists: [GenerateId(ModelType.Lists)]
+  messages: Id(ModelEnum.Lists),
+  lists: [Id(ModelEnum.Lists)]
 }, {timestamps: true})
 
 
-export const GroupModel = mongoose.model<Group>(ModelType.Groups, GroupSchema)
+export const GroupModel = mongoose.model<Group>(ModelEnum.Groups, GroupSchema)
