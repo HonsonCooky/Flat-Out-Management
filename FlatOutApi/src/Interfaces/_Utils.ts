@@ -7,14 +7,14 @@ import {ModelEnum, RoleEnum} from "./_Enums";
 export type Authentication = {
   identifier: string,
   secret: string,
-  refPath: ModelEnum
+  docModel: ModelEnum
 }
 
 /**
  * ENTITY AND ROLE: A link to some document, where some level of authorization is connected.
  */
-export interface EntityRoleAndRef {
-  entity: Types.ObjectId,
+export interface DocRoleAndModel {
+  doc: Types.ObjectId,
   role: RoleEnum,
-  refPath: ModelEnum
+  docModel: ModelEnum
 }

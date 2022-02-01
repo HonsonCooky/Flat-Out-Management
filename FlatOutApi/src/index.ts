@@ -1,5 +1,5 @@
 import express from "express";
-import mongoose, {MongooseOptions} from "mongoose";
+import mongoose from "mongoose";
 import {config} from "dotenv";
 import {initializeUserInterface} from "./Api/UserApiCalls";
 import {initializeUtilInterface} from "./Api/_Utils";
@@ -18,19 +18,13 @@ export const secret: string = process.env.TOKEN_SECRET || 'err'
 if (secret === 'err') throw new Error("Can't find secret")
 const port: string = process.env.PORT || "3200"
 const mongoUri: string = process.env.MONGO_URI || '' // Will throw an error
-const mongoOptions: MongooseOptions = {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-}
 
 /**
  * MONGODB:
- * Connect to the MongoDB interface. Set some variables such that deprecated fields are used/unused. MongoDB
+ * Connect to the MongoDB interface. Set some variables such that deprecated fields are used/unused. MongoDB's
  * connections are slow, so doing it asynchronously first should help speed up the connection process.
  */
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect(mongoUri, mongoOptions).then(() => addLogs("MongoDB connected"))
+mongoose.connect(mongoUri).then(() => addLogs("MongoDB connected"))
 
 /**
  * EXPRESS:

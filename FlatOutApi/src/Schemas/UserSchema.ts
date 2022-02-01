@@ -1,7 +1,7 @@
-import mongoose, {Schema, Document} from "mongoose";
-import {DateFromToday, EntityRoleAndRefType, Name, Password, Token} from "./_SchemaTypes";
+import mongoose, {Schema} from "mongoose";
+import {DateFromToday, DocRoleAndRefType, Name, Password, Token} from "./_SchemaTypes";
 import {ModelEnum} from "../Interfaces/_Enums";
-import {Named, Linked, TimeStamped} from "../Interfaces/_FOMObjects";
+import {FOMCollectionDocument} from "../Interfaces/_FOMObjects";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -10,7 +10,7 @@ import {Named, Linked, TimeStamped} from "../Interfaces/_FOMObjects";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface User extends Document, Named, Linked, TimeStamped {
+export interface User extends FOMCollectionDocument {
   password: string,
   token: string,
   onLeave: Date[]
@@ -20,7 +20,7 @@ const UserSchema = new Schema<User>({
   name: Name,
   password: Password,
   token: Token,
-  groups: [EntityRoleAndRefType],
+  associations: [DocRoleAndRefType],
   onLeave: [DateFromToday]
 }, {timestamps: true})
 

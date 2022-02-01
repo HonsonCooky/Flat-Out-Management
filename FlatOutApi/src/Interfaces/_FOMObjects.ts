@@ -1,25 +1,32 @@
-import {Authentication, EntityRoleAndRef} from "./_Utils";
+import {Authentication, DocRoleAndModel} from "./_Utils";
 
 /**
- * BASE: Outlines the base features for every document in the Flat Out Management DB.
+ * NAMED: An object with a mandatory 'name'.
  */
 export interface Named {
   name: string
 }
 
 /**
- * LINKED: An extension to the base document, this document also has associations to other documents.
+ * LINKED: An object with connections to other documents.
  */
-export interface Linked {
-  associations: EntityRoleAndRef[]
+interface Linked {
+  associations: DocRoleAndModel[]
 }
 
 /**
- * TIME STAMPED: An extension to the base document, this document also has createdAt, and updatedAt information.
+ * TIME STAMPED: An object that is timestamped
  */
-export interface TimeStamped {
+interface TimeStamped {
   createdAt: Date,
   updatedAt: Date
+}
+
+/**
+ * FOM COLLECTION DOCUMENT: All baseline schemas will follow this basic outline.
+ */
+export interface FOMCollectionDocument extends Document, Named, Linked, TimeStamped {
+  FOMVersion: string,
 }
 
 /**

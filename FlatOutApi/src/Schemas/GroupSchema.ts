@@ -1,8 +1,7 @@
-import mongoose, {Schema, Document} from "mongoose";
-import {DefaultTrue, EntityRoleAndRefType, Id, Name, Password} from "./_SchemaTypes";
+import mongoose, {Schema} from "mongoose";
+import {Name, Password, Token} from "./_SchemaTypes";
 import {ModelEnum} from "../Interfaces/_Enums";
-import {Linked, Named, TimeStamped} from "../Interfaces/_FOMObjects";
-import {List} from "./ListSchema";
+import {FOMCollectionDocument} from "../Interfaces/_FOMObjects";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -11,33 +10,17 @@ import {List} from "./ListSchema";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface ChoreConfig extends List {
-  name: "Chores",
-  choresAutoFill: boolean,
-  choresLoop: boolean,
-}
-
-export interface Group extends Document, Named, Linked, TimeStamped {
+export interface IGroup extends FOMCollectionDocument {
   password: string,
   tokens: string[],
-  chores: ChoreConfig,
 }
 
-const Config = new Schema<ChoreConfig>({
-  associations: [EntityRoleAndRefType],
-  choresAutoFill: DefaultTrue,
-  choresLoop: DefaultTrue,
-  predictions: [EntityRoleAndRefType]
-})
-
-const GroupSchema = new Schema<Group>({
+const GroupSchema = new Schema<IGroup>({
   name: Name,
   password: Password,
-  users: [EntityRoleAndRefType(ModelEnum.Users)],
-  chores: Config,
-  messages: Id(ModelEnum.Lists),
-  lists: [Id(ModelEnum.Lists)]
+  tokens: [Token],
+
 }, {timestamps: true})
 
 
-export const GroupModel = mongoose.model<Group>(ModelEnum.Groups, GroupSchema)
+export const GroupModel = mongoose.model<IGroup>(ModelEnum.Groups, GroupSchema)
