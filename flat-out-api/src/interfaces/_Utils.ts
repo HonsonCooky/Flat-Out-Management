@@ -1,5 +1,5 @@
 import {Types} from "mongoose";
-import {ModelEnum, RoleEnum} from "./_Enums";
+import {ModelEnum, RoleEnum} from "./_enums";
 
 /**
  * AUTHENTICATION: The contract for some authentication request from client.

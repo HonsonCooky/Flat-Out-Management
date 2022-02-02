@@ -1,7 +1,7 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
-import {ModelEnum, RoleEnum} from "../Interfaces/_Enums";
-import {DocRoleAndModel} from "../Interfaces/_Utils";
-import {addLogs} from "../Logging";
+import {ModelEnum, RoleEnum} from "../interfaces/_enums";
+import {DocRoleAndModel} from "../interfaces/_Utils";
+import {addLogs} from "../Logger";
 
 /**
  * NAME: A required string value that represents the shown title of the document.

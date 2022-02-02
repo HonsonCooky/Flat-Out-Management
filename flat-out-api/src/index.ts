@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import {config} from "dotenv";
-import userRoutes from "./Api/UserApiCalls";
-import groupRoutes from "./Api/GroupApiCalls"
-import listRoutes from "./Api/ListApiCalls";
-import utilRoutes from "./Api/_Utils";
-import {addLogs} from "./Logging";
-import {errorHandler} from "./Middleware/ErrorHandling";
+import userRoutes from "./api/UserApiCalls";
+import groupRoutes from "./api/GroupApiCalls"
+import listRoutes from "./api/ListApiCalls";
+import utilRoutes from "./api/_apiUtils";
+import {addLogs} from "./Logger";
+import {errorHandler} from "./middleware/ErrorHandling";
 import helmet from "helmet";
 
 /**
@@ -27,22 +27,22 @@ mongoose.connect(mongoUri).then(() => addLogs("MongoDB connected"))
 
 /**
  * EXPRESS:
- * Instantiate the express interface. The order of instantiation is important here. Middleware declared before the API
- * Interfaces run BEFORE each HTTP request. Middleware declared after the API interface run AFTER each HTTP request.
+ * Instantiate the express interface. The order of instantiation is important here. middleware declared before the API
+ * interfaces run BEFORE each HTTP request. middleware declared after the API interface run AFTER each HTTP request.
  */
 export const app = express()
 
-// Middleware BEFORE requests
+// middleware BEFORE requests
 app.use(helmet())
 app.use(express.json())
 
-// Api Interfaces
+// api interfaces
 app.use('/user', userRoutes)
 app.use('/group', groupRoutes)
 app.use('/list', listRoutes)
 app.use('', utilRoutes)
 
-// Middleware AFTER requests
+// middleware AFTER requests
 app.use(errorHandler)
 
 // Start listening once setup is complete

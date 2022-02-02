@@ -1,4 +1,4 @@
-import {FOMReq, FOMRes} from "../Interfaces/_FOMObjects";
+import {FOMReq, FOMRes} from "../interfaces/_fomObjects";
 
 export function handlePostCall(fn: (params: string[], body: FOMReq) => Promise<FOMRes>, req: any, res: any, next: any) {
   fn(req.params, req.body)

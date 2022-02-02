@@ -1,7 +1,7 @@
-import {getLogs, isDbConnected} from "../Logging";
+import {getLogs, isDbConnected} from "../Logger";
 import express from "express";
 /**
- * UtilInterface: The _Utils.ts contains one function for initializing some basic functionality for the
+ * UtilInterface: The _apiUtils.ts contains one function for initializing some basic functionality for the
  * Heroku + MongoDB backend. Getting logs, or waking up the dyno. Small unassociated functionality resides here.
  */
 

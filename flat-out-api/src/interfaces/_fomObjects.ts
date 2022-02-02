@@ -30,7 +30,7 @@ export interface FOMCollectionDocument extends Document, Named, Linked, TimeStam
 }
 
 /**
- * FOMREQ: Flat Out Management Request, outlines the contract that some request to the API must adhere to.
+ * FOMREQ: Flat Out management Request, outlines the contract that some request to the API must adhere to.
  */
 export type FOMReq = {
   params: any,
@@ -40,7 +40,7 @@ export type FOMReq = {
 }
 
 /**
- * FOMRES: Flat Out Management Result, outlines the contract that the API will adhere to, sending anything back to
+ * FOMRES: Flat Out management Result, outlines the contract that the API will adhere to, sending anything back to
  * the client.
  */
 export type FOMRes = {

@@ -1,9 +1,9 @@
 import {connection, Types} from "mongoose";
-import {UserModel} from "../Schemas/UserSchema";
-import {GroupModel} from "../Schemas/GroupSchema";
+import {UserModel} from "../schemas/UserSchema";
+import {GroupModel} from "../schemas/GroupSchema";
 import bcrypt from "bcryptjs";
-import {Authentication} from "../Interfaces/_Utils";
-import {RoleEnum} from "../Interfaces/_Enums";
+import {Authentication} from "../interfaces/_Utils";
+import {RoleEnum} from "../interfaces/_enums";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ async function authenticateOther(content: any, userId?: Types.ObjectId, groupId?
 }
 
 /**
- * BODY TO FOM OBJECTS: Given a request body, extract the Flat Out Management documents from the DB.
+ * BODY TO FOM OBJECTS: Given a request body, extract the Flat Out management documents from the DB.
  * @param body
  * @param permissions: Providing any 'false' permissions is done with intention.
  */

@@ -1,7 +1,7 @@
 import mongoose, {Schema} from "mongoose";
-import {Name, Password, Token} from "./_SchemaTypes";
-import {ModelEnum} from "../Interfaces/_Enums";
-import {FOMCollectionDocument} from "../Interfaces/_FOMObjects";
+import {Name, Password, Token} from "./_schemaTypes";
+import {ModelEnum} from "../interfaces/_enums";
+import {FOMCollectionDocument} from "../interfaces/_fomObjects";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
