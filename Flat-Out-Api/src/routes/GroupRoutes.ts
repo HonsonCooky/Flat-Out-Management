@@ -2,7 +2,7 @@ import express from "express";
 
 
 /**
- * GroupInterface: The GroupApiCalls.ts contains one function for calling and handling (parsing handling to
+ * GroupInterface: The GroupRoutes.ts contains one function for calling and handling (parsing handling to
  * middleware) GroupManagement functions. In a nutshell, it is the EXPRESS interface setup relaying calls to the
  * Mongoose backend in /management/GroupManagement.ts
  */

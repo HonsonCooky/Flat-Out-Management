@@ -1,4 +1,4 @@
-import {FOMReq} from "../interfaces/_enums";
+import {FOMReq} from "../interfaces/_fomObjects";
 
 /**
  * SANITIZE: Remove the stored password from the user. Sanitizing for client consumption.

@@ -1,7 +1,7 @@
 import express from "express";
 
 /**
- * ListInterface: The ListApiCalls.ts contains one function for calling and handling (parsing handling to
+ * ListInterface: The ListRoutes.ts contains one function for calling and handling (parsing handling to
  * middleware) ListManagement functions. In a nutshell, it is the EXPRESS interface setup relaying calls to the
  * Mongoose backend in /management/ListManagement.ts
  */
