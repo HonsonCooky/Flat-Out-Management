@@ -1,6 +1,6 @@
 import {ErrorRequestHandler} from "express";
 import {addLogs} from "./Logging";
-import {FOMRes} from "../Interfaces/_Enums";
+import {FOMRes} from "../Interfaces/_FOMObjects";
 
 
 /** -----------------------------------------------------------------------------------------------------------------

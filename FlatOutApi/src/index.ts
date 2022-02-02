@@ -1,12 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
 import {config} from "dotenv";
-import {initializeUserInterface} from "./Api/UserApiCalls";
-import {initializeUtilInterface} from "./Api/_Utils";
-import {initializeGroupInterface} from "./Api/GroupApiCalls";
-import {initializeListInterface} from "./Api/ListApiCalls";
+import userRoutes from "./Api/UserApiCalls";
+import groupRoutes from "./Api/GroupApiCalls"
+import listRoutes from "./Api/ListApiCalls";
+import utilRoutes from "./Api/_Utils";
 import {addLogs} from "./Util/Logging";
 import {errorHandler} from "./Util/ErrorHandling";
+import helmet from "helmet";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -14,8 +15,6 @@ import {errorHandler} from "./Util/ErrorHandling";
  * public Git repository.
  */
 config()
-export const secret: string = process.env.TOKEN_SECRET || 'err'
-if (secret === 'err') throw new Error("Can't find secret")
 const port: string = process.env.PORT || "3200"
 const mongoUri: string = process.env.MONGO_URI || '' // Will throw an error
 
@@ -34,13 +33,14 @@ mongoose.connect(mongoUri).then(() => addLogs("MongoDB connected"))
 export const app = express()
 
 // Middleware BEFORE requests
+app.use(helmet())
 app.use(express.json())
 
-// Initialize Interfaces, grouped by interactions with MongoDB collections
-initializeUserInterface()
-initializeGroupInterface()
-initializeListInterface()
-initializeUtilInterface()
+// Api Interfaces
+app.use('/user', userRoutes)
+app.use('/group', groupRoutes)
+app.use('/list', listRoutes)
+app.use('', utilRoutes)
 
 // Middleware AFTER requests
 app.use(errorHandler)

@@ -1,4 +1,4 @@
-import {Authentication, DocRoleAndModel} from "./_Utils";
+import {DocRoleAndModel} from "./_Utils";
 
 /**
  * NAMED: An object with a mandatory 'name'.
@@ -33,8 +33,10 @@ export interface FOMCollectionDocument extends Document, Named, Linked, TimeStam
  * FOMREQ: Flat Out Management Request, outlines the contract that some request to the API must adhere to.
  */
 export type FOMReq = {
-  auth?: Authentication,
-  content?: any
+  params: any,
+  body: {
+
+  }
 }
 
 /**
