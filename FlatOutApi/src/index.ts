@@ -5,8 +5,8 @@ import userRoutes from "./Api/UserApiCalls";
 import groupRoutes from "./Api/GroupApiCalls"
 import listRoutes from "./Api/ListApiCalls";
 import utilRoutes from "./Api/_Utils";
-import {addLogs} from "./Util/Logging";
-import {errorHandler} from "./Util/ErrorHandling";
+import {addLogs} from "./Logging";
+import {errorHandler} from "./Middleware/ErrorHandling";
 import helmet from "helmet";
 
 /**

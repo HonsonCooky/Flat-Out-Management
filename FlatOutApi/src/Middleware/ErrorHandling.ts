@@ -1,5 +1,5 @@
 import {ErrorRequestHandler} from "express";
-import {addLogs} from "./Logging";
+import {addLogs} from "../Logging";
 import {FOMRes} from "../Interfaces/_FOMObjects";
 
 

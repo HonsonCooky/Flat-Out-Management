@@ -1,4 +1,4 @@
-import {getLogs, isDbConnected} from "../Util/Logging";
+import {getLogs, isDbConnected} from "../Logging";
 import express from "express";
 /**
  * UtilInterface: The _Utils.ts contains one function for initializing some basic functionality for the
