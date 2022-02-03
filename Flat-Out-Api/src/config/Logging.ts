@@ -1,46 +1,35 @@
-/**
- * Extracted and altered from https://github.com/joeythelantern/Typescript-Quickstart-Projects/blob/main/typescript-express-nodejs-quickstart/source/config/logging.ts
- */
+import {isDbConnected} from "./ConfigUtils";
+import {LogLevel} from "../interfaces/_enums";
+import {LogModel} from "../schemas/LogSchema";
+import {Log} from "../interfaces/_utilInterfaces";
 
-const info = (namespace: string, message: string, object?: any) => {
-  if (object) {
-    console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
-  } else {
-    console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`);
+let localLogs: Log[] = []
+const logging = false
+
+const log = (message: string, object?: any, logLevel?: LogLevel) => {
+  localLogs.push({
+    level: logLevel ? logLevel : LogLevel.info,
+    message,
+    object,
+  })
+
+  if (isDbConnected() && logging) {
+    localLogs.forEach(log => {new LogModel(log).save().then()})
+    localLogs = []
   }
-};
+}
 
-const warn = (namespace: string, message: string, object?: any) => {
-  if (object) {
-    console.warn(`[${getTimeStamp()}] [WARN] [${namespace}] ${message}`, object);
-  } else {
-    console.warn(`[${getTimeStamp()}] [WARN] [${namespace}] ${message}`);
-  }
-};
+const info = (message: string, object?: any) =>
+  log(message, object)
 
-const error = (namespace: string, message: string, object?: any) => {
-  if (object) {
-    console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
-  } else {
-    console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
-  }
-};
+const warn = (message: string, object?: any) =>
+  log(message, object, LogLevel.warn)
 
-const debug = (namespace: string, message: string, object?: any) => {
-  if (object) {
-    console.debug(`[${getTimeStamp()}] [DEBUG] [${namespace}] ${message}`, object);
-  } else {
-    console.debug(`[${getTimeStamp()}] [DEBUG] [${namespace}] ${message}`);
-  }
-};
-
-const getTimeStamp = (): string => {
-  return new Date().toISOString();
-};
+const error = (message: string, object?: any) =>
+  log(message, object, LogLevel.error)
 
 export default {
   info,
   warn,
   error,
-  debug
 };

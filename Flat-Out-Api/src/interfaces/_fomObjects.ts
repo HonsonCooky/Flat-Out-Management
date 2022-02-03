@@ -1,4 +1,4 @@
-import {DocRoleAndModel} from "./_Utils";
+import {DocRoleAndModel} from "./_utilInterfaces";
 
 /**
  * NAMED: An object with a mandatory 'name'.

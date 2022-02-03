@@ -13,3 +13,12 @@ export enum RoleEnum {
   ASSOCIATE = 'associate',
   UNDEFINED = 'undefined'
 }
+
+/**
+ * LOG LEVEL: Logged information will have some level of error.
+ */
+export enum LogLevel {
+  info = "INFO",
+  warn = "WARN",
+  error = "ERROR"
+}

@@ -1,5 +1,5 @@
 import {Types} from "mongoose";
-import {ModelEnum, RoleEnum} from "./_enums";
+import {LogLevel, ModelEnum, RoleEnum} from "./_enums";
 
 /**
  * AUTHENTICATION: The contract for some authentication request from client.
@@ -17,4 +17,13 @@ export interface DocRoleAndModel {
   doc: Types.ObjectId,
   role: RoleEnum,
   docModel: ModelEnum
+}
+
+/**
+ * LOG: A log that is stored in MongoDB
+ */
+export interface Log {
+  level: LogLevel,
+  message: string,
+  object: any
 }

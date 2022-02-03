@@ -5,9 +5,9 @@ import userRoutes from "./routes/UserRoutes";
 import groupRoutes from "./routes/GroupRoutes"
 import listRoutes from "./routes/ListRoutes";
 import configRoutes from "./routes/ConfigRoutes";
-import {log} from "./config/Logging";
 import {errorHandler} from "./middleware/ErrorHandling";
 import helmet from "helmet";
+import Logging from "./config/Logging";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -36,7 +36,7 @@ const SERVER_TOKEN_SECRET: string = process.env.SERVER_TOKEN_SECRET
  * Connect to the MongoDB interface. Set some variables such that deprecated fields are used/unused. MongoDB's
  * connections are slow, so doing it asynchronously first should help speed up the connection process.
  */
-mongoose.connect(DATABASE_ACCESS).then(() => log("MongoDB connected"))
+mongoose.connect(DATABASE_ACCESS).then(() => Logging.info("MongoDB connected"))
 
 /**
  * EXPRESS:
@@ -60,6 +60,6 @@ app.use(errorHandler)
 
 // Start listening once setup is complete
 app.listen(SERVER_PORT, () => {
-  log("Heroku connected");
+  Logging.info("Heroku connected");
   console.log(`http://localhost:${SERVER_PORT}`)
 })

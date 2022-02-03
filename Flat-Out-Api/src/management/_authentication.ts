@@ -2,7 +2,7 @@ import {connection, Types} from "mongoose";
 import {UserModel} from "../schemas/UserSchema";
 import {GroupModel} from "../schemas/GroupSchema";
 import bcrypt from "bcryptjs";
-import {Authentication} from "../interfaces/_Utils";
+import {Authentication} from "../interfaces/_utilInterfaces";
 import {RoleEnum} from "../interfaces/_enums";
 
 
