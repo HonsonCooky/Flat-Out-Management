@@ -4,12 +4,17 @@
  --------------------------------------------------------------------------------------------------------------- */
 import {model, Schema} from "mongoose";
 import {LogLevel} from "../interfaces/_enums";
-import {Log} from "../interfaces/_utilInterfaces";
 
-const LogSchema = new Schema<Log>({
+export interface ILog {
+  level: LogLevel,
+  message: string,
+  object: any
+}
+
+const LogSchema = new Schema<ILog>({
   level: {type: String, enum: LogLevel, default: LogLevel.info},
   message: {type: String, required: [true, "Log missing message?"]},
   object: {type: String}
 }, {timestamps: true})
 
-export const LogModel = model<Log>("Logs", LogSchema)
+export const LogModel = model<ILog>("Logs", LogSchema)

@@ -1,7 +1,7 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "../interfaces/_enums";
-import {DocRoleAndModel} from "../interfaces/_utilInterfaces";
-import Logging from "../config/Logging";
+import {DocRoleAndModel} from "../interfaces/_docRoleAndModel";
+import logger from "../config/Logging";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
@@ -42,7 +42,7 @@ export const today = (): Date => {
  */
   let now = new Date(Date.now())
   let t = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  Logging.info(`Today: ${t.toLocaleString()}`)
+  logger.info(`Today: ${t.toLocaleString()}`)
   return t
 }
 export const DateFromToday: SchemaDefinitionProperty<Date> = {

@@ -1,13 +1,13 @@
 import mongoose, {Schema} from "mongoose";
 import {DocRoleAndRefType, Name} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {FOMCollectionDocument} from "../interfaces/_fomObjects";
+import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LIST SCHEMA:
  * The List Schema is a front for an array of items. Items (
  --------------------------------------------------------------------------------------------------------------- */
-export interface ITable extends FOMCollectionDocument {
+export interface ITable extends IFOMCollectionDocument {
   columns: string[],
 }
 

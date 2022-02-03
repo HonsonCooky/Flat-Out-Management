@@ -1,7 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import {DateFromToday, DocRoleAndRefType, Name, Password, Token} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {FOMCollectionDocument} from "../interfaces/_fomObjects";
+import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -10,13 +10,13 @@ import {FOMCollectionDocument} from "../interfaces/_fomObjects";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface User extends FOMCollectionDocument {
+export interface IUser extends IFOMCollectionDocument {
   password: string,
   token: string,
   onLeave: Date[]
 }
 
-const UserSchema = new Schema<User>({
+const UserSchema = new Schema<IUser>({
   name: Name,
   password: Password,
   token: Token,
@@ -24,4 +24,4 @@ const UserSchema = new Schema<User>({
   onLeave: [DateFromToday]
 }, {timestamps: true})
 
-export const UserModel = mongoose.model<User>(ModelEnum.Users, UserSchema)
+export const UserModel = mongoose.model<IUser>(ModelEnum.Users, UserSchema)

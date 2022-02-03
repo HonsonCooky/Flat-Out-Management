@@ -1,9 +1,8 @@
 import {isDbConnected} from "./ConfigUtils";
 import {LogLevel} from "../interfaces/_enums";
-import {LogModel} from "../schemas/LogSchema";
-import {Log} from "../interfaces/_utilInterfaces";
+import {ILog, LogModel} from "../schemas/LogSchema";
 
-let localLogs: Log[] = []
+let localLogs: ILog[] = []
 const logging = false
 
 const log = (message: string, object?: any, logLevel?: LogLevel) => {
@@ -28,8 +27,11 @@ const warn = (message: string, object?: any) =>
 const error = (message: string, object?: any) =>
   log(message, object, LogLevel.error)
 
-export default {
+
+const logger = {
   info,
   warn,
   error,
-};
+}
+
+export = logger

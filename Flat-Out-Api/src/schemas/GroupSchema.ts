@@ -1,7 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import {Name, Password, Token} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {FOMCollectionDocument} from "../interfaces/_fomObjects";
+import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ import {FOMCollectionDocument} from "../interfaces/_fomObjects";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IGroup extends FOMCollectionDocument {
+export interface IGroup extends IFOMCollectionDocument {
   password: string,
   tokens: string[],
 }

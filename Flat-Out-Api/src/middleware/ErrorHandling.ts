@@ -1,6 +1,6 @@
 import {ErrorRequestHandler} from "express";
-import {FOMRes} from "../interfaces/_fomObjects";
-import Logging from "../config/Logging";
+import {IRes} from "../interfaces/_fomObjects";
+import logger from "../config/Logging";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ import Logging from "../config/Logging";
  * This removes computation on the client side, as the information is already calculated here on the server side.
  ----------------------------------------------------------------------------------------------------------------- */
 
-function jsonError(msg: string): FOMRes {
+function jsonError(msg: string): IRes {
   return {msg: msg}
 }
 
@@ -23,7 +23,7 @@ const known400ErrorMessages = [
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
   let msg: string = err.message
 
-  Logging.error(msg, err)
+  logger.error(msg, err)
 
   for (let i = 0; i < known400ErrorMessages.length; i++) if (msg.includes(known400ErrorMessages[i])) {
     res.status(400).send(jsonError(msg.replace(/400: /g, '')))
