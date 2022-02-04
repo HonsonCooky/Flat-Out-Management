@@ -38,17 +38,6 @@ export const Nickname: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * SESSION: A string that represents a secret between the Server and the Client. Knowing this secret, enables
- * automatic login.
- */
-export const Token: SchemaDefinitionProperty<string> = {
-  type: String,
-  sparse: true,
-  unique: true,
-  required: [true, "Missing 'Token'"]
-}
-
-/**
  * DATE FROM TODAY: A Date value, where the minimum value can only be today (anything beforehand is deemed irrelevant)
  */
 export const today = (): Date => {
