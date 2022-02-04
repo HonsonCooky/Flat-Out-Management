@@ -6,19 +6,19 @@ import listRoutes from "../routes/ListRoutes";
 import configRoutes from "../routes/ConfigRoutes";
 import {errorHandler} from "../middleware/ErrorHandling";
 
-const app = express()
+const webAPI = express()
 
 // middleware BEFORE requests
-app.use(helmet())
-app.use(express.json())
+webAPI.use(helmet())
+webAPI.use(express.json())
 
 // Initialize Routes
-app.use('/user', userRoutes)
-app.use('/group', groupRoutes)
-app.use('/list', listRoutes)
-app.use('', configRoutes)
+webAPI.use('/user', userRoutes)
+webAPI.use('/group', groupRoutes)
+webAPI.use('/list', listRoutes)
+webAPI.use('', configRoutes)
 
 // middleware AFTER requests
-app.use(errorHandler)
+webAPI.use(errorHandler)
 
-export = app
+export = webAPI

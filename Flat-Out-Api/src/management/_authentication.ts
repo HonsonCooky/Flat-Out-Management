@@ -20,11 +20,8 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
 }
 
 export function signJWT(user: IUser): string {
-  let timeSinceEpoch = new Date().getTime();
-  let expirationTime = timeSinceEpoch + (Number(envConfig.token.expiration) * 100000)
-  let expirationTimeSec = Math.floor(expirationTime / 1000)
-
-  logger.info(`Attempting to sign token for ${user.name}`)
+  logger.info(`Attempting to sign token for ${user._id}`)
+  const expiresIn = envConfig.token.expirationDays + 'd'
 
   return jwt.sign(
     {
@@ -33,8 +30,8 @@ export function signJWT(user: IUser): string {
     envConfig.token.secret,
     {
       issuer: envConfig.token.issuer,
-      algorithm: 'ES256',
-      expiresIn: expirationTimeSec
+      algorithm: 'HS256',
+      expiresIn: expiresIn
     })
 }
 

@@ -10,25 +10,25 @@ config()
 if (
   !process.env.DATABASE_ACCESS ||
   !process.env.SERVER_PORT ||
-  !process.env.SERVER_TOKEN_EXPIRATION ||
   !process.env.SERVER_TOKEN_ISSUER ||
-  !process.env.SERVER_TOKEN_SECRET
+  !process.env.SERVER_TOKEN_SECRET ||
+  !process.env.SERVER_TOKEN_EXPIRATION_DAYS
 )
   throw new Error('500: Missing environment variables')
 
 const DATABASE_ACCESS: string = process.env.DATABASE_ACCESS
 const SERVER_PORT: string = process.env.SERVER_PORT
-const SERVER_TOKEN_EXPIRATION: string = process.env.SERVER_TOKEN_EXPIRATION
 const SERVER_TOKEN_ISSUER: string = process.env.SERVER_TOKEN_ISSUER
 const SERVER_TOKEN_SECRET: string = process.env.SERVER_TOKEN_SECRET
+const SERVER_TOKEN_EXPIRATION_DAYS: string = process.env.SERVER_TOKEN_EXPIRATION_DAYS
 
 let envConfig = {
   port: SERVER_PORT,
   mongoDb: DATABASE_ACCESS,
   token: {
-    expiration: SERVER_TOKEN_EXPIRATION,
     issuer: SERVER_TOKEN_ISSUER,
-    secret: SERVER_TOKEN_SECRET
+    secret: SERVER_TOKEN_SECRET,
+    expirationDays: SERVER_TOKEN_EXPIRATION_DAYS
   }
 }
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import app from "./config/ExpressConfiguration";
+import webAPI from "./config/ExpressConfiguration";
 import logger from "./config/Logging";
 import envConfig from "./config/EnvrionmentConfig";
 
@@ -17,7 +17,7 @@ mongoose.connect(envConfig.mongoDb)
  * Instantiate the express interface. The order of instantiation is important here. middleware declared before the API
  * interfaces run BEFORE each HTTP request. middleware declared after the API interface run AFTER each HTTP request.
  */
-app.listen(envConfig.port, () => {
+webAPI.listen(envConfig.port, () => {
   logger.info("Heroku connected");
   console.log(`http://localhost:${envConfig.port}`)
 })

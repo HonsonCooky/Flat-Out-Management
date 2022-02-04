@@ -33,11 +33,8 @@ export interface IFOMCollectionDocument extends Document<Types.ObjectId>, INamed
 /**
  * IREQ: Flat Out management Request, outlines the contract that some request to the API must adhere to.
  */
-export type IReq = {
-  params: any,
-  body: {
-
-  }
+export interface IReq extends IFOMCollectionDocument {
+  [key: string]: any
 }
 
 /**
@@ -45,7 +42,8 @@ export type IReq = {
  * the client.
  */
 export type IRes = {
+  msg: string,
   item?: any,
-  msg: string
+  token?: string
 }
 

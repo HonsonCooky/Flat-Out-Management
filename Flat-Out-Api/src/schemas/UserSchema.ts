@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {DateFromToday, DocRoleAndRefType, Name, Password, Token} from "./_schemaTypes";
+import {DateFromToday, DocRoleAndRefType, Name, Nickname, Password} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
 import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
@@ -12,15 +12,15 @@ import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
 export interface IUser extends IFOMCollectionDocument {
   password: string,
-  token: string,
+  nickname?: string,
   onLeave: Date[]
 }
 
 const UserSchema = new Schema<IUser>({
   name: Name,
-  password: Password,
-  token: Token,
   associations: [DocRoleAndRefType],
+  password: Password,
+  nickname: Nickname,
   onLeave: [DateFromToday]
 }, {timestamps: true})
 

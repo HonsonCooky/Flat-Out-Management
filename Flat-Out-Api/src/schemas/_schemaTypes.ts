@@ -11,17 +11,30 @@ export const Name: SchemaDefinitionProperty<string> = {
   minLength: 3,
   maxLength: 50,
   trim: true,
-  required: [true, `Missing 'Name'`]
+  required: [true, `Missing 'Name'`],
+  unique: true,
+  sparse: true
 }
 
 /**
  * PASSWORD: A required string value that represents the secret that enables authentication to some document
  * information.
  */
-export const Password: SchemaDefinitionProperty<string>  = {
+export const Password: SchemaDefinitionProperty<string> = {
   type: String,
   minLength: 12,
   required: [true, `Missing 'Password'`]
+}
+
+/**
+ * PASSWORD: A required string value that represents the secret that enables authentication to some document
+ * information.
+ */
+export const Nickname: SchemaDefinitionProperty<string> = {
+  type: String,
+  minLength: 3,
+  maxLength: 50,
+  trim: true
 }
 
 /**
@@ -35,16 +48,16 @@ export const Token: SchemaDefinitionProperty<string> = {
   required: [true, "Missing 'Token'"]
 }
 
-export const today = (): Date => {
-
 /**
  * DATE FROM TODAY: A Date value, where the minimum value can only be today (anything beforehand is deemed irrelevant)
  */
+export const today = (): Date => {
   let now = new Date(Date.now())
   let t = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   logger.info(`Today: ${t.toLocaleString()}`)
   return t
 }
+
 export const DateFromToday: SchemaDefinitionProperty<Date> = {
   type: Date,
   min: today()

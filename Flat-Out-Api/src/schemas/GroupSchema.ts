@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {Name, Password, Token} from "./_schemaTypes";
+import {Name, Nickname, Password} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
 import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
@@ -12,14 +12,13 @@ import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
 export interface IGroup extends IFOMCollectionDocument {
   password: string,
-  tokens: string[],
+  nickname?: string
 }
 
 const GroupSchema = new Schema<IGroup>({
   name: Name,
   password: Password,
-  tokens: [Token],
-
+  nickname: Nickname,
 }, {timestamps: true})
 
 
