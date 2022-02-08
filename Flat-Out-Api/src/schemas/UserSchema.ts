@@ -1,5 +1,5 @@
-import mongoose, {Schema} from "mongoose";
-import {DateFromToday, DocRoleAndRefType, Name, Nickname, Password} from "./_schemaTypes";
+import {Schema, model} from "mongoose";
+import {DateFromToday, DocRoleAndRefType, Id, Name, Nickname, Password} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
 import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
 
@@ -17,6 +17,7 @@ export interface IUser extends IFOMCollectionDocument {
 }
 
 const UserSchema = new Schema<IUser>({
+  uid: Id,
   name: Name,
   associations: [DocRoleAndRefType],
   password: Password,
@@ -24,4 +25,4 @@ const UserSchema = new Schema<IUser>({
   onLeave: [DateFromToday]
 }, {timestamps: true})
 
-export const UserModel = mongoose.model<IUser>(ModelEnum.Users, UserSchema)
+export const UserModel = model<IUser>(ModelEnum.Users, UserSchema)

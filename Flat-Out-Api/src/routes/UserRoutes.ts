@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction} from "express";
-import {userLogin, userRegister, userUpdate} from "../management/UserManagement";
-import {handleApiCall} from "./_routeHandlers";
+import {userAutoLogin, userDelete, userLogin, userRegister, userUpdate} from "../management/UserManagement";
+import {_routeHandler} from "./_routeHandlers";
 import {extractJWT} from "../middleware/ExtractJWT";
 
 /**
@@ -13,16 +13,22 @@ const userRoutes = express.Router()
 
 userRoutes.post('/register',
   (req: Request, res: Response, next: NextFunction) =>
-    handleApiCall(userRegister(req.body), req, res, next))
+    _routeHandler(userRegister(req.body), req, res, next))
 
 userRoutes.post('/login',
   (req: Request, res: Response, next: NextFunction) =>
-    handleApiCall(userLogin(req.body), req, res, next))
+    _routeHandler(userLogin(req.body), req, res, next))
+
+userRoutes.post('/auto-login', extractJWT,
+  (req: Request, res: Response, next: NextFunction) =>
+    _routeHandler(userAutoLogin(res.locals.jwt), req, res, next))
 
 userRoutes.post('/update', extractJWT,
   (req: Request, res: Response, next: NextFunction) =>
-    handleApiCall(userUpdate(res.locals.jwt, req.body), req, res, next))
+    _routeHandler(userUpdate(res.locals.jwt, req.body), req, res, next))
 
-userRoutes.post('/delete')
+userRoutes.post('/delete', extractJWT,
+  (req: Request, res: Response, next: NextFunction) =>
+    _routeHandler(userDelete(res.locals.jwt), req, res, next))
 
 export = userRoutes

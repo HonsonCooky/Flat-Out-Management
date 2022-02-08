@@ -6,13 +6,15 @@ let localLogs: ILog[] = []
 const logging = false
 
 const log = (message: string, object?: any, logLevel?: LogLevel) => {
+  if (!logging) return
+
   localLogs.push({
     level: logLevel ? logLevel : LogLevel.info,
     message,
     object,
   })
 
-  if (isDbConnected() && logging) {
+  if (isDbConnected()) {
     localLogs.forEach(log => {new LogModel(log).save().then()})
     localLogs = []
   }

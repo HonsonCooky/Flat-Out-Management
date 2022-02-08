@@ -5,7 +5,7 @@ import envConfig from "../config/EnvrionmentConfig";
 
 export function extractJWT(req: Request, res: Response, next: NextFunction) {
   logger.info('Validating Token')
-  const token = req.headers.authorization?.split(' ')[1]
+  let token = req.headers.authorization?.split(' ')[1]
   if (!token) throw new Error(`400: Unauthorized access to command`)
 
   jwt.verify(token, envConfig.token.secret, (err, decoded) => {

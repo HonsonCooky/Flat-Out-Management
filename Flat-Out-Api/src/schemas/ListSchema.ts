@@ -7,14 +7,12 @@ import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
  * LIST SCHEMA:
  * The List Schema is a front for an array of items. Items (
  --------------------------------------------------------------------------------------------------------------- */
-export interface ITable extends IFOMCollectionDocument {
-  columns: string[],
-}
+export interface IList extends IFOMCollectionDocument {}
 
-const TableSchema = new Schema<ITable>({
+const ListSchema = new Schema<IList>({
   uid: Id,
   name: Name,
   associations: [DocRoleAndRefType]
 }, {timestamps: true})
 
-export const TableModel = model<ITable>(ModelEnum.Lists, TableSchema)
+export const ListModel = model<IList>(ModelEnum.Lists, ListSchema)

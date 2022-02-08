@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import envConfig from "../config/EnvrionmentConfig";
 import logger from "../config/Logging";
 import jwt from "jsonwebtoken";
+import {JWTPayload} from "../interfaces/_fomObjects";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -21,18 +22,15 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
 
 export function signJWT(user: IUser): string {
   logger.info(`Attempting to sign token for ${user._id}`)
-  const expiresIn = envConfig.token.expirationDays + 'd'
+  if (!user.uid) throw new Error(`500: User doesn't have an ID. Can't sign without`)
+  let payload: JWTPayload = {uid: user.uid, name: user.name}
+  let options: any = {
+    issuer: envConfig.token.issuer,
+    algorithm: 'HS256',
+    expiresIn: envConfig.token.expirationDays + 'd'
+  }
 
-  return jwt.sign(
-    {
-      userId: user._id
-    },
-    envConfig.token.secret,
-    {
-      issuer: envConfig.token.issuer,
-      algorithm: 'HS256',
-      expiresIn: expiresIn
-    })
+  return jwt.sign(payload, envConfig.token.secret, options)
 }
 
 /** -----------------------------------------------------------------------------------------------------------------

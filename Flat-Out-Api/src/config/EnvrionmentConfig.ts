@@ -8,19 +8,26 @@ import {config} from "dotenv";
 config()
 
 if (
-  !process.env.DATABASE_ACCESS ||
-  !process.env.SERVER_PORT ||
+  !process.env.DB_USERNAME ||
+  !process.env.DB_PASSWORD ||
+  !process.env.DB_HOST ||
+  !process.env.DB_NAME ||
+  !process.env.PORT ||
   !process.env.SERVER_TOKEN_ISSUER ||
   !process.env.SERVER_TOKEN_SECRET ||
   !process.env.SERVER_TOKEN_EXPIRATION_DAYS
 )
   throw new Error('500: Missing environment variables')
 
-const DATABASE_ACCESS: string = process.env.DATABASE_ACCESS
-const SERVER_PORT: string = process.env.SERVER_PORT
+const SERVER_PORT: string = process.env.PORT
 const SERVER_TOKEN_ISSUER: string = process.env.SERVER_TOKEN_ISSUER
 const SERVER_TOKEN_SECRET: string = process.env.SERVER_TOKEN_SECRET
 const SERVER_TOKEN_EXPIRATION_DAYS: string = process.env.SERVER_TOKEN_EXPIRATION_DAYS
+const DATABASE_ACCESS: string =
+  `mongodb+srv://` +
+  `${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}` +
+  `@${process.env.DB_HOST}/${process.env.DB_NAME}` +
+  `?retryWrites=true&w=majority`
 
 let envConfig = {
   port: SERVER_PORT,

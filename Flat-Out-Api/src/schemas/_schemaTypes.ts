@@ -71,6 +71,14 @@ export const Id: SchemaDefinitionProperty<Types.ObjectId> = {
   ref: (doc: DocRoleAndModel) => doc.docModel
 }
 
+export const IdRef: SchemaDefinitionProperty<Types.ObjectId> = {
+  type: Types.ObjectId,
+  required: [true, `Missing 'Id'`],
+  sparse: true,
+  unique: true,
+  ref: (doc: DocRoleAndModel) => doc.docModel
+}
+
 /**
  * ROLE: A string value where it can only be one of several enum values.
  */
@@ -94,7 +102,7 @@ export const ModelType: SchemaDefinitionProperty<ModelEnum> = {
  * RoleEnum.UNDEFINED)
  */
 export const DocRoleAndRefType: SchemaDefinitionProperty<DocRoleAndModel> = {
-  doc: Id,
+  doc: IdRef,
   role: RoleType,
   docModel: ModelType
 }

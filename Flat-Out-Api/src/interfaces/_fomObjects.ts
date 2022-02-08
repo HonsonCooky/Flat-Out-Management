@@ -5,6 +5,7 @@ import {Document, Types} from "mongoose";
  * NAMED: An object with a mandatory 'name'.
  */
 export interface INamed {
+  uid: Types.ObjectId,
   name: string
 }
 
@@ -47,3 +48,10 @@ export type IRes = {
   token?: string
 }
 
+/**
+ * JSON WEB TOKEN contract
+ */
+export type JWTPayload = {
+  uid: Types.ObjectId,
+  name: string,
+}
