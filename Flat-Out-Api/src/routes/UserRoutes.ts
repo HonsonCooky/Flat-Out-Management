@@ -20,15 +20,15 @@ const userRoutes = express.Router()
 // GENERIC -------------------------------------------------------------------------
 userRoutes.post('/register',
   (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(_registerProtectedDocument(req.body, ModelEnum.User), res, next))
+    _routeHandler(_registerProtectedDocument(req.body, ModelEnum.USER), res, next))
 
 userRoutes.post('/auto-login', extractJWT,
   (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(_autoLoginProtectedDocument(res.locals.jwt, ModelEnum.User), res, next))
+    _routeHandler(_autoLoginProtectedDocument(res.locals.jwt, ModelEnum.USER), res, next))
 
 userRoutes.post('/delete', extractJWT,
   (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(_deleteDocument(res.locals.jwt, ModelEnum.User), res, next))
+    _routeHandler(_deleteDocument(res.locals.jwt, ModelEnum.USER), res, next))
 
 // UNIQUE -------------------------------------------------------------------------
 userRoutes.post('/login',

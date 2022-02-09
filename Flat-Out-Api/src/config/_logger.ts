@@ -15,7 +15,7 @@ const log = (message: string, object?: any, logLevel?: LogLevel) => {
     localLogs = []
   } else {
     localLogs.push({
-      level: logLevel ? logLevel : LogLevel.info,
+      level: logLevel ? logLevel : LogLevel.INFO,
       message,
       object,
     })
@@ -26,10 +26,10 @@ const info = (message: string, object?: any) =>
   log(message, object)
 
 const warn = (message: string, object?: any) =>
-  log(message, object, LogLevel.warn)
+  log(message, object, LogLevel.WARN)
 
 const error = (message: string, object?: any) =>
-  log(message, object, LogLevel.error)
+  log(message, object, LogLevel.ERROR)
 
 
 export default {

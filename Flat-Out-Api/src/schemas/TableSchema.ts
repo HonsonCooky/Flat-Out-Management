@@ -35,4 +35,4 @@ const TableSchema = new Schema<ITable>({
   contentRow: [RowSchema()]
 }, {timestamps: true})
 
-export const TableModel = model<ITable>(ModelEnum.Table, TableSchema)
+export const TableModel = model<ITable>(ModelEnum.TABLE, TableSchema)

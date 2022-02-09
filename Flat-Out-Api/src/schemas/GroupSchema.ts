@@ -21,4 +21,4 @@ const GroupSchema = new Schema<IGroup>({
 }, {timestamps: true})
 
 
-export const GroupModel = model<IGroup>(ModelEnum.Group, GroupSchema)
+export const GroupModel = model<IGroup>(ModelEnum.GROUP, GroupSchema)

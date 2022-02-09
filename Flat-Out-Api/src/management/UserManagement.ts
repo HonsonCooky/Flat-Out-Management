@@ -18,11 +18,11 @@ import {signJWT} from "./_authentication";
 export async function userLogin(body: any): Promise<IRes> {
   _logger.info(`Attempting user login: Credentials`)
 
-  let doc = await getDocFromBody(body, ModelEnum.User)
+  let doc = await getDocFromBody(body, ModelEnum.USER)
   doc.uuid = new Types.ObjectId()
   await doc.save()
 
-  let token = signJWT(doc, ModelEnum.User)
+  let token = signJWT(doc, ModelEnum.USER)
 
   _logger.info(`Successfully logged in user: "${doc._id}"`)
 
@@ -43,7 +43,7 @@ export async function userLogin(body: any): Promise<IRes> {
  * }
  */
 export async function userUpdate(jwt: IDocModelAndRole, body: any): Promise<IRes> {
-  let user: IUser = await _middleProtectedUpdate(jwt, body, ModelEnum.User) as IUser
+  let user: IUser = await _middleProtectedUpdate(jwt, body, ModelEnum.USER) as IUser
   if (!('outOfFlatDates' in user)) throw new Error(`400: Document id does not refer to a User document`)
   user.outOfFlatDates = body.outOfFlatDates ? body.outOfFlatDates : user.outOfFlatDates
 

@@ -1,5 +1,4 @@
-import express from "express";
-import {LogModel} from "../schemas/LogSchema";
+import express, {Request, Response} from "express";
 import env from "../config/_envConfig";
 
 /**
@@ -9,12 +8,8 @@ import env from "../config/_envConfig";
 
 const _configRoutes = express.Router()
 
-_configRoutes.get('/', (req, res) => {
+_configRoutes.get('/', (req: Request, res: Response) => {
   res.status(200).send({msg: {Heroku: true, MongoDB: env.mongo.isDbConnected}})
-})
-
-_configRoutes.get("/get/logs", async (req, res) => {
-  res.status(200).send({msg: await LogModel.find()})
 })
 
 export = _configRoutes
