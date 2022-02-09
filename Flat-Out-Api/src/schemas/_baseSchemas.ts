@@ -1,4 +1,11 @@
-import {DocModelAndRoleType, Id, UiName, Password, DocName, Version} from "./_schemaTypes";
+import {
+  DocModelAndRoleType,
+  DocName,
+  Id,
+  Password,
+  UiName,
+  Version
+} from "./_schemaTypes";
 
 export const FOMNodeSchema = {
   docName: DocName,

@@ -9,7 +9,9 @@ const log = (message: string, object?: any, logLevel?: LogLevel) => {
   if (!logging) return
 
   if (env.mongo.isDbConnected()) {
-    localLogs.forEach(log => {(new LogModel(log)).save().then()})
+    localLogs.forEach(log => {
+      (new LogModel(log)).save().then()
+    })
     localLogs = []
   } else {
     localLogs.push({

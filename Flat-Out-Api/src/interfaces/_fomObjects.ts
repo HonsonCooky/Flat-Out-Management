@@ -11,6 +11,7 @@ export interface IFOMNode extends Document<Types.ObjectId> {
   fomVersion: string,
   createdAt: Date,
   updatedAt: Date,
+  _id: Types.ObjectId,
   _doc: any,
 }
 
@@ -33,11 +34,4 @@ export type IRes = {
   msg: string,
   item?: IFOMNode | IFOMProtectedNode,
   token?: string
-}
-
-/**
- * JSON WEB TOKEN contract
- */
-export type JWTPayload = {
-  uuid: Types.ObjectId
 }

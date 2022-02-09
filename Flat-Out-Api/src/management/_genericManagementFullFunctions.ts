@@ -1,10 +1,10 @@
-import {saltAndHash, signJWT} from "./_authentication";
 import {Model, model, Types} from "mongoose";
-import {IFOMObject, IFOMProtectedNode, IRes, JWTPayload} from "../interfaces/_fomObjects";
+import {saltAndHash} from "./_authentication";
+import {getDocFromJWT} from "./_genericHelperFunctions";
+import {IFOMObject, IFOMProtectedNode, IRes} from "../interfaces/_fomObjects";
 import {ModelEnum} from "../interfaces/_enums";
 import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
 import env from "../config/_envConfig";
-import {getDocFromBody, getDocFromJWT} from "./_genericHelperFunctions";
 import _logger from "../config/_logger";
 
 
@@ -20,7 +20,7 @@ import _logger from "../config/_logger";
 export async function _registerDocument(body: any, type: ModelEnum, save: boolean = true): Promise<IRes | IFOMProtectedNode> {
   _logger.info(`Attempting ${type} registration`)
   let docName = body.docName
-  let uiName = body.uiName
+  let uiName = body.uiName ? body.uiName : body.docName
   let fomVersion = env.version
 
   let docModel: Model<IFOMObject> = model<IFOMObject>(type)
@@ -67,39 +67,14 @@ export async function _registerProtectedDocument(body: any, type: ModelEnum): Pr
 }
 
 /**
- * LOGIN PROTECTED DOCUMENT: If a document is protected. Then registering won't
- * @param body {
- *   docName: string,
- *   password: string
- * }
- * @param type: ModelEnum
- */
-export async function _loginProtectedDocument(body: any, type: ModelEnum): Promise<IRes>{
-  _logger.info(`Attempting ${type} login: Credentials`)
-
-  let doc = await getDocFromBody(body, type)
-  doc.uuid = new Types.ObjectId()
-  await doc.save()
-
-  let token = signJWT(doc)
-
-  _logger.info(`Successfully logged in ${type}: ${doc._id}`)
-
-  return {
-    msg: `Successfully logged in ${type}: ${doc.uiName}`,
-    item: doc,
-    token: 'Bearer ' + token
-  }
-}
-
-/**
  * AUTO LOGIN PROTECTED DOCUMENT: If a document is protected. Then registering won't
  * @param jwt: JWT Authentication Token
  * @param type: ModelEnum
  */
-export async function _autoLoginProtectedDocument(jwt: JWTPayload, type: ModelEnum): Promise<IRes>{
+export async function _autoLoginProtectedDocument(jwt: IDocModelAndRole, type: ModelEnum): Promise<IRes> {
   _logger.info(`Attempting ${type} login: JWT`)
   let doc = await getDocFromJWT(jwt, type)
+
   return {
     msg: `Successfully logged in ${type}: ${doc.uiName}`,
     item: doc
@@ -111,7 +86,7 @@ export async function _autoLoginProtectedDocument(jwt: JWTPayload, type: ModelEn
  * @param jwt
  * @param type
  */
-export async function _deleteDocument(jwt: JWTPayload, type: ModelEnum): Promise<IRes> {
+export async function _deleteDocument(jwt: IDocModelAndRole, type: ModelEnum): Promise<IRes> {
   _logger.info(`Finding user to delete`)
   let doc = await getDocFromJWT(jwt, type)
 
@@ -123,7 +98,7 @@ export async function _deleteDocument(jwt: JWTPayload, type: ModelEnum): Promise
 
     // Update the document such that it doesn't have this id in it
     aDoc.associations = aDoc.associations.filter((a: IDocModelAndRole) => !doc?._id?.equals(a.doc))
-    await aDoc.updateOne()
+    await aDoc.save()
   }
 
   await doc.deleteOne()

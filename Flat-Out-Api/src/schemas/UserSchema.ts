@@ -1,4 +1,4 @@
-import {Schema, model} from "mongoose";
+import {model, Schema} from "mongoose";
 import {DateFromToday} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
 import {IFOMProtectedNode} from "../interfaces/_fomObjects";

@@ -3,7 +3,7 @@ import helmet from "helmet";
 import userRoutes from "../routes/UserRoutes";
 import groupRoutes from "../routes/GroupRoutes";
 import listRoutes from "../routes/ListRoutes";
-import configRoutes from "../routes/ConfigRoutes";
+import _configRoutes from "../routes/_configRoutes";
 import {errorHandler} from "../middleware/ErrorHandling";
 import env from "./_envConfig";
 import _logger from "./_logger";
@@ -19,7 +19,7 @@ export function _startApi() {
   webAPI.use('/user', userRoutes)
   webAPI.use('/group', groupRoutes)
   webAPI.use('/list', listRoutes)
-  webAPI.use('', configRoutes)
+  webAPI.use('', _configRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

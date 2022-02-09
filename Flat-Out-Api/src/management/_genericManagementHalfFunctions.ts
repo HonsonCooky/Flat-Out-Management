@@ -1,8 +1,9 @@
-import {IFOMObject, IFOMProtectedNode, JWTPayload} from "../interfaces/_fomObjects";
+import {IFOMObject, IFOMProtectedNode} from "../interfaces/_fomObjects";
 import {ModelEnum} from "../interfaces/_enums";
 import {getDocFromJWT} from "./_genericHelperFunctions";
 import {saltAndHash} from "./_authentication";
 import _logger from "../config/_logger";
+import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
 
 /**
  * MIDDLE UPDATE: Get the document and update the contents which every document will have. This is a MIDDLEWARE
@@ -14,7 +15,7 @@ import _logger from "../config/_logger";
  * @param jwt: JWT Authentication Token
  * @param type: ModelEnum
  */
-export async function _middleUpdate(jwt: JWTPayload, body: any, type: ModelEnum): Promise<IFOMObject> {
+export async function _middleUpdate(jwt: IDocModelAndRole, body: any, type: ModelEnum): Promise<IFOMObject> {
   _logger.info(`Attempting ${type} update`)
   let doc: IFOMProtectedNode = await getDocFromJWT(jwt, type)
 
@@ -23,6 +24,7 @@ export async function _middleUpdate(jwt: JWTPayload, body: any, type: ModelEnum)
 
   return doc
 }
+
 /**
  * MIDDLE PROTECTED UPDATE: Get the document and update the contents which every document will have. This is a
  * MIDDLEWARE
@@ -34,7 +36,7 @@ export async function _middleUpdate(jwt: JWTPayload, body: any, type: ModelEnum)
  * @param jwt: JWT Authentication Token
  * @param type: ModelEnum
  */
-export async function _middleProtectedUpdate(jwt: JWTPayload, body: any, type: ModelEnum): Promise<IFOMProtectedNode> {
+export async function _middleProtectedUpdate(jwt: IDocModelAndRole, body: any, type: ModelEnum): Promise<IFOMProtectedNode> {
   _logger.info(`Attempting ${type} protected update`)
   let doc: IFOMObject = await _middleUpdate(jwt, body, type)
   if (!('password' in doc)) throw new Error(`500: Attempted protected update on non-protected document`)
