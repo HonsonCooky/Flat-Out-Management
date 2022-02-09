@@ -1,7 +1,8 @@
 export enum ModelEnum {
   Users = 'Users',
   Groups = 'Groups',
-  Lists = 'Lists'
+  Lists = 'Lists',
+  Tables = 'Tables'
 }
 
 /**

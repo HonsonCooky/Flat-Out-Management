@@ -11,7 +11,7 @@ export function _routeHandler(promise: Promise<IRes>, req: any, res: any, next: 
 
 function _sanitizeDocument(iRes: IRes): IRes{
   if (!iRes.item) return iRes
-  let {_id, uid, password, ...rest} = iRes.item._doc
+  let {_id, uuid, password, ...rest} = iRes.item._doc
   return {
     msg: iRes.msg,
     item: rest,

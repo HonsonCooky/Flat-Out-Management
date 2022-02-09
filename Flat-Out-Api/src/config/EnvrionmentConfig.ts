@@ -2,9 +2,9 @@ import {config} from "dotenv";
 
 /**
  * ENVIRONMENT VARIABLES
- * Using dotenv package, get the process.env values. Stored here is sensitive data which would be best not shown in a
- * public Git repository.
+ * Using dotenv package, get the process.env values.
  */
+
 config()
 
 if (
@@ -29,7 +29,20 @@ const DATABASE_ACCESS: string =
   `@${process.env.DB_HOST}/${process.env.DB_NAME}` +
   `?retryWrites=true&w=majority`
 
+
+/**
+ * VERSION: Get the VCS value from the package.json
+ */
+const packageJson: any = require('../../package.json')
+const fomVersion: string = packageJson.version
+
+
+/**
+ * EXPORT: Export all the above, tied with a bow, in an object
+ */
+
 let envConfig = {
+  fomVersion,
   port: SERVER_PORT,
   mongoDb: DATABASE_ACCESS,
   token: {

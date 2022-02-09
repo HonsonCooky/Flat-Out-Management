@@ -1,7 +1,8 @@
 import {Schema, model} from "mongoose";
-import {Id, Name, Nickname, Password} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
+import {IFOMProtectedNode} from "../interfaces/_fomObjects";
+import {FOMProtectedNodeSchema} from "./_baseSchemas";
+import {DateFromToday} from "./_schemaTypes";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,16 +11,13 @@ import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IGroup extends IFOMCollectionDocument {
-  password: string,
-  nickname?: string
+export interface IGroup extends IFOMProtectedNode {
+  groupCalendar: Date[]
 }
 
 const GroupSchema = new Schema<IGroup>({
-  uid: Id,
-  name: Name,
-  password: Password,
-  nickname: Nickname,
+  ...FOMProtectedNodeSchema,
+  groupCalendar: [DateFromToday]
 }, {timestamps: true})
 
 

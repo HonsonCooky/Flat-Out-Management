@@ -1,42 +1,29 @@
-import {DocRoleAndModel} from "./_docRoleAndModel";
+import {IDocModelAndRole} from "./_docRoleAndModel";
 import {Document, Types} from "mongoose";
 
 /**
- * NAMED: An object with a mandatory 'name'.
+ * FOM COLLECTION DOCUMENT: A node object with links to other objects.
  */
-export interface INamed {
-  uid: Types.ObjectId,
-  name: string
-}
-
-/**
- * LINKED: An object with connections to other documents.
- */
-interface ILinked {
-  associations: DocRoleAndModel[]
-}
-
-/**
- * TIME STAMPED: An object that is timestamped
- */
-interface ITimeStamped {
+export interface IFOMNode extends Document<Types.ObjectId> {
+  docName: string,
+  uiName: string
+  associations: IDocModelAndRole[]
+  fomVersion: string,
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
+  _doc: any,
 }
 
 /**
- * FOM COLLECTION DOCUMENT: All baseline schemas will follow this basic outline.
+ * FOM PROTECTED COLLECTION Node: A protected node object, with links to other objects and some authorization to
+ * view.
  */
-export interface IFOMCollectionDocument extends Document<Types.ObjectId>, INamed, ILinked, ITimeStamped {
-  FOMVersion: string,
+export interface IFOMProtectedNode extends IFOMNode {
+  uuid: Types.ObjectId,
+  password: string
 }
 
-/**
- * IREQ: Flat Out management Request, outlines the contract that some request to the API must adhere to.
- */
-export interface IReq extends IFOMCollectionDocument {
-  [key: string]: any
-}
+export type IFOMObject = IFOMNode | IFOMProtectedNode
 
 /**
  * IRES: Flat Out management Result, outlines the contract that the API will adhere to, sending anything back to
@@ -44,7 +31,7 @@ export interface IReq extends IFOMCollectionDocument {
  */
 export type IRes = {
   msg: string,
-  item?: any,
+  item?: IFOMNode | IFOMProtectedNode,
   token?: string
 }
 
@@ -52,6 +39,5 @@ export type IRes = {
  * JSON WEB TOKEN contract
  */
 export type JWTPayload = {
-  uid: Types.ObjectId,
-  name: string,
+  uuid: Types.ObjectId
 }

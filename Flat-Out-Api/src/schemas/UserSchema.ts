@@ -1,7 +1,8 @@
 import {Schema, model} from "mongoose";
-import {DateFromToday, DocRoleAndRefType, Id, Name, Nickname, Password} from "./_schemaTypes";
+import {DateFromToday} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
+import {IFOMProtectedNode} from "../interfaces/_fomObjects";
+import {FOMProtectedNodeSchema} from "./_baseSchemas";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -10,19 +11,13 @@ import {IFOMCollectionDocument} from "../interfaces/_fomObjects";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IUser extends IFOMCollectionDocument {
-  password: string,
-  nickname?: string,
-  onLeave: Date[]
+export interface IUser extends IFOMProtectedNode {
+  outOfFlatDates: Date[]
 }
 
 const UserSchema = new Schema<IUser>({
-  uid: Id,
-  name: Name,
-  associations: [DocRoleAndRefType],
-  password: Password,
-  nickname: Nickname,
-  onLeave: [DateFromToday]
+  ...FOMProtectedNodeSchema,
+  outOfFlatDates: [DateFromToday]
 }, {timestamps: true})
 
 export const UserModel = model<IUser>(ModelEnum.Users, UserSchema)

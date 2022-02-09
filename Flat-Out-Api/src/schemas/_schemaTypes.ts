@@ -1,17 +1,16 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "../interfaces/_enums";
-import {DocRoleAndModel} from "../interfaces/_docRoleAndModel";
+import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
 import logger from "../config/Logging";
+import envConfig from "../config/EnvrionmentConfig";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
  */
-export const Name: SchemaDefinitionProperty<string> = {
+export const DocName: SchemaDefinitionProperty<string> = {
   type: String,
-  minLength: 3,
-  maxLength: 50,
   trim: true,
-  required: [true, `Missing 'Name'`],
+  required: [true, `Missing 'DocName'`],
   unique: true,
   sparse: true
 }
@@ -27,20 +26,35 @@ export const Password: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * PASSWORD: A required string value that represents the secret that enables authentication to some document
- * information.
+ * NICKNAME: A non-required, but nicety, to store for UI purposes
  */
-export const Nickname: SchemaDefinitionProperty<string> = {
+export const UiName: SchemaDefinitionProperty<string> = {
   type: String,
   minLength: 3,
-  maxLength: 50,
+  maxLength: 20,
   trim: true
+}
+
+/**
+ * VERSION: Maintains semantic versioning for document.
+ */
+// Simple '1.0.0' semantic versions regex
+const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
+
+export const Version: SchemaDefinitionProperty<string> = {
+  type: String,
+  default: envConfig.fomVersion,
+  required: [true, `Missing 'Version'`],
+  validate: {
+    validator: (value: string) => verRegex.test(value),
+    message: ({value}) => `500: Illegal Versioning ${value}`
+  }
 }
 
 /**
  * DATE FROM TODAY: A Date value, where the minimum value can only be today (anything beforehand is deemed irrelevant)
  */
-export const today = (): Date => {
+const today = (): Date => {
   let now = new Date(Date.now())
   let t = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   logger.info(`Today: ${t.toLocaleString()}`)
@@ -49,7 +63,7 @@ export const today = (): Date => {
 
 export const DateFromToday: SchemaDefinitionProperty<Date> = {
   type: Date,
-  min: today()
+  min: [today(), `400: Date needs to be after today (incl). Consider placing date in history?`]
 }
 
 /**
@@ -68,15 +82,14 @@ export const Id: SchemaDefinitionProperty<Types.ObjectId> = {
   required: [true, `Missing 'Id'`],
   sparse: true,
   unique: true,
-  ref: (doc: DocRoleAndModel) => doc.docModel
 }
 
-export const IdRef: SchemaDefinitionProperty<Types.ObjectId> = {
+const IdRef: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Types.ObjectId,
   required: [true, `Missing 'Id'`],
   sparse: true,
   unique: true,
-  ref: (doc: DocRoleAndModel) => doc.docModel
+  ref: (doc: IDocModelAndRole) => doc.docModel
 }
 
 /**
@@ -98,11 +111,11 @@ export const ModelType: SchemaDefinitionProperty<ModelEnum> = {
 }
 
 /**
- * ENTITY ROLE AND REF TYPE: A tuple, connecting some link to a document, with a reference and role (which can be
+ * DOC, MODEL AND ROLE TYPE: A tuple, connecting some link to a document, with a reference and role (which can be
  * RoleEnum.UNDEFINED)
  */
-export const DocRoleAndRefType: SchemaDefinitionProperty<DocRoleAndModel> = {
+export const DocModelAndRoleType: SchemaDefinitionProperty<IDocModelAndRole> = {
   doc: IdRef,
-  role: RoleType,
-  docModel: ModelType
+  docModel: ModelType,
+  role: RoleType
 }
