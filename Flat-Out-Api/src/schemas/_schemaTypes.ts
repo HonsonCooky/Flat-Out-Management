@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "../interfaces/_enums";
 import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
-import logger from "../config/Logging";
-import envConfig from "../config/EnvrionmentConfig";
+import env from "../config/_envConfig";
+import _logger from "../config/_logger";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
@@ -43,7 +43,7 @@ const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
 
 export const Version: SchemaDefinitionProperty<string> = {
   type: String,
-  default: envConfig.fomVersion,
+  default: env.version,
   required: [true, `Missing 'Version'`],
   validate: {
     validator: (value: string) => verRegex.test(value),
@@ -57,7 +57,7 @@ export const Version: SchemaDefinitionProperty<string> = {
 const today = (): Date => {
   let now = new Date(Date.now())
   let t = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  logger.info(`Today: ${t.toLocaleString()}`)
+  _logger.info(`Today: ${t.toLocaleString()}`)
   return t
 }
 

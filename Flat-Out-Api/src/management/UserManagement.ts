@@ -1,5 +1,4 @@
 import {IRes, JWTPayload} from "../interfaces/_fomObjects";
-import logger from "../config/Logging";
 import {
   _autoLoginProtectedDocument,
   _deleteDocument,
@@ -9,6 +8,7 @@ import {
 import {ModelEnum} from "../interfaces/_enums";
 import {_middleProtectedUpdate} from "./_genericManagementHalfFunctions";
 import {IUser} from "../schemas/UserSchema";
+import _logger from "../config/_logger";
 
 /** -------------------------------------------------------------------------------------------------------------------
  * GENERIC
@@ -49,7 +49,7 @@ export async function userUpdate(jwt: JWTPayload, body: any): Promise<IRes> {
 
   await user.save()
 
-  logger.info(`Successfully updated user ${user._id}`)
+  _logger.info(`Successfully updated user ${user._id}`)
 
   return {
     msg: `Successfully updated user ${user.docName}`,

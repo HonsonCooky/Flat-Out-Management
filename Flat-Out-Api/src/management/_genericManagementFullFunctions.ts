@@ -1,11 +1,11 @@
-import logger from "../config/Logging";
 import {saltAndHash, signJWT} from "./_authentication";
 import {Model, model, Types} from "mongoose";
 import {IFOMObject, IFOMProtectedNode, IRes, JWTPayload} from "../interfaces/_fomObjects";
 import {ModelEnum} from "../interfaces/_enums";
 import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
-import envConfig from "../config/EnvrionmentConfig";
+import env from "../config/_envConfig";
 import {getDocFromBody, getDocFromJWT} from "./_genericHelperFunctions";
+import _logger from "../config/_logger";
 
 
 /**
@@ -18,10 +18,10 @@ import {getDocFromBody, getDocFromJWT} from "./_genericHelperFunctions";
  * @param save: False IFF this is a protected document (code reuse)
  */
 export async function _registerDocument(body: any, type: ModelEnum, save: boolean = true): Promise<IRes | IFOMProtectedNode> {
-  logger.info(`Attempting ${type} registration`)
+  _logger.info(`Attempting ${type} registration`)
   let docName = body.docName
   let uiName = body.uiName
-  let fomVersion = envConfig.fomVersion
+  let fomVersion = env.version
 
   let docModel: Model<IFOMObject> = model<IFOMObject>(type)
   let doc = new docModel({docName, uiName, fomVersion})
@@ -31,7 +31,7 @@ export async function _registerDocument(body: any, type: ModelEnum, save: boolea
 
   await doc.save()
 
-  logger.info(`Successfully created ${type}: ${doc._id}`)
+  _logger.info(`Successfully created ${type}: ${doc._id}`)
 
   return {
     msg: `Successfully registered ${type}: ${docName}`
@@ -59,7 +59,7 @@ export async function _registerProtectedDocument(body: any, type: ModelEnum): Pr
 
   await doc.save()
 
-  logger.info(`Successfully created protected ${type}: ${doc._id}`)
+  _logger.info(`Successfully created protected ${type}: ${doc._id}`)
 
   return {
     msg: `Successfully registered ${type}: ${doc.docName}`
@@ -75,7 +75,7 @@ export async function _registerProtectedDocument(body: any, type: ModelEnum): Pr
  * @param type: ModelEnum
  */
 export async function _loginProtectedDocument(body: any, type: ModelEnum): Promise<IRes>{
-  logger.info(`Attempting ${type} login: Credentials`)
+  _logger.info(`Attempting ${type} login: Credentials`)
 
   let doc = await getDocFromBody(body, type)
   doc.uuid = new Types.ObjectId()
@@ -83,7 +83,7 @@ export async function _loginProtectedDocument(body: any, type: ModelEnum): Promi
 
   let token = signJWT(doc)
 
-  logger.info(`Successfully logged in ${type}: ${doc._id}`)
+  _logger.info(`Successfully logged in ${type}: ${doc._id}`)
 
   return {
     msg: `Successfully logged in ${type}: ${doc.uiName}`,
@@ -98,7 +98,7 @@ export async function _loginProtectedDocument(body: any, type: ModelEnum): Promi
  * @param type: ModelEnum
  */
 export async function _autoLoginProtectedDocument(jwt: JWTPayload, type: ModelEnum): Promise<IRes>{
-  logger.info(`Attempting ${type} login: JWT`)
+  _logger.info(`Attempting ${type} login: JWT`)
   let doc = await getDocFromJWT(jwt, type)
   return {
     msg: `Successfully logged in ${type}: ${doc.uiName}`,
@@ -112,7 +112,7 @@ export async function _autoLoginProtectedDocument(jwt: JWTPayload, type: ModelEn
  * @param type
  */
 export async function _deleteDocument(jwt: JWTPayload, type: ModelEnum): Promise<IRes> {
-  logger.info(`Finding user to delete`)
+  _logger.info(`Finding user to delete`)
   let doc = await getDocFromJWT(jwt, type)
 
   // Disconnect from others

@@ -1,6 +1,6 @@
-import {isDbConnected} from "./ConfigUtils";
 import {LogLevel} from "../interfaces/_enums";
 import {ILog, LogModel} from "../schemas/LogSchema";
+import env from "./_envConfig";
 
 let localLogs: ILog[] = []
 const logging = false
@@ -8,7 +8,7 @@ const logging = false
 const log = (message: string, object?: any, logLevel?: LogLevel) => {
   if (!logging) return
 
-  if (isDbConnected()) {
+  if (env.mongo.isDbConnected()) {
     localLogs.forEach(log => {(new LogModel(log)).save().then()})
     localLogs = []
   } else {
@@ -30,10 +30,8 @@ const error = (message: string, object?: any) =>
   log(message, object, LogLevel.error)
 
 
-const logger = {
+export default {
   info,
   warn,
   error,
 }
-
-export = logger

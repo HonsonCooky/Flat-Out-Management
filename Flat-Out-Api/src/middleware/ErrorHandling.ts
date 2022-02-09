@@ -1,6 +1,6 @@
 import {ErrorRequestHandler} from "express";
 import {IRes} from "../interfaces/_fomObjects";
-import logger from "../config/Logging";
+import _logger from "../config/_logger";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ const known400ErrorMessages = [
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
   let msg: string = err.message
 
-  logger.error(msg, err)
+  _logger.error(msg, err)
 
   for (let i = 0; i < known400ErrorMessages.length; i++) if (msg.includes(known400ErrorMessages[i])) {
     res.status(400).send(jsonError(msg.replace(/400: /g, '')))

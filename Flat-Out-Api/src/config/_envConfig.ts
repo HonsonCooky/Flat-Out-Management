@@ -1,4 +1,5 @@
 import {config} from "dotenv";
+import {connection} from "mongoose";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -41,15 +42,18 @@ const fomVersion: string = packageJson.version
  * EXPORT: Export all the above, tied with a bow, in an object
  */
 
-let envConfig = {
-  fomVersion,
-  port: SERVER_PORT,
-  mongoDb: DATABASE_ACCESS,
+export default {
+  version: fomVersion,
+  express: {
+    port: SERVER_PORT,
+  },
+  mongo: {
+    connectionStr: DATABASE_ACCESS,
+    isDbConnected: () => connection.readyState === 1,
+  },
   token: {
     issuer: SERVER_TOKEN_ISSUER,
     secret: SERVER_TOKEN_SECRET,
     expirationDays: SERVER_TOKEN_EXPIRATION_DAYS
   }
 }
-
-export = envConfig

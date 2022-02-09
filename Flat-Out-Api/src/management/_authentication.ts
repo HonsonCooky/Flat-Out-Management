@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import envConfig from "../config/EnvrionmentConfig";
-import logger from "../config/Logging";
+import env from "../config/_envConfig";
 import jwt from "jsonwebtoken";
 import {IFOMProtectedNode, JWTPayload} from "../interfaces/_fomObjects";
+import _logger from "../config/_logger";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -20,16 +20,16 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
 }
 
 export function signJWT(doc: IFOMProtectedNode): string {
-  logger.info(`Attempting to sign token for ${doc._id}`)
+  _logger.info(`Attempting to sign token for ${doc._id}`)
   if (!doc.uuid) throw new Error(`500: User doesn't have an ID. Can't sign without`)
   let payload: JWTPayload = {uuid: doc.uuid}
   let options: any = {
-    issuer: envConfig.token.issuer,
+    issuer: env.token.issuer,
     algorithm: 'HS256',
-    expiresIn: envConfig.token.expirationDays + 'd'
+    expiresIn: env.token.expirationDays + 'd'
   }
 
-  return jwt.sign(payload, envConfig.token.secret, options)
+  return jwt.sign(payload, env.token.secret, options)
 }
 
 /** -----------------------------------------------------------------------------------------------------------------

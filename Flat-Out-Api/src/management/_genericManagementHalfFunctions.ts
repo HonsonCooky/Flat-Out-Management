@@ -1,8 +1,8 @@
 import {IFOMObject, IFOMProtectedNode, JWTPayload} from "../interfaces/_fomObjects";
 import {ModelEnum} from "../interfaces/_enums";
-import logger from "../config/Logging";
 import {getDocFromJWT} from "./_genericHelperFunctions";
 import {saltAndHash} from "./_authentication";
+import _logger from "../config/_logger";
 
 /**
  * MIDDLE UPDATE: Get the document and update the contents which every document will have. This is a MIDDLEWARE
@@ -15,7 +15,7 @@ import {saltAndHash} from "./_authentication";
  * @param type: ModelEnum
  */
 export async function _middleUpdate(jwt: JWTPayload, body: any, type: ModelEnum): Promise<IFOMObject> {
-  logger.info(`Attempting ${type} update`)
+  _logger.info(`Attempting ${type} update`)
   let doc: IFOMProtectedNode = await getDocFromJWT(jwt, type)
 
   doc.docName = body.docName ? body.docName : doc.docName
@@ -35,7 +35,7 @@ export async function _middleUpdate(jwt: JWTPayload, body: any, type: ModelEnum)
  * @param type: ModelEnum
  */
 export async function _middleProtectedUpdate(jwt: JWTPayload, body: any, type: ModelEnum): Promise<IFOMProtectedNode> {
-  logger.info(`Attempting ${type} protected update`)
+  _logger.info(`Attempting ${type} protected update`)
   let doc: IFOMObject = await _middleUpdate(jwt, body, type)
   if (!('password' in doc)) throw new Error(`500: Attempted protected update on non-protected document`)
 
