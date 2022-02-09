@@ -3,9 +3,9 @@ import {_loginProtectedDocument, _registerProtectedDocument} from "./_genericMan
 import {ModelEnum} from "../interfaces/_enums";
 
 export async function groupRegister(body: any): Promise<IRes>{
-  return _registerProtectedDocument(body, ModelEnum.Groups)
+  return _registerProtectedDocument(body, ModelEnum.Group)
 }
 
 export async function groupLogin(body: any){
-  return _loginProtectedDocument(body, ModelEnum.Groups)
+  return _loginProtectedDocument(body, ModelEnum.Group)
 }

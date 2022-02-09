@@ -15,19 +15,19 @@ import _logger from "../config/_logger";
  -------------------------------------------------------------------------------------------------------------------*/
 // REGISTER
 export async function userRegister(body: any): Promise<IRes> {
-  return _registerProtectedDocument(body, ModelEnum.Users)
+  return _registerProtectedDocument(body, ModelEnum.User)
 }
 // LOGIN
 export async function userLogin(body: any): Promise<IRes> {
-  return _loginProtectedDocument(body, ModelEnum.Users)
+  return _loginProtectedDocument(body, ModelEnum.User)
 }
 // AUTO LOGIN
 export async function userAutoLogin(jwt: JWTPayload): Promise<IRes> {
-  return _autoLoginProtectedDocument(jwt, ModelEnum.Users)
+  return _autoLoginProtectedDocument(jwt, ModelEnum.User)
 }
 // DELETE
 export async function userDelete(jwt: JWTPayload): Promise<IRes> {
-  return _deleteDocument(jwt, ModelEnum.Users)
+  return _deleteDocument(jwt, ModelEnum.User)
 }
 
 /** -------------------------------------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ export async function userDelete(jwt: JWTPayload): Promise<IRes> {
  * }
  */
 export async function userUpdate(jwt: JWTPayload, body: any): Promise<IRes> {
-  let user: IUser = await _middleProtectedUpdate(jwt, body, ModelEnum.Users) as IUser
+  let user: IUser = await _middleProtectedUpdate(jwt, body, ModelEnum.User) as IUser
   if (!('outOfFlatDates' in user)) throw new Error(`400: Document id does not refer to a User document`)
 
   user.outOfFlatDates = body.outOfFlatDates ? body.outOfFlatDates : user.outOfFlatDates

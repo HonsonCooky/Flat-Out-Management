@@ -20,4 +20,4 @@ const UserSchema = new Schema<IUser>({
   outOfFlatDates: [DateFromToday]
 }, {timestamps: true})
 
-export const UserModel = model<IUser>(ModelEnum.Users, UserSchema)
+export const UserModel = model<IUser>(ModelEnum.User, UserSchema)
