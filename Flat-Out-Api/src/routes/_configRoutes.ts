@@ -9,7 +9,7 @@ import env from "../config/_envConfig";
 const _configRoutes = express.Router()
 
 _configRoutes.get('/', (req: Request, res: Response) => {
-  res.status(200).send({msg: {Heroku: true, MongoDB: env.mongo.isDbConnected}})
+  res.status(200).send({msg: {Heroku: true, MongoDB: env.mongo.isDbConnected()}})
 })
 
 export = _configRoutes
