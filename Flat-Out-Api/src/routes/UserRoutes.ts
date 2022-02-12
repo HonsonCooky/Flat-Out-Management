@@ -1,7 +1,7 @@
 import express, {NextFunction, Request, Response} from "express";
-import {userLogin} from "../management/UserManagement";
+import {userLogin, userUpdate} from "../management/UserManagement";
 import {_routeHandler} from "./_routeHandlers";
-import {_registerProtectedDocument} from "../management/_genericManagementFullFunctions";
+import {_deleteDocument, _registerProtectedDocument} from "../management/_genericManagementFullFunctions";
 import {ModelEnum} from "../interfaces/_enums";
 import {extractJWT} from "../middleware/ExtractJWT";
 
@@ -22,14 +22,18 @@ userRoutes.post('/login',
   (req: Request, res: Response, next: NextFunction) =>
     _routeHandler(userLogin(req.body), res, next))
 
+userRoutes.post('/delete',
+  (req: Request, res: Response, next: NextFunction) =>
+    _routeHandler(_deleteDocument(req.body, ModelEnum.USER), res, next))
+
+// UNIQUE -------------------------------------------------------------------------
+
 userRoutes.post('/auto-login', extractJWT,
   (req: Request, res: Response, next: NextFunction) =>
     _routeHandler(userLogin(res.locals.jwt), res, next))
 
-userRoutes.post('/delete')
-
-// UNIQUE -------------------------------------------------------------------------
-
-userRoutes.post('/update')
+userRoutes.post('/update', extractJWT,
+  (req: Request, res: Response, next: NextFunction) =>
+    _routeHandler(userUpdate(res.locals.jwt, req.body), res, next))
 
 export = userRoutes
