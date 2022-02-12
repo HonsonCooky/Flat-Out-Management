@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import env from "../config/_envConfig";
 import _logger from "../config/_logger";
 

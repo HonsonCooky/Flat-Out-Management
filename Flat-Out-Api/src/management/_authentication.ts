@@ -1,10 +1,8 @@
 import bcrypt from "bcryptjs";
 import env from "../config/_envConfig";
 import jwt from "jsonwebtoken";
-import {IFOMProtectedNode} from "../interfaces/_fomObjects";
+import {IFomProtectDoc, JwtAuthContract} from "../interfaces/_fomObjects";
 import _logger from "../config/_logger";
-import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
-import {ModelEnum, RoleEnum} from "../interfaces/_enums";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -21,20 +19,18 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
   return bcrypt.compareSync(nonHashed, hashed)
 }
 
-export function signJWT(doc: IFOMProtectedNode, type: ModelEnum, role?: RoleEnum): string {
-  _logger.info(`Attempting to sign token for "${doc._id}"`)
+export function signJWT(doc: IFomProtectDoc, expiresIn: string = env.token.expirationDays): string {
+  _logger.info(`Attempting to sign token for "${doc.docName}"`)
   if (!doc.uuid) throw new Error(`500: User doesn't have an ID. Can't sign without`)
 
-  let payload: IDocModelAndRole = {
-    doc: doc.uuid,
-    docModel: type,
-    role: role ? role : RoleEnum.UNDEFINED
+  let payload: JwtAuthContract = {
+    uuid: doc.uuid
   }
 
   let options: any = {
     issuer: env.token.issuer,
     algorithm: 'HS256',
-    expiresIn: env.token.expirationDays + 'd'
+    expiresIn: expiresIn + 'd'
   }
 
   return jwt.sign(payload, env.token.secret, options)

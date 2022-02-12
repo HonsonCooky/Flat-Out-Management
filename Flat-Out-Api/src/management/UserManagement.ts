@@ -1,56 +1,37 @@
-import {IRes} from "../interfaces/_fomObjects";
+import {IRes, JwtAuthContract} from "../interfaces/_fomObjects";
 import {ModelEnum} from "../interfaces/_enums";
-import {_middleProtectedUpdate} from "./_genericManagementHalfFunctions";
-import {IUser} from "../schemas/UserSchema";
+import {_middleAuthWithBody, _middleAuthWithJWT} from "./_genericManagementMiddleFunctions";
 import _logger from "../config/_logger";
-import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
-import {getDocFromBody} from "./_genericHelperFunctions";
 import {Types} from "mongoose";
 import {signJWT} from "./_authentication";
+import {IUser} from "../schemas/UserSchema";
+
 
 /**
- * LOGIN PROTECTED DOCUMENT: If a document is protected. Then registering won't
- * @param body {
- *   docName: string,
- *   password: string
- * }
+ * USER LOGIN: Login a user. This is the only instance of directly logging into the service. All other forms of
+ * authentication come from 'connect'.
+ * @see _middleAuthWithBody
  */
-export async function userLogin(body: any): Promise<IRes> {
-  _logger.info(`Attempting user login: Credentials`)
+export async function userLogin(auth: JwtAuthContract | any): Promise<IRes> {
+  _logger.info(`Attempting user login`)
 
-  let doc = await getDocFromBody(body, ModelEnum.USER)
-  doc.uuid = new Types.ObjectId()
-  await doc.save()
-
-  let token = signJWT(doc, ModelEnum.USER)
-
-  _logger.info(`Successfully logged in user: "${doc._id}"`)
-
-  return {
-    msg: `Successfully logged in user: "${doc.uiName}"`,
-    item: doc,
-    token: 'Bearer ' + token
+  let user: IUser
+  if (!auth.uuid && auth.docName && auth.password) {
+    user = await _middleAuthWithBody(auth, ModelEnum.USER) as IUser
+    user.uuid = new Types.ObjectId()
+    await user.save()
   }
-}
+  // Authenticate with JWT
+  else {
+    user = await _middleAuthWithJWT(auth)
+  }
 
+  let token = signJWT(user, auth.expiresIn)
 
-/**
- * USER UPDATE: Update the user
- * @param jwt: JWT Authentication Token of user document
- * @param body {
- *  ..._middleProtectedUpdate,
- *  outOfFlatDates?: Date[]
- * }
- */
-export async function userUpdate(jwt: IDocModelAndRole, body: any): Promise<IRes> {
-  let user: IUser = await _middleProtectedUpdate(jwt, body, ModelEnum.USER) as IUser
-  if (!('outOfFlatDates' in user)) throw new Error(`400: Document id does not refer to a User document`)
-  user.outOfFlatDates = body.outOfFlatDates ? body.outOfFlatDates : user.outOfFlatDates
-
-  await user.save()
-  _logger.info(`Successfully updated user "${user._id}"`)
+  _logger.info(`Successfully logged in user: "${user.docName}"`)
   return {
-    msg: `Successfully updated user "${user.docName}"`,
-    item: user
+    msg: `Successfully logged in user: "${user.docName}"`,
+    item: user,
+    token: 'Bearer ' + token
   }
 }

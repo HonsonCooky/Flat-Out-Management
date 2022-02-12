@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose";
 import {ModelEnum} from "../interfaces/_enums";
-import {IFOMProtectedNode} from "../interfaces/_fomObjects";
+import {IFomProtectDoc} from "../interfaces/_fomObjects";
 import {FOMProtectedNodeSchema} from "./_baseSchemas";
 import {DateFromToday} from "./_schemaTypes";
 
@@ -11,7 +11,7 @@ import {DateFromToday} from "./_schemaTypes";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IGroup extends IFOMProtectedNode {
+export interface IGroup extends IFomProtectDoc {
   groupCalendar: Date[]
 }
 

@@ -3,10 +3,9 @@ import {ILog, LogModel} from "../schemas/LogSchema";
 import env from "./_envConfig";
 
 let localLogs: ILog[] = []
-const logging = false
 
 const log = (message: string, object?: any, logLevel?: LogLevel) => {
-  if (!logging) return
+  if (env.devMode) return
 
   if (env.mongo.isDbConnected()) {
     localLogs.forEach(log => {

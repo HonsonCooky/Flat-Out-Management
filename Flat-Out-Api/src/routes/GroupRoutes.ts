@@ -1,13 +1,7 @@
 import express, {NextFunction, Request, Response} from 'express';
 import {_routeHandler} from './_routeHandlers';
-import {
-  _autoLoginProtectedDocument,
-  _deleteDocument,
-  _registerProtectedDocument,
-} from '../management/_genericManagementFullFunctions';
+import {_registerProtectedDocument,} from '../management/_genericManagementFullFunctions';
 import {ModelEnum} from '../interfaces/_enums';
-import {extractJWT} from '../middleware/ExtractJWT';
-import {groupJoin} from '../management/GroupManagement';
 
 
 /**
@@ -16,26 +10,19 @@ import {groupJoin} from '../management/GroupManagement';
  * Mongoose backend in /management/GroupManagement.ts
  */
 
-const groupRoutes = express.Router();
+const groupRoutes = express.Router()
 
 // GENERIC --------------------------------------------------------------------
 groupRoutes.post('/register',
   (req: Request, res: Response, next: NextFunction) =>
     _routeHandler(_registerProtectedDocument(req.body, ModelEnum.GROUP), res, next))
 
-groupRoutes.post('/auto-login',
-  (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(_autoLoginProtectedDocument(res.locals.jwt, ModelEnum.GROUP), res, next))
+groupRoutes.post('/login')
 
-groupRoutes.post('/delete',
-  (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(_deleteDocument(res.locals.jwt, ModelEnum.GROUP), res, next))
+groupRoutes.post('/delete')
 
 // UNIQUE ---------------------------------------------------------------------
-groupRoutes.post('/join', extractJWT,
-  (req: Request, res: Response, next: NextFunction) =>
-    _routeHandler(groupJoin(res.locals.jwt, req.body), res, next))
-
+groupRoutes.post('/join')
 groupRoutes.post('/join_request')
 groupRoutes.post('/accept_request')
 groupRoutes.post('/update')

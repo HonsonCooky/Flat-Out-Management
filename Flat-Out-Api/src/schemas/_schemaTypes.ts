@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "../interfaces/_enums";
-import {IDocModelAndRole} from "../interfaces/_docRoleAndModel";
 import env from "../config/_envConfig";
 import _logger from "../config/_logger";
+import {IDocModelAndRole} from "../interfaces/_fomObjects";
 
 /**
  * NAME: A required string value that represents the shown title of the document.

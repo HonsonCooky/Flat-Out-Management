@@ -6,6 +6,8 @@ import {connection} from "mongoose";
  * Using dotenv package, get the process.env values.
  */
 
+const devMode = true
+
 config()
 
 if (
@@ -24,10 +26,14 @@ const SERVER_PORT: string = process.env.PORT
 const SERVER_TOKEN_ISSUER: string = process.env.SERVER_TOKEN_ISSUER
 const SERVER_TOKEN_SECRET: string = process.env.SERVER_TOKEN_SECRET
 const SERVER_TOKEN_EXPIRATION_DAYS: string = process.env.SERVER_TOKEN_EXPIRATION_DAYS
+const DATABASE_ENVIRONMENT = devMode ? 'dev-' : 'prod-'
 const DATABASE_ACCESS: string =
   `mongodb+srv://` +
-  `${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}` +
-  `@${process.env.DB_HOST}/${process.env.DB_NAME}` +
+  `${process.env.DB_USERNAME}:` +
+  `${process.env.DB_PASSWORD}@` +
+  `${process.env.DB_HOST}/` +
+  `${DATABASE_ENVIRONMENT}` +
+  `${process.env.DB_NAME}` +
   `?retryWrites=true&w=majority`
 
 
@@ -43,6 +49,7 @@ const fomVersion: string = packageJson.version
  */
 
 export default {
+  devMode,
   version: fomVersion,
   express: {
     port: SERVER_PORT,
