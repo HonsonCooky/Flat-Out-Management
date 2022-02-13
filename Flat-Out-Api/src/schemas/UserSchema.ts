@@ -1,8 +1,8 @@
 import {model, Schema} from "mongoose";
 import {DateFromToday} from "./_schemaTypes";
 import {ModelEnum} from "../interfaces/_enums";
-import {IFomProtectDoc} from "../interfaces/_fomObjects";
-import {FOMProtectedNodeSchema} from "./_baseSchemas";
+import {IFomController} from "../interfaces/_fomObjects";
+import {FomControllerSchema} from "./_baseSchemas";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:
@@ -11,12 +11,12 @@ import {FOMProtectedNodeSchema} from "./_baseSchemas";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IUser extends IFomProtectDoc {
+export interface IUser extends IFomController {
   outOfFlatDates: Date[]
 }
 
 const UserSchema = new Schema<IUser>({
-  ...FOMProtectedNodeSchema,
+  ...FomControllerSchema,
   outOfFlatDates: [DateFromToday]
 }, {timestamps: true})
 

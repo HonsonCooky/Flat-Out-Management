@@ -8,43 +8,54 @@ import {JwtPayload} from "jsonwebtoken"
 export interface IDocModelAndRole {
   doc: Types.ObjectId,
   docModel: ModelEnum
-  role: RoleEnum
+  role: RoleEnum,
+  secret: string,
 }
 
 /**
  * FOM OBJECT: A generic object which can be either a FOMNode or FOMProtectedNode
  */
-export type IFOMObject = IFomDoc | IFomProtectDoc
+export type IFomObject = IFomController | IFomCollective;
 
 /**
- * FOM COLLECTION DOCUMENT: A node object with links to other objects.
+ * FOM DOC: Every document in the MongoDB database will have these outlining features
  */
-export interface IFomDoc extends Document<Types.ObjectId> {
+interface IFomDoc extends Document<Types.ObjectId> {
   docName: string,
+  password: string, // Hidden
   uiName: string
   associations: IDocModelAndRole[]
   fomVersion: string,
   createdAt: Date,
   updatedAt: Date,
-  _id: Types.ObjectId,
+  _id: Types.ObjectId, // Hidden
   _doc: any,
 }
 
 /**
- * FOM PROTECTED COLLECTION Node: A protected node object, with links to other objects and some authorization to
- * view.
+ * FOM CONTROLLER: A controller has the authority to enact some action. JWT will be associated to these documents
+ * (hence the dynamic UUID).
  */
-export interface IFomProtectDoc extends IFomDoc {
-  uuid: Types.ObjectId,
-  password: string,
+export interface IFomController extends IFomDoc {
+  uuid: Types.ObjectId // Hidden
 }
 
 /**
- * BODY AUTH CONTRACT: If the body of a request is authenticating something, then it needs a docName and a password.
+ * FOM COLLECTIVE: A collective is simply a collection of information. Each collective is given a password, however,
+ * some passwords may be transitive (nested documents). Read permissions are enabled to all documents with an
+ * association higher than RoleEnum.JOIN_REQUEST to this document. Write permissions are enabled to all IFomControllers
+ * with AT LEAST 'authLevel' of association.
+ */
+export interface IFomCollective extends IFomDoc {
+  authLevel: RoleEnum // Hidden
+}
+
+/**
+ * BODY AUTH CONTRACT: Used for cases where a docName,
  */
 export interface BodyAuthContract {
-  docName: string,
-  password: string
+  docPass?: { docName: string, password: string }
+  dmr?: IDocModelAndRole
 
   [key: string]: any,
 }
@@ -62,6 +73,6 @@ export interface JwtAuthContract extends JwtPayload {
  */
 export type IRes = {
   msg: string,
-  item?: IFOMObject,
+  item?: IFomObject,
   token?: string
 }

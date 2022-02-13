@@ -16,19 +16,18 @@ function jsonError(msg: string): IRes {
 const known400ErrorMessages = [
   '400',
   'duplicate',
-  'validation failed',
-  'Cast to ObjectId failed'
+  'validation failed'
 ]
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
   let msg: string = err.message
 
-  _logger.error(msg, err)
-
   for (let i = 0; i < known400ErrorMessages.length; i++) if (msg.includes(known400ErrorMessages[i])) {
+    _logger.warn(msg, err)
     res.status(400).send(jsonError(msg.replace(/400: /g, '')))
     return
   }
 
+  _logger.error(msg, err)
   res.status(500).send(jsonError(msg))
 }

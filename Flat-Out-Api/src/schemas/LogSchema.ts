@@ -17,4 +17,4 @@ const LogSchema = new Schema<ILog>({
   object: {type: String}
 }, {timestamps: true})
 
-export const LogModel = model<ILog>("Logs", LogSchema)
+export const LogModel = model<ILog>("_logs", LogSchema)

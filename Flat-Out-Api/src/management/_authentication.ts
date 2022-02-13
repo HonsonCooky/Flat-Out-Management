@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import env from "../config/_envConfig";
 import jwt from "jsonwebtoken";
-import {IFomProtectDoc, JwtAuthContract} from "../interfaces/_fomObjects";
+import {IFomController, JwtAuthContract} from "../interfaces/_fomObjects";
 import _logger from "../config/_logger";
 
 
@@ -19,9 +19,9 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
   return bcrypt.compareSync(nonHashed, hashed)
 }
 
-export function signJWT(doc: IFomProtectDoc, expiresIn: string = env.token.expirationDays): string {
+export function signJWT(doc: IFomController, expiresIn: string = env.token.expirationDays): string {
   _logger.info(`Attempting to sign token for "${doc.docName}"`)
-  if (!doc.uuid) throw new Error(`500: User doesn't have an ID. Can't sign without`)
+  if (!doc.uuid) throw new Error(`500: User doesn't have an UUID. Can't sign without`)
 
   let payload: JwtAuthContract = {
     uuid: doc.uuid
@@ -35,9 +35,3 @@ export function signJWT(doc: IFomProtectDoc, expiresIn: string = env.token.expir
 
   return jwt.sign(payload, env.token.secret, options)
 }
-
-/** -----------------------------------------------------------------------------------------------------------------
- * VALIDATION:
- * Authentication functions to ensure that actions taken are done in the structured order intended by the API.
- ----------------------------------------------------------------------------------------------------------------- */
-

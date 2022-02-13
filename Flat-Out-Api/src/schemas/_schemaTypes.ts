@@ -67,26 +67,34 @@ export const DateFromToday: SchemaDefinitionProperty<Date> = {
 }
 
 /**
- * DEFAULT TRUE: A boolean value, where it's true by default (without interaction)
+ * DEFAULT FALSE: A boolean field which cannot be undefined. It defaults to FALSE
  */
-export const DefaultTrue: SchemaDefinitionProperty<boolean> = {
+export const DefaultFalse: SchemaDefinitionProperty<Boolean> = {
   type: Boolean,
-  default: true,
+  default: false
+}
+
+/**
+ * DEFAULT TRUE: A boolean field which cannot be undefined. It defaults to TRUE
+ */
+export const DefaultTrue: SchemaDefinitionProperty<Boolean> = {
+  type: Boolean,
+  default: true
 }
 
 /**
  * ID: A fancy Types.ObjectId wrapper
  */
-export const Id: SchemaDefinitionProperty<Types.ObjectId> = {
+export const UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Types.ObjectId,
-  required: [true, `Missing 'Id'`],
+  required: [true, `Missing 'UUID'`],
   sparse: true,
   unique: true,
 }
 
 const IdRef: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Types.ObjectId,
-  required: [true, `Missing 'Id'`],
+  required: [true, `Missing Ref 'Id'`],
   sparse: true,
   unique: true,
   ref: (doc: IDocModelAndRole) => doc.docModel
@@ -98,7 +106,7 @@ const IdRef: SchemaDefinitionProperty<Types.ObjectId> = {
 export const RoleType: SchemaDefinitionProperty<RoleEnum> = {
   type: String,
   enum: RoleEnum,
-  default: RoleEnum.UNDEFINED
+  required: [true, `Missing 'RoleType'`]
 }
 
 /**
@@ -107,7 +115,7 @@ export const RoleType: SchemaDefinitionProperty<RoleEnum> = {
 export const ModelType: SchemaDefinitionProperty<ModelEnum> = {
   type: String,
   enum: ModelEnum,
-  required: [true, `Missing 'Dynamic Reference'`]
+  required: [true, `Missing 'ModelType'`]
 }
 
 /**
@@ -117,5 +125,6 @@ export const ModelType: SchemaDefinitionProperty<ModelEnum> = {
 export const DocModelAndRoleType: SchemaDefinitionProperty<IDocModelAndRole> = {
   doc: IdRef,
   docModel: ModelType,
-  role: RoleType
+  role: RoleType,
+  secret: String
 }

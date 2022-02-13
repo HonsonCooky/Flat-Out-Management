@@ -1,14 +1,19 @@
-import {DocModelAndRoleType, DocName, Id, Password, UiName, Version} from "./_schemaTypes";
+import {DocModelAndRoleType, DocName, Password, RoleType, UiName, UUID, Version} from "./_schemaTypes";
 
-export const FOMNodeSchema = {
-  docName: DocName,
+const FomBaseSchema = {
   uiName: UiName,
-  fomVersion: Version,
   associations: [DocModelAndRoleType],
+  fomVersion: Version,
 }
 
-export const FOMProtectedNodeSchema = {
-  ...FOMNodeSchema,
-  uuid: Id,
-  password: Password
+export const FomControllerSchema = {
+  ...FomBaseSchema,
+  docName: DocName,
+  password: Password,
+  uuid: UUID
+}
+
+export const FomCollectiveSchema = {
+  ...FomBaseSchema,
+  authLevel: RoleType
 }
