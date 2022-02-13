@@ -1,8 +1,8 @@
 import {model, Schema} from "mongoose";
-import {DateFromToday} from "./_schemaTypes";
-import {ModelEnum} from "../interfaces/_enums";
-import {IFomController} from "../interfaces/_fomObjects";
-import {FomControllerSchema} from "./_baseSchemas";
+import {DateFromToday} from "../interfaces/SchemaTypes";
+import {ModelEnum} from "../interfaces/GlobalEnums";
+import {IFomController} from "../interfaces/FomObjects";
+import {FomControllerSchema} from "./BaseSchemas";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * USER SCHEMA:

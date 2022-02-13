@@ -1,6 +1,6 @@
 import {ErrorRequestHandler} from "express";
-import {IRes} from "../interfaces/_fomObjects";
-import _logger from "../config/_logger";
+import {IRes} from "../interfaces/FomObjects";
+import _logger from "../config/Logger";
 
 
 /** -----------------------------------------------------------------------------------------------------------------

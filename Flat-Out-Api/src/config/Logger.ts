@@ -1,6 +1,6 @@
-import {LogLevel} from "../interfaces/_enums";
+import {LogLevel} from "../interfaces/GlobalEnums";
 import {ILog, LogModel} from "../schemas/LogSchema";
-import env from "./_envConfig";
+import env from "./EnvConfig";
 
 let localLogs: ILog[] = []
 

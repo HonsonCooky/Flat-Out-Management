@@ -1,5 +1,5 @@
-import {_startMongo} from "./config/_startMongo";
-import {_startApi} from "./config/_startApi";
+import {startMongo} from "./config/StartMongo";
+import {startApi} from "./config/StartApi";
 
-_startMongo()
-_startApi()
+startMongo()
+startApi()

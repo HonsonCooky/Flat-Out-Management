@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import env from "../config/_envConfig";
+import env from "../config/EnvConfig";
 import jwt from "jsonwebtoken";
-import {IFomController, JwtAuthContract} from "../interfaces/_fomObjects";
-import _logger from "../config/_logger";
+import {IFomController, JwtAuthContract} from "../interfaces/FomObjects";
+import _logger from "../config/Logger";
 
 
 /** -----------------------------------------------------------------------------------------------------------------
@@ -20,8 +20,7 @@ export function compareHashes(nonHashed: string, hashed: string): boolean {
 }
 
 export function signJWT(doc: IFomController, expiresIn: string = env.token.expirationDays): string {
-  _logger.info(`Attempting to sign token for "${doc.docName}"`)
-  if (!doc.uuid) throw new Error(`500: User doesn't have an UUID. Can't sign without`)
+  if (!doc.uuid) throw new Error(`500: Doc doesn't have an UUID. Can't sign without`)
 
   let payload: JwtAuthContract = {
     uuid: doc.uuid
@@ -33,5 +32,6 @@ export function signJWT(doc: IFomController, expiresIn: string = env.token.expir
     expiresIn: expiresIn + 'd'
   }
 
+  _logger.info(`Attempting to sign token for "${doc.docName}"`)
   return jwt.sign(payload, env.token.secret, options)
 }

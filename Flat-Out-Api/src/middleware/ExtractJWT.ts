@@ -1,10 +1,11 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
-import env from "../config/_envConfig";
-import _logger from "../config/_logger";
+import env from "../config/EnvConfig";
+import _logger from "../config/Logger";
 
-export function extractJWT(req: Request, res: Response, next: NextFunction) {
+export = (req: Request, res: Response, next: NextFunction) => {
   _logger.info('Validating Token')
+
   let token = req.headers.authorization?.split(' ')[1]
   if (!token) throw new Error(`400: Unauthorized access to command`)
 

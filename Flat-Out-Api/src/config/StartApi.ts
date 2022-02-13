@@ -1,11 +1,11 @@
 import express from "express";
 import helmet from "helmet";
-import configRoutes from "../routes/ConfigRoutes";
+import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
-import env from "./_envConfig";
-import _logger from "./_logger";
+import env from "./EnvConfig";
+import _logger from "./Logger";
 
-export function _startApi() {
+export function startApi() {
   let webAPI = express()
 
   // middleware BEFORE requests
@@ -13,7 +13,7 @@ export function _startApi() {
   webAPI.use(express.json())
 
   // Initialize Routes
-  webAPI.use('', configRoutes)
+  webAPI.use('', baseRoute)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

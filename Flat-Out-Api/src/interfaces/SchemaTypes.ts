@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
-import {ModelEnum, RoleEnum} from "../interfaces/_enums";
-import env from "../config/_envConfig";
-import _logger from "../config/_logger";
-import {IDocModelAndRole} from "../interfaces/_fomObjects";
+import {ModelEnum, RoleEnum} from "./GlobalEnums";
+import env from "../config/EnvConfig";
+import _logger from "../config/Logger";
+import {IDocModelAndRole} from "./FomObjects";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
@@ -80,6 +80,24 @@ export const DefaultFalse: SchemaDefinitionProperty<Boolean> = {
 export const DefaultTrue: SchemaDefinitionProperty<Boolean> = {
   type: Boolean,
   default: true
+}
+
+/**
+ * DEFAULT ADMIN: A RoleEnum with a default value of ADMIN
+ */
+export const DefaultAdmin: SchemaDefinitionProperty<RoleEnum> = {
+  type: String,
+  enum: RoleEnum,
+  default: RoleEnum.ADMIN
+}
+
+/**
+ * DEFAULT FLATMATE: A RoleEnum with a default value of FLATMATE
+ */
+export const DefaultFlatmate: SchemaDefinitionProperty<RoleEnum> = {
+  type: String,
+  enum: RoleEnum,
+  default: RoleEnum.FLATMATE
 }
 
 /**
