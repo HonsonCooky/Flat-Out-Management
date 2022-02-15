@@ -19,13 +19,13 @@ export const FomDocSchema: SchemaDefinition<IFomDoc> = {
 }
 
 export const FomNodeSchema: SchemaDefinition<IFomNode> = {
-  ...FomDocSchema,
   docName: DocName,
   password: Password,
   associations: [DocModelAndRoleType],
+  ...FomDocSchema,
 }
 
 export const FomControllerSchema: SchemaDefinition<IFomController> = {
-  ...FomDocSchema,
-  uuid: UUID
+  uuid: UUID,
+  ...FomNodeSchema
 }

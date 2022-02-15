@@ -1,14 +1,14 @@
-import {IRes, JwtAuthContract} from "../interfaces/FomObjects";
+import {IRes} from "../interfaces/FomObjects";
 import {NextFunction, Request, RequestHandler, Response} from "express";
 
 /**
  * ROUTE HANDLER: Manage the execution and try catching of all functions being called from a URL call.
  * @param fn
  */
-export function routeHandler(fn: (body: any, jwt?: JwtAuthContract) => Promise<IRes>): RequestHandler {
+export function routeHandler(fn: (req: Request, res: Response) => Promise<IRes>): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
-    fn(req.body, res.locals.jwt)
-      .then(async (iRes: IRes) => res.status(200).send(await sanitizeRes(iRes)))
+    fn(req, res)
+      .then(async (iRes: IRes) => res.status(200).send(sanitizeRes(iRes)))
       .catch((e: any) => next(e))
   }
 }
@@ -18,7 +18,7 @@ export function routeHandler(fn: (body: any, jwt?: JwtAuthContract) => Promise<I
  * necessary to parse back.
  * @param iRes
  */
-async function sanitizeRes(iRes: IRes): Promise<IRes> {
+function sanitizeRes(iRes: IRes): IRes {
   if (!iRes.item) return iRes
   let {_id, uuid, password, readAuthLevel, writeAuthLevel, ...rest} = iRes.item._doc
   return {
