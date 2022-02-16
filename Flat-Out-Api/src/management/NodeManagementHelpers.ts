@@ -1,7 +1,7 @@
 import {ModelEnum} from "../interfaces/GlobalEnums";
 import {IDocModelAndRole, IFomNode} from "../interfaces/FomObjects";
 import {compareHashes, saltAndHash} from "./AuthFuncs";
-import {docRegister} from "./DocManagementHelpers";
+import {docRegister, docUpdate} from "./DocManagementHelpers";
 import {models} from "mongoose";
 
 /**
@@ -31,4 +31,31 @@ export async function nodeAuth(type: ModelEnum, body: IDocModelAndRole | any): P
     throw new Error(`400: Unable to authenticate ${type}`)
 
   return doc
+}
+
+/**
+ * NODE UPDATE: Update the contents of a node.
+ * @param doc
+ * @param body
+ */
+export function nodeUpdate(doc: IFomNode, body: IDocModelAndRole | any): void {
+  docUpdate(doc, body)
+  doc.docName = body.docName ?? doc.docName
+  doc.password = body.password ? saltAndHash(body.password) : doc.password
+}
+
+/**
+ * NODE DELETE: Delete a node, disconnecting from all associations.
+ * @param doc
+ */
+export async function nodeDelete(doc: IFomNode): Promise<void> {
+  for (let dmr of doc.associations) {
+    let association: IFomNode | null = await models[dmr.docModel].findOne({_id: dmr.doc})
+    if (!association) continue
+
+    association.associations = association.associations.filter((dmr: IDocModelAndRole) => !doc._id.equals(dmr.doc))
+    await association.save()
+  }
+
+  doc.deleteOne()
 }

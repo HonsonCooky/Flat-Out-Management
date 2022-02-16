@@ -3,6 +3,11 @@ import {IFomDoc} from "../interfaces/FomObjects";
 import {models} from "mongoose";
 import {ModelEnum} from "../interfaces/GlobalEnums";
 
+/**
+ * DOC REGISTER: Create a doc
+ * @param type
+ * @param body
+ */
 export function docRegister(type: ModelEnum, body: any): IFomDoc {
   return new models[type]({
     uiName: body.uiName ?? body.docName,
@@ -10,4 +15,16 @@ export function docRegister(type: ModelEnum, body: any): IFomDoc {
     readAuthLevel: body.readAuthLevel,
     writeAuthLevel: body.writeAuthLevel
   })
+}
+
+/**
+ * DOC UPDATE: Update the potential contents of a doc
+ * @param doc
+ * @param body
+ */
+export function docUpdate(doc: IFomDoc, body: any): void {
+  doc.uiName = body.uiName ?? doc.uiName
+  doc.fomVersion = envConfig.version
+  doc.readAuthLevel = body.readAuthLevel ?? doc.readAuthLevel
+  doc.writeAuthLevel = body.writeAuthLevel ?? doc.writeAuthLevel
 }

@@ -1,7 +1,7 @@
 import {ModelEnum} from "../interfaces/GlobalEnums";
-import {IFomController} from "../interfaces/FomObjects";
+import {IDocModelAndRole, IFomController} from "../interfaces/FomObjects";
 import {models, Types} from "mongoose";
-import {nodeAuth, nodeRegister} from "./NodeManagementHelpers";
+import {nodeAuth, nodeDelete, nodeRegister, nodeUpdate} from "./NodeManagementHelpers";
 
 /**
  * CONTROLLER REGISTER: Create a controller document.
@@ -31,4 +31,22 @@ export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomCo
   }
 
   return doc
+}
+
+/**
+ * CONTROLLER UPDATE: Update the contents of a controller. (Currently a wrapper for node update)
+ * @param doc
+ * @param body
+ */
+export function controllerUpdate(doc: IFomController, body: IDocModelAndRole | any): void {
+  nodeUpdate(doc, body)
+}
+
+
+/**
+ * CONTROLLER DELETE: Delete the contents of a controller. (Currently a wrapper for node delete)
+ * @param doc
+ */
+export async function controllerDelete(doc: IFomController): Promise<void> {
+  await nodeDelete(doc)
 }
