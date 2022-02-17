@@ -1,7 +1,7 @@
 import {ModelEnum} from "../interfaces/GlobalEnums";
 import {IDocModelAndRole, IFomNode} from "../interfaces/FomObjects";
-import {compareHashes, saltAndHash} from "./AuthFuncs";
-import {docRegister, docUpdate} from "./DocManagementHelpers";
+import {compareHashes, saltAndHash} from "./0.AuthFuncs";
+import {docRegister, docUpdate} from "./1.DocManagement";
 import {models} from "mongoose";
 
 /**

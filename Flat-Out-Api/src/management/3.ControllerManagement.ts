@@ -1,7 +1,7 @@
 import {ModelEnum} from "../interfaces/GlobalEnums";
-import {IDocModelAndRole, IFomController} from "../interfaces/FomObjects";
+import {IDocModelAndRole, IFomController, IFomNode} from "../interfaces/FomObjects";
 import {models, Types} from "mongoose";
-import {nodeAuth, nodeDelete, nodeRegister, nodeUpdate} from "./NodeManagementHelpers";
+import {nodeAuth, nodeDelete, nodeRegister, nodeUpdate} from "./2.NodeManagement";
 
 /**
  * CONTROLLER REGISTER: Create a controller document.
@@ -40,6 +40,20 @@ export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomCo
  */
 export function controllerUpdate(doc: IFomController, body: IDocModelAndRole | any): void {
   nodeUpdate(doc, body)
+}
+
+/**
+ * CONTROLLER CONNECT: Connect a controller to some other document. A connection gives a controller some level of
+ * authorization
+ * RULES:
+ *    1) Controllers cannot connect to other controllers. The connection between a controller and other document,
+ *    gives authority to the controller over said document
+ * @param doc
+ * @param other
+ * @param body
+ */
+export function controllerConnect(doc: IFomController, other: IFomNode, body: any): any {
+
 }
 
 

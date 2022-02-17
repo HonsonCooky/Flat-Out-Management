@@ -28,3 +28,12 @@ export function docUpdate(doc: IFomDoc, body: any): void {
   doc.readAuthLevel = body.readAuthLevel ?? doc.readAuthLevel
   doc.writeAuthLevel = body.writeAuthLevel ?? doc.writeAuthLevel
 }
+
+/**
+ * STRING TO MODEL: Convert a string to a ModelEnum.
+ * @param str
+ */
+export function strToModel(str: String): ModelEnum {
+  if (!Object.values(ModelEnum).includes(<ModelEnum>str)) throw new Error(`400: Invalid model type provided`)
+  return <ModelEnum>str
+}
