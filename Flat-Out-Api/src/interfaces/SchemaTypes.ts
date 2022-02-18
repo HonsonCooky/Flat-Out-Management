@@ -144,5 +144,4 @@ export const DocModelAndRoleType: SchemaDefinitionProperty<IDocModelAndRole> = {
   doc: IdRef,
   docModel: ModelType,
   role: RoleType,
-  secret: String
 }

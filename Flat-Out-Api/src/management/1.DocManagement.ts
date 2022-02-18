@@ -1,7 +1,7 @@
 import envConfig from "../config/EnvConfig";
 import {IFomDoc} from "../interfaces/FomObjects";
 import {models} from "mongoose";
-import {ModelEnum} from "../interfaces/GlobalEnums";
+import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
 
 /**
  * DOC REGISTER: Create a doc
@@ -36,4 +36,13 @@ export function docUpdate(doc: IFomDoc, body: any): void {
 export function strToModel(str: String): ModelEnum {
   if (!Object.values(ModelEnum).includes(<ModelEnum>str)) throw new Error(`400: Invalid model type provided`)
   return <ModelEnum>str
+}
+
+/**
+ * STRING TO ROLE: Convert a string to a RoleEnum.
+ * @param str
+ */
+export function strToRole(str: String): RoleEnum {
+  if (!Object.values(RoleEnum).includes(<RoleEnum>str)) throw new Error(`400: Invalid role type provided`)
+  return <RoleEnum>str
 }

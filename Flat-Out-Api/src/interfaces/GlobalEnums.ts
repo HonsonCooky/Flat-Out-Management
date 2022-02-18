@@ -16,7 +16,7 @@ export enum RoleEnum {
   FLATMATE = 'flatmate',
   ASSOCIATE = 'associate',
   JOIN_REQUEST = 'joinRequest',
-  UNDEFINED = 'undefined'
+  NULL = 'null'
 }
 
 /**

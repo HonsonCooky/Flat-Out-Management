@@ -1,10 +1,16 @@
-import {IFomObject, IRes} from "../interfaces/FomObjects";
+import {IRes} from "../interfaces/FomObjects";
 import {IUser} from "../schemas/UserSchema";
-import {controllerAuth, controllerDelete, controllerRegister, controllerUpdate} from "./3.ControllerManagement";
+import {
+  controllerAuth,
+  controllerConnect,
+  controllerDelete,
+  controllerPopulate,
+  controllerRegister,
+  controllerUpdate
+} from "./3.ControllerManagement";
 import {ModelEnum} from "../interfaces/GlobalEnums";
 import {Request, Response} from "express";
 import {signJWT} from "./0.AuthFuncs";
-import {models} from "mongoose";
 
 /**
  * USER REGISTER: Create a USER document.
@@ -57,20 +63,25 @@ export async function userUpdate(req: Request, res: Response): Promise<IRes> {
  * @param res
  */
 export async function userConnect(req: Request, res: Response): Promise<IRes> {
-  if (!req.params.type)
-    throw new Error(`400: Unable to connect to document without model`)
-
-  let type = req.params.type
-  if (!Object.values(ModelEnum).includes(<ModelEnum>type.toLowerCase()))
-    throw new Error(`400: Unable to find model ${type}`)
-
-  let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
-
-  let doc: IFomObject | null = await models[type].findOne({_id: req.body.doc})
-
+  await controllerConnect(ModelEnum.USER, req, res)
 
   return {
-    msg: `Successfully connected user ${user.docName} to `
+    msg: `Successfully connected user to document`
+  }
+}
+
+/**
+ * USER POPULATE: This EXPENSIVE function will return all the information from the server, that a client will need.
+ * @param req
+ * @param res
+ */
+export async function userPopulate(req: Request, res: Response): Promise<IRes> {
+  let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
+  let pop: any = await controllerPopulate(user)
+
+  return {
+    msg: `Successfully populated user`,
+    item: pop
   }
 }
 

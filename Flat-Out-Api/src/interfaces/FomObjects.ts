@@ -8,14 +8,13 @@ import {JwtPayload} from "jsonwebtoken"
 export interface IDocModelAndRole {
   doc: Types.ObjectId,
   docModel: ModelEnum
-  role: RoleEnum,
-  secret: string,
+  role: RoleEnum
 }
 
 /**
  * FOM OBJECT: A generic object which can be either a FOMNode or FOMProtectedNode
  */
-export type IFomObject = IFomController | IFomDoc;
+export type IFomObject = IFomController | IFomNode | IFomDoc;
 
 /**
  * FOM DOC: Every document in the MongoDB database will have these outlining features
