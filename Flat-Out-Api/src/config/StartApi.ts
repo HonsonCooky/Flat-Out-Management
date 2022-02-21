@@ -5,6 +5,7 @@ import {errorHandler} from "../middleware/ErrorHandling";
 import env from "./EnvConfig";
 import _logger from "./Logger";
 import userRoutes from "../routes/UserRoutes";
+import groupRoutes from "../routes/GroupRoutes";
 
 export function startApi() {
   let webAPI = express()
@@ -16,6 +17,7 @@ export function startApi() {
   // Initialize Routes
   webAPI.use('', baseRoute)
   webAPI.use('/user', userRoutes)
+  webAPI.use('/group', groupRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

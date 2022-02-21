@@ -2,7 +2,7 @@ import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "./GlobalEnums";
 import env from "../config/EnvConfig";
 import _logger from "../config/Logger";
-import {IDocModelAndRole} from "./FomObjects";
+import {ICache, ICacheObject, IDocModelAndRole} from "./FomObjects";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
@@ -144,4 +144,18 @@ export const DocModelAndRoleType: SchemaDefinitionProperty<IDocModelAndRole> = {
   doc: IdRef,
   docModel: ModelType,
   role: RoleType,
+}
+
+/**
+ * CACHE: Removes the need to populate unnecessarily
+ */
+const CacheObjectType: SchemaDefinitionProperty<ICacheObject> = {
+  obj: Object,
+  objModel: ModelType,
+  role: RoleType,
+}
+
+export const CacheType: SchemaDefinitionProperty<ICache> = {
+  cache: [CacheObjectType],
+  requiresUpdate: DefaultFalse,
 }

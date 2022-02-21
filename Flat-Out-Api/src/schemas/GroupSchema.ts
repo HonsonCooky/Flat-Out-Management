@@ -1,8 +1,8 @@
 import {model, Schema} from "mongoose";
 import {ModelEnum} from "../interfaces/GlobalEnums";
 import {DateFromToday} from "../interfaces/SchemaTypes";
-import {IFomNode} from "../interfaces/FomObjects";
-import {FomNodeSchema} from "./BaseSchemas";
+import {IFomComponent} from "../interfaces/FomObjects";
+import {FomComponentSchema} from "./BaseSchemas";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -11,12 +11,12 @@ import {FomNodeSchema} from "./BaseSchemas";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface IGroup extends IFomNode {
+export interface IGroup extends IFomComponent {
   groupCalendar: Date[]
 }
 
 const GroupSchema = new Schema<IGroup>({
-  ...FomNodeSchema,
+  ...FomComponentSchema,
   groupCalendar: [DateFromToday]
 }, {timestamps: true})
 

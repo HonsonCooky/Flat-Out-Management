@@ -8,7 +8,7 @@ import {
   controllerRegister,
   controllerUpdate
 } from "./3.ControllerManagement";
-import {ModelEnum} from "../interfaces/GlobalEnums";
+import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
 import {Request, Response} from "express";
 import {signJWT} from "./0.AuthFuncs";
 
@@ -31,8 +31,8 @@ export async function userRegister(req: Request, res: Response): Promise<IRes> {
  * @param res
  */
 export async function userAuth(req: Request, res: Response): Promise<IRes> {
-  let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt ?? req.body) as IUser
-  let token: string | undefined = !res.locals.jwt ? 'Bearer ' + signJWT(user, req.body.expiresIn) : undefined
+  let user: IUser = await controllerAuth(ModelEnum.USER, req.body) as IUser
+  let token: string = signJWT(user.uuid, req.body.expiresIn)
 
   return {
     msg: `Successfully authenticated user ${user.docName}`,
@@ -48,7 +48,7 @@ export async function userAuth(req: Request, res: Response): Promise<IRes> {
  */
 export async function userUpdate(req: Request, res: Response): Promise<IRes> {
   let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
-  controllerUpdate(user, req.body)
+  await controllerUpdate(user, req.body)
   await user.save()
 
   return {
@@ -64,9 +64,11 @@ export async function userUpdate(req: Request, res: Response): Promise<IRes> {
  */
 export async function userConnect(req: Request, res: Response): Promise<IRes> {
   await controllerConnect(ModelEnum.USER, req, res)
+  let token = req.body.authLevel != RoleEnum.JOIN_REQUEST ? signJWT(req.body.password) : undefined
 
   return {
-    msg: `Successfully connected user to document`
+    msg: `Successfully connected user to document`,
+    token
   }
 }
 
@@ -77,11 +79,11 @@ export async function userConnect(req: Request, res: Response): Promise<IRes> {
  */
 export async function userPopulate(req: Request, res: Response): Promise<IRes> {
   let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
-  let pop: any = await controllerPopulate(user)
+  await controllerPopulate(user)
 
   return {
     msg: `Successfully populated user`,
-    item: pop
+    item: user
   }
 }
 

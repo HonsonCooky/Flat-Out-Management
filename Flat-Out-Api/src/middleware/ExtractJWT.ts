@@ -6,7 +6,7 @@ import _logger from "../config/Logger";
 export = (req: Request, res: Response, next: NextFunction) => {
   _logger.info('Validating Token')
 
-  let token = req.headers.authorization?.split(' ')[1]
+  let token = req.headers?.authorization?.split(' ')[1]
   if (!token) {
     next()
     return

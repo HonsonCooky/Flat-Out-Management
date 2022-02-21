@@ -1,8 +1,8 @@
 import {model, Schema, SchemaDefinitionProperty} from "mongoose";
 import {ModelEnum} from "../interfaces/GlobalEnums";
-import {IDocModelAndRole, IFomDoc} from "../interfaces/FomObjects";
+import {IDocModelAndRole, IFomComponent} from "../interfaces/FomObjects";
 import {DateFromToday, DocModelAndRoleType} from "../interfaces/SchemaTypes";
-import {FomDocSchema} from "./BaseSchemas";
+import {FomComponentSchema} from "./BaseSchemas";
 
 /** ------------------------------------------------------------------------------------------------------------------
  * ROW SCHEMA: Tables should be an SQL thing, but this is the best way of storing dynamic list data. The row contains
@@ -21,14 +21,14 @@ const RowSchema = (type: SchemaDefinitionProperty = String || DocModelAndRoleTyp
  * TABLE SCHEMA: The List Schema is a front for an array of items. Items (
  --------------------------------------------------------------------------------------------------------------- */
 
-export interface ITable extends IFomDoc {
+export interface ITable extends IFomComponent {
   numOfCols: number,
   titleRow: IRow,
   contentRows: IRow[],
 }
 
 const TableSchema = new Schema<ITable>({
-  ...FomDocSchema,
+  ...FomComponentSchema,
   numOfCols: {type: Number, required: [true, `Missing number of columns`]},
   titleRow: RowSchema(String),
   contentRows: [RowSchema()]

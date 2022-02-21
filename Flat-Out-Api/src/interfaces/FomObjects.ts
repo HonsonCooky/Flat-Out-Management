@@ -12,18 +12,38 @@ export interface IDocModelAndRole {
 }
 
 /**
+ * CACHE OBJECT: A cached object (linked to the user)
+ */
+export interface ICacheObject {
+  obj: Object,
+  objModel: ModelEnum,
+  role: RoleEnum,
+}
+
+/**
+ * CACHE: The cache linking to some ICacheObjects
+ */
+export interface ICache {
+  cache: ICacheObject[],
+  requiresUpdate: boolean
+}
+
+/**
  * FOM OBJECT: A generic object which can be either a FOMNode or FOMProtectedNode
  */
-export type IFomObject = IFomController | IFomNode | IFomDoc;
+export type IFomObject = IFomController | IFomComponent;
 
 /**
  * FOM DOC: Every document in the MongoDB database will have these outlining features
  */
-export interface IFomDoc extends Document<Types.ObjectId> {
+export interface IFomComponent extends Document<Types.ObjectId> {
   _id: Types.ObjectId, // Hidden
   _doc: any,
+  docName: string,
+  password: string, // Hidden
   uiName: string
   fomVersion: string,
+  associations: IDocModelAndRole[],
   readAuthLevel: RoleEnum, // Hidden
   writeAuthLevel: RoleEnum, // Hidden
   createdAt: Date,
@@ -31,28 +51,19 @@ export interface IFomDoc extends Document<Types.ObjectId> {
 }
 
 /**
- * FOM NODE: A node is a middle document that no ONE client controls, but it creates a common link between multiple
- * controllers and documents.
- */
-export interface IFomNode extends IFomDoc {
-  docName: string, // Hidden (kind of)
-  password: string, // Hidden
-  associations: IDocModelAndRole[]
-}
-
-/**
  * FOM CONTROLLER: A controller is a document that maintains a client's information. It enables authentication and
  * verification of actions.
  */
-export interface IFomController extends IFomNode {
+export interface IFomController extends IFomComponent {
   uuid: Types.ObjectId // Hidden
+  cache: ICache,
 }
 
 /**
  * JWT CONTRACT: A jwt token can be extracted to this contract. It must also be signed using this contract.
  */
 export interface JwtAuthContract extends JwtPayload {
-  uuid: Types.ObjectId
+  uuid: any
 }
 
 /**

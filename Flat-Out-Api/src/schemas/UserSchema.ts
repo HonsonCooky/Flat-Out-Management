@@ -12,7 +12,7 @@ import {FomControllerSchema} from "./BaseSchemas";
  --------------------------------------------------------------------------------------------------------------- */
 
 export interface IUser extends IFomController {
-  outOfFlatDates: Date[]
+  outOfFlatDates: Date[],
 }
 
 const UserSchema = new Schema<IUser>({

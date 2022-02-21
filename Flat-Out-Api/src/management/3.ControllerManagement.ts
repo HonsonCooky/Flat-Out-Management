@@ -1,9 +1,9 @@
 import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
-import {IDocModelAndRole, IFomController, IFomObject} from "../interfaces/FomObjects";
+import {ICache, ICacheObject, IDocModelAndRole, IFomController, IFomObject} from "../interfaces/FomObjects";
 import {models, Types} from "mongoose";
-import {nodeAuth, nodeDelete, nodeRegister, nodeUpdate} from "./2.NodeManagement";
+import {componentAuth, componentDelete, componentRegister, componentUpdate} from "./2.ComponentManagement";
 import {Request, Response} from "express";
-import {strToModel} from "./1.DocManagement";
+import {strToModel} from "./1.HelperFuncs";
 import {compareHashes} from "./0.AuthFuncs";
 
 /**
@@ -12,7 +12,7 @@ import {compareHashes} from "./0.AuthFuncs";
  * @param body
  */
 export function controllerRegister(type: ModelEnum, body: any): IFomController {
-  let controller = nodeRegister(type, body) as IFomController
+  let controller = componentRegister(type, body) as IFomController
   controller.uuid = new Types.ObjectId()
   return controller
 }
@@ -24,7 +24,7 @@ export function controllerRegister(type: ModelEnum, body: any): IFomController {
  */
 export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomController> {
   let doc: IFomController | null = !auth.uuid ?
-    await nodeAuth(type, auth) as IFomController :
+    await componentAuth(type, auth) as IFomController :
     await models[type].findOne({uuid: auth.uuid})
 
   if (!doc) throw new Error(`400: Invalid JWT`)
@@ -37,12 +37,12 @@ export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomCo
 }
 
 /**
- * CONTROLLER UPDATE: Update the contents of a controller. (Currently a wrapper for node update)
+ * CONTROLLER UPDATE: Update the contents of a controller. (Currently a wrapper for component update)
  * @param doc
  * @param body
  */
-export function controllerUpdate(doc: IFomController, body: IDocModelAndRole | any): void {
-  nodeUpdate(doc, body)
+export async function controllerUpdate(doc: IFomController, body: IDocModelAndRole | any): Promise<void> {
+  await componentUpdate(doc, body)
 }
 
 /**
@@ -53,32 +53,46 @@ export function controllerUpdate(doc: IFomController, body: IDocModelAndRole | a
  *    gives authority to the controller over said document.
  *    2) If a found document is not password protected, it is assumed that, that document is open to all controllers.
  * @param type
- * @param req
+ * @param req {
+ *   jwt: JwtAuthContract
+ *   body: {
+ *    doc: Types.ObjectId
+ *    password: string
+ *    authLevel: Requested RoleEnum
+ *   }
+ * }
  * @param res
  */
 export async function controllerConnect(type: ModelEnum, req: Request, res: Response): Promise<void> {
   let controller = await controllerAuth(type, res.locals.jwt)
 
-  let body = req.body, nodeType = strToModel(req.params.type)
-  let doc: IFomObject | null = await models[nodeType].findOne({_id: body.doc})
+  let body = req.body
+  let componentType = strToModel(req.params.type)
+  let component: IFomObject | null = await models[componentType].findOne({docName: body.doc})
 
-  if (!doc) throw new Error(`400: Unable to find ${nodeType} to connect to`)
-  if ("uuid" in doc) throw new Error(`400: NO! You cannot connect to another controller`)
+  if (!component) throw new Error(`400: Unable to find ${componentType} to connect to`)
+  if ("uuid" in component) throw new Error(`400: NO! You cannot connect to another controller`)
+
   if (!body.authLevel) throw new Error(`400: Missing connection parameters`)
 
-  if ("password" in doc) {
-    body.authLevel = compareHashes(body.password, doc.password) ? body.authLevel : RoleEnum.JOIN_REQUEST
-    doc.associations.push({
-      doc: controller._id,
-      docModel: type,
-      role: body.authLevel
-    })
-    await doc.save()
-  }
+  if (compareHashes(body.password, component.password)) {
+    let admin = component.associations.find((dmr: IDocModelAndRole) => dmr.role === RoleEnum.ADMIN)
+  } else body.auhLevel = RoleEnum.JOIN_REQUEST
 
+  // Remove associations with this id
+  component.associations = component.associations.filter((dmr: IDocModelAndRole) => !dmr.doc.equals(controller._id))
+  component.associations.push({
+    doc: controller._id,
+    docModel: type,
+    role: body.authLevel
+  })
+  await component.save()
+
+  // Remove associations with component id
+  controller.associations = controller.associations.filter((dmr: IDocModelAndRole) => !component?._id.equals(dmr.doc._id))
   controller.associations.push({
-    doc: doc._id,
-    docModel: nodeType,
+    doc: component._id,
+    docModel: componentType,
     role: body.authLevel
   })
 
@@ -90,19 +104,38 @@ export async function controllerConnect(type: ModelEnum, req: Request, res: Resp
  * CONTROLLER POPULATE: Validate and populate a
  * @param doc
  */
-export async function controllerPopulate(doc: IFomController): Promise<any> {
-  // First, get all associations that are real connections
-  await doc.populate({
-    path: 'associations',
+export async function controllerPopulate(doc: IFomController) {
+  // Populate the associations
+  if (!doc.cache.requiresUpdate) return
 
-  })
+  // Populate everything so we know what to filter
+  let pop = await doc.populate({path: 'associations.doc', populate: {path: 'associations.doc'}})
+
+  // Filter each into a cache
+  doc.cache = toCache(pop.associations)
+
+  // Save the cache into the document
+  await doc.save()
+}
+
+function toCache(associations: any[]): ICache {
+  // A is a IDocModelAndRole except "doc" is not filled in
+  let cache: ICacheObject[] = associations
+    .filter((dmr: any) => { // DMR but the "doc" is populated
+
+    })
+
+  return {
+    cache,
+    requiresUpdate: false
+  }
 }
 
 
 /**
- * CONTROLLER DELETE: Delete the contents of a controller. (Currently a wrapper for node delete)
+ * CONTROLLER DELETE: Delete the contents of a controller. (Currently a wrapper for component delete)
  * @param doc
  */
 export async function controllerDelete(doc: IFomController): Promise<void> {
-  await nodeDelete(doc)
+  await componentDelete(doc)
 }

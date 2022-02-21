@@ -8,7 +8,7 @@ import env from "../config/EnvConfig";
 
 const baseRoute = express.Router()
 
-baseRoute.get('/', (req: Request, res: Response) => {
+baseRoute.get('', (req: Request, res: Response) => {
   res.status(200).send({msg: {Heroku: true, MongoDB: env.mongo.isDbConnected()}})
 })
 
