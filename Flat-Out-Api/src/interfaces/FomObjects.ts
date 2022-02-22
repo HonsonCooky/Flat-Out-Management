@@ -15,17 +15,10 @@ export interface IDocModelAndRole {
  * CACHE OBJECT: A cached object (linked to the user)
  */
 export interface ICacheObject {
-  obj: Object,
+  path: string,
+  obj: any,
   objModel: ModelEnum,
   role: RoleEnum,
-}
-
-/**
- * CACHE: The cache linking to some ICacheObjects
- */
-export interface ICache {
-  cache: ICacheObject[],
-  requiresUpdate: boolean
 }
 
 /**
@@ -46,6 +39,8 @@ export interface IFomComponent extends Document<Types.ObjectId> {
   associations: IDocModelAndRole[],
   readAuthLevel: RoleEnum, // Hidden
   writeAuthLevel: RoleEnum, // Hidden
+  cache: ICacheObject[],
+  cacheUpdateRequired: boolean,
   createdAt: Date,
   updatedAt: Date,
 }
@@ -56,7 +51,6 @@ export interface IFomComponent extends Document<Types.ObjectId> {
  */
 export interface IFomController extends IFomComponent {
   uuid: Types.ObjectId // Hidden
-  cache: ICache,
 }
 
 /**

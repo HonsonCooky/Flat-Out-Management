@@ -20,7 +20,7 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IRes>)
  */
 function sanitizeRes(iRes: IRes): IRes {
   if (!iRes.item) return iRes
-  let {_id, uuid, docName, password, readAuthLevel, writeAuthLevel, associations, ...rest} = iRes.item._doc
+  let {_id, uuid, docName, password, associations, ...rest} = iRes.item._doc
   return {
     msg: iRes.msg,
     item: rest,

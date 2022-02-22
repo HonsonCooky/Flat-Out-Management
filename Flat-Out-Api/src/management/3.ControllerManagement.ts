@@ -1,5 +1,5 @@
 import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
-import {ICache, ICacheObject, IDocModelAndRole, IFomController, IFomObject} from "../interfaces/FomObjects";
+import {IDocModelAndRole, IFomController, IFomObject} from "../interfaces/FomObjects";
 import {models, Types} from "mongoose";
 import {componentAuth, componentDelete, componentRegister, componentUpdate} from "./2.ComponentManagement";
 import {Request, Response} from "express";
@@ -38,11 +38,13 @@ export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomCo
 
 /**
  * CONTROLLER UPDATE: Update the contents of a controller. (Currently a wrapper for component update)
+ * @param type
  * @param doc
  * @param body
+ * @param informOthers
  */
-export async function controllerUpdate(doc: IFomController, body: IDocModelAndRole | any): Promise<void> {
-  await componentUpdate(doc, body)
+export async function controllerUpdate(type: ModelEnum, doc: IFomController, body: any, informOthers: boolean = false): Promise<void> {
+  await componentUpdate(type, doc, body, informOthers)
 }
 
 /**
@@ -77,6 +79,7 @@ export async function controllerConnect(type: ModelEnum, req: Request, res: Resp
 
   if (compareHashes(body.password, component.password)) {
     let admin = component.associations.find((dmr: IDocModelAndRole) => dmr.role === RoleEnum.ADMIN)
+    body.authLevel = admin ? body.authLevel : RoleEnum.JOIN_REQUEST
   } else body.auhLevel = RoleEnum.JOIN_REQUEST
 
   // Remove associations with this id
@@ -102,35 +105,65 @@ export async function controllerConnect(type: ModelEnum, req: Request, res: Resp
 
 /**
  * CONTROLLER POPULATE: Validate and populate a
- * @param doc
+ * @param seen
+ * @param a
  */
-export async function controllerPopulate(doc: IFomController) {
-  // Populate the associations
-  if (!doc.cache.requiresUpdate) return
+let haveSeen = (seen: Types.ObjectId[], a: Types.ObjectId): boolean => seen.some((id: Types.ObjectId) => id.equals(a._id))
 
-  // Populate everything so we know what to filter
-  let pop = await doc.populate({path: 'associations.doc', populate: {path: 'associations.doc'}})
-
-  // Filter each into a cache
-  doc.cache = toCache(pop.associations)
-
-  // Save the cache into the document
+export async function controllerPopulate(type: ModelEnum, doc: IFomController) {
+  await recControllerPop(doc, doc, type)
   await doc.save()
 }
 
-function toCache(associations: any[]): ICache {
-  // A is a IDocModelAndRole except "doc" is not filled in
-  let cache: ICacheObject[] = associations
-    .filter((dmr: any) => { // DMR but the "doc" is populated
+async function recControllerPop(doc: IFomController,
+                                curDoc: any,
+                                type: ModelEnum,
+                                seen: Types.ObjectId[] = [],
+                                curPath: string = "") {
 
+  if (!doc.cacheUpdateRequired) return
+  if (haveSeen(seen, curDoc._id)) return
+
+  doc.cache = []
+  doc.cacheUpdateRequired = false
+
+  let pop: any = await curDoc.populate({
+    path: 'associations.doc',
+    select: [
+      "uiName",
+      "fomVersion",
+      "readAuthLevel",
+      "writeAuthLevel",
+      "associations",
+      "cacheUpdateRequired",
+      "createdAt",
+      "updatedAt",
+
+      // Group
+      "groupCalendar",
+
+      // Table
+      "numOfCols",
+      "titleRow",
+      "contentRows",
+    ]
+  })
+
+  let nonControllers: any[] = pop.associations.filter((dmr: any) => dmr.docModel != ModelEnum.USER)
+
+  for (let other of nonControllers) {
+    let p = curPath + `/${other.docModel}`
+    await recControllerPop(doc, other.doc, other.docModel, seen, p)
+    let {associations, ...rest} = other.doc._doc
+
+    doc.cache.push({
+      path: p,
+      obj: rest,
+      objModel: other.docModel,
+      role: other.role
     })
-
-  return {
-    cache,
-    requiresUpdate: false
   }
 }
-
 
 /**
  * CONTROLLER DELETE: Delete the contents of a controller. (Currently a wrapper for component delete)

@@ -3,7 +3,7 @@ import {IDocModelAndRole, IFomComponent} from "../interfaces/FomObjects";
 import {compareHashes, saltAndHash} from "./0.AuthFuncs";
 import {models} from "mongoose";
 import envConfig from "../config/EnvConfig";
-import {handleAssociations} from "./1.HelperFuncs";
+import {handleAssociations, handleUpdate} from "./1.HelperFuncs";
 
 /**
  * NODE REGISTER: Create a node document.
@@ -41,17 +41,20 @@ export async function componentAuth(type: ModelEnum, auth: any): Promise<IFomCom
 
 /**
  * NODE UPDATE: Update the contents of a node.
+ * @param type
  * @param doc
  * @param body
+ * @param informOthers
  */
-export async function componentUpdate(doc: IFomComponent, body: IDocModelAndRole | any): Promise<void> {
+export async function componentUpdate(type: ModelEnum, doc: IFomComponent, body: any, informOthers: boolean = false): Promise<void> {
   doc.docName = body.docName ?? doc.docName
   doc.password = body.password ? saltAndHash(body.password) : doc.password
   doc.uiName = body.uiName ?? doc.uiName
   doc.fomVersion = envConfig.version
   doc.readAuthLevel = body.readAuthLevel ?? doc.readAuthLevel
   doc.writeAuthLevel = body.writeAuthLevel ?? doc.writeAuthLevel
-  await handleAssociations(doc, true)
+  await handleAssociations(doc)
+  if (informOthers) await handleUpdate(type, doc)
 }
 
 /**

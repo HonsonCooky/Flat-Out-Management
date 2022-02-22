@@ -5,7 +5,8 @@
 export enum ModelEnum {
   USER = 'user',
   GROUP = 'group',
-  TABLE = 'table'
+  TABLE = 'table',
+  STORAGE = 'storage'
 }
 
 /**

@@ -2,7 +2,7 @@ import {SchemaDefinitionProperty, Types} from "mongoose";
 import {ModelEnum, RoleEnum} from "./GlobalEnums";
 import env from "../config/EnvConfig";
 import _logger from "../config/Logger";
-import {ICache, ICacheObject, IDocModelAndRole} from "./FomObjects";
+import {ICacheObject, IDocModelAndRole} from "./FomObjects";
 
 /**
  * NAME: A required string value that represents the shown title of the document.
@@ -149,13 +149,18 @@ export const DocModelAndRoleType: SchemaDefinitionProperty<IDocModelAndRole> = {
 /**
  * CACHE: Removes the need to populate unnecessarily
  */
-const CacheObjectType: SchemaDefinitionProperty<ICacheObject> = {
+const PathType: SchemaDefinitionProperty<string> = {
+  type: String,
+  required: [true, 'Cache missing path'],
+  validate: {
+    validator: (value: string) => /(\/((user)|(group)|(table)))+/gm.test(value),
+    msg: "Invalid Cache Path"
+  }
+}
+
+export const CacheObjectType: SchemaDefinitionProperty<ICacheObject> = {
+  path: PathType,
   obj: Object,
   objModel: ModelType,
   role: RoleType,
-}
-
-export const CacheType: SchemaDefinitionProperty<ICache> = {
-  cache: [CacheObjectType],
-  requiresUpdate: DefaultFalse,
 }

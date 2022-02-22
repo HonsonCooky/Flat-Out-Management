@@ -1,6 +1,6 @@
 import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
 import {IDocModelAndRole, IFomObject} from "../interfaces/FomObjects";
-import {models} from "mongoose";
+import {models, Types} from "mongoose";
 
 /**
  * STRING TO MODEL: Convert a string to a ModelEnum.
@@ -22,25 +22,37 @@ export function strToRole(str: String): RoleEnum {
 
 
 /**
- * HANDLE ASSOCIATIONS: Remove associations that no longer exist, and tell Controllers if the current object has
- * been updated (they need to update their cache).
+ * HANDLE ASSOCIATIONS: Remove associations that no longer exist.
  * @param doc
- * @param updated
  */
-export async function handleAssociations(doc: IFomObject, updated: boolean = false) {
+export async function handleAssociations(doc: IFomObject) {
   // Remove all invalid associations
   doc.associations = doc.associations.filter(async (dmr: IDocModelAndRole) => {
     let other: IFomObject | null = await models[dmr.docModel].findOne({_id: dmr.doc})
     if (!other) return false
     return !!other.associations.find((dmr: IDocModelAndRole) => dmr.doc.equals(doc._id))
   })
-
   await doc.save()
-
-  // If this document has been updated, then all associated controllers need to be told to update
-  if (updated) await informControllers(doc)
 }
 
-async function informControllers(doc: IFomObject) {
+/**
+ * HANDLE UPDATE: Inform other associations that you have been updated.
+ * @param type
+ * @param doc
+ * @param seen
+ */
+export async function handleUpdate(type: ModelEnum, doc: IFomObject, seen: Types.ObjectId[] = []){
+  seen.push(doc._id) // First document is already updated
 
+  for (let a of doc.associations){
+    if (seen.some((id: Types.ObjectId) => id.equals(a.doc))) continue
+
+    let other: IFomObject | null = await models[a.docModel].findOne({_id: a.doc})
+    if (!other || other.cacheUpdateRequired) continue
+
+    await other.updateOne({cacheUpdateRequired: true})
+
+    if (type != ModelEnum.TABLE) continue
+    await handleUpdate(a.docModel, other, seen)
+  }
 }

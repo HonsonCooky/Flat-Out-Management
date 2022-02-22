@@ -26,6 +26,20 @@ export async function userRegister(req: Request, res: Response): Promise<IRes> {
 }
 
 /**
+ * USER DELETE: Delete a user document.
+ * @param req
+ * @param res
+ */
+export async function userDelete(req: Request, res: Response): Promise<IRes> {
+  let user: IUser = await controllerAuth(ModelEnum.USER, req.body) as IUser
+  await controllerDelete(user)
+
+  return {
+    msg: `Successfully deleted user ${user.docName}`
+  }
+}
+
+/**
  * USER AUTH: Authenticate a user document.
  * @param req
  * @param res
@@ -42,13 +56,13 @@ export async function userAuth(req: Request, res: Response): Promise<IRes> {
 }
 
 /**
- * USER UPDATE: Update the contents of a user.
+ * USER UPDATE: Update the contents of a user. Only need to inform a group of the update, if OutOfFlatDates is altered.
  * @param req
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IRes> {
   let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
-  await controllerUpdate(user, req.body)
+  await controllerUpdate(ModelEnum.USER, user, req.body, !!req.body.outOfFlatDates)
   await user.save()
 
   return {
@@ -79,24 +93,10 @@ export async function userConnect(req: Request, res: Response): Promise<IRes> {
  */
 export async function userPopulate(req: Request, res: Response): Promise<IRes> {
   let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
-  await controllerPopulate(user)
+  await controllerPopulate(ModelEnum.USER, user)
 
   return {
     msg: `Successfully populated user`,
     item: user
-  }
-}
-
-/**
- * USER DELETE: Delete a user document.
- * @param req
- * @param res
- */
-export async function userDelete(req: Request, res: Response): Promise<IRes> {
-  let user: IUser = await controllerAuth(ModelEnum.USER, req.body) as IUser
-  await controllerDelete(user)
-
-  return {
-    msg: `Successfully deleted user ${user.docName}`
   }
 }

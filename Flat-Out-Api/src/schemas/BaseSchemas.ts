@@ -1,7 +1,6 @@
 import {
-  CacheType,
-  DefaultAdmin,
-  DefaultFlatmate,
+  CacheObjectType,
+  DefaultAdmin, DefaultFlatmate,
   DocModelAndRoleType,
   DocName,
   Password,
@@ -20,10 +19,11 @@ export const FomComponentSchema: SchemaDefinition<IFomComponent> = {
   fomVersion: Version,
   readAuthLevel: DefaultFlatmate,
   writeAuthLevel: DefaultAdmin,
+  cache: [CacheObjectType],
+  cacheUpdateRequired: {type: Boolean, default: false}
 }
 
 export const FomControllerSchema: SchemaDefinition<IFomController> = {
   uuid: UUID,
-  cache: [CacheType],
   ...FomComponentSchema
 }
