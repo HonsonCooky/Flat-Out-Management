@@ -6,6 +6,7 @@ import env from "./EnvConfig";
 import _logger from "./Logger";
 import userRoutes from "../routes/UserRoutes";
 import groupRoutes from "../routes/GroupRoutes";
+import {extractInformation} from "../middleware/ExtractInformation";
 
 export function startApi() {
   let webAPI = express()
@@ -15,6 +16,7 @@ export function startApi() {
   webAPI.use(express.json())
 
   // Initialize Routes
+  webAPI.all('*', extractInformation)
   webAPI.use('', baseRoute)
   webAPI.use('/user', userRoutes)
   webAPI.use('/group', groupRoutes)

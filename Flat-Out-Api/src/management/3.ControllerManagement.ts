@@ -1,9 +1,9 @@
 import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
-import {IDocModelAndRole, IFomController, IFomObject} from "../interfaces/FomObjects";
+import {IDocModelAndRole, IFomController, IFomObject, JwtAuthContract} from "../interfaces/FomObjects";
 import {models, Types} from "mongoose";
-import {componentAuth, componentDelete, componentRegister, componentUpdate} from "./2.ComponentManagement";
+import {componentAuth, componentCreate, componentDelete, componentUpdate} from "./2.ComponentManagement";
 import {Request, Response} from "express";
-import {strToModel} from "./1.HelperFuncs";
+import {handleAssociations, strToModel} from "./1.HelperFuncs";
 import {compareHashes} from "./0.AuthFuncs";
 
 /**
@@ -12,7 +12,7 @@ import {compareHashes} from "./0.AuthFuncs";
  * @param body
  */
 export function controllerRegister(type: ModelEnum, body: any): IFomController {
-  let controller = componentRegister(type, body) as IFomController
+  let controller = componentCreate(type, body) as IFomController
   controller.uuid = new Types.ObjectId()
   return controller
 }
@@ -20,20 +20,25 @@ export function controllerRegister(type: ModelEnum, body: any): IFomController {
 /**
  * CONTROLLER AUTH: Authenticate a controller document
  * @param type
- * @param auth
+ * @param body
  */
-export async function controllerAuth(type: ModelEnum, auth: any): Promise<IFomController> {
-  let doc: IFomController | null = !auth.uuid ?
-    await componentAuth(type, auth) as IFomController :
-    await models[type].findOne({uuid: auth.uuid})
+export async function controllerAuth(type: ModelEnum, body: any): Promise<IFomController> {
+  let controller = await componentAuth(type, body) as IFomController
+  controller.uuid = new Types.ObjectId()
+  return controller
+}
 
-  if (!doc) throw new Error(`400: Invalid JWT`)
-  if (!auth.uuid) {
-    doc.uuid = new Types.ObjectId()
-    await doc.save()
-  }
 
-  return doc
+/**
+ * CONTROLLER JWT GET: Get some controller with a JWT
+ * @param type
+ * @param jwt
+ */
+export async function controllerJwtGet(type: ModelEnum, jwt: JwtAuthContract): Promise<IFomController> {
+  let controller: IFomController = await models[type].findOne({uuid: jwt.uuid}) as IFomController
+  if (!controller) throw new Error('Invalid JWT')
+  await handleAssociations(controller)
+  return controller
 }
 
 /**
@@ -79,7 +84,7 @@ export async function controllerConnect(type: ModelEnum, req: Request, res: Resp
 
   if (compareHashes(body.password, component.password)) {
     let admin = component.associations.find((dmr: IDocModelAndRole) => dmr.role === RoleEnum.ADMIN)
-    body.authLevel = admin ? body.authLevel : RoleEnum.JOIN_REQUEST
+    body.authLevel = admin ? body.authLevel === RoleEnum.ADMIN ? RoleEnum.JOIN_REQUEST : body.authLevel : RoleEnum.ADMIN
   } else body.auhLevel = RoleEnum.JOIN_REQUEST
 
   // Remove associations with this id

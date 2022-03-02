@@ -1,4 +1,4 @@
-import {ModelEnum} from "../interfaces/GlobalEnums";
+import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
 import {IDocModelAndRole, IFomComponent} from "../interfaces/FomObjects";
 import {compareHashes, saltAndHash} from "./0.AuthFuncs";
 import {models} from "mongoose";
@@ -6,32 +6,38 @@ import envConfig from "../config/EnvConfig";
 import {handleAssociations, handleUpdate} from "./1.HelperFuncs";
 
 /**
- * NODE REGISTER: Create a node document.
+ * COMPONENT CREATE: Create a node document.
  * @param type
  * @param body
  */
-export function componentRegister(type: ModelEnum, body: any): IFomComponent {
+export function componentCreate(type: ModelEnum, body: any): IFomComponent {
   return new models[type]({
     docName: body.docName,
     password: saltAndHash(body.password),
     uiName: body.uiName ?? body.docName,
     fomVersion: envConfig.version,
     readAuthLevel: body.readAuthLevel,
-    writeAuthLevel: body.writeAuthLevel
+    writeAuthLevel: body.writeAuthLevel,
+    associations: body.creator ? [{
+      doc: body.creator,
+      docModel: body.creatorModel,
+      role: RoleEnum.ADMIN
+    }] : []
   })
 }
 
 /**
- * NODE AUTH: Authenticate a node document.
+ * COMPONENT AUTH: Authenticate a node document.
  * @param type
- * @param auth
+ * @param body
  */
-export async function componentAuth(type: ModelEnum, auth: any): Promise<IFomComponent> {
-  let doc: IFomComponent | null = await models[type].findOne({$or: [{docName: auth.docName}, {_id: auth.doc}]})
+export async function componentAuth(type: ModelEnum, body: any): Promise<IFomComponent> {
+  let doc: IFomComponent | null = await models[type].findOne({$or: [{docName: body.docName}, {_id: body.doc}]})
+
 
   if (!doc)
     throw new Error(`400: Unable to find ${type}: Credentials`)
-  if (!compareHashes(auth.password, doc.password))
+  if (!compareHashes(body.password, doc.password))
     throw new Error(`400: Unable to authenticate ${type}`)
 
   await handleAssociations(doc)
@@ -40,7 +46,7 @@ export async function componentAuth(type: ModelEnum, auth: any): Promise<IFomCom
 }
 
 /**
- * NODE UPDATE: Update the contents of a node.
+ * COMPONENT UPDATE: Update the contents of a node.
  * @param type
  * @param doc
  * @param body
@@ -58,7 +64,7 @@ export async function componentUpdate(type: ModelEnum, doc: IFomComponent, body:
 }
 
 /**
- * NODE DELETE: Delete a node, disconnecting from all associations.
+ * COMPONENT DELETE: Delete a node, disconnecting from all associations.
  * @param doc
  */
 export async function componentDelete(doc: IFomComponent): Promise<void> {

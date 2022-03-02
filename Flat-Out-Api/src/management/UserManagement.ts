@@ -4,11 +4,12 @@ import {
   controllerAuth,
   controllerConnect,
   controllerDelete,
+  controllerJwtGet,
   controllerPopulate,
   controllerRegister,
   controllerUpdate
 } from "./3.ControllerManagement";
-import {ModelEnum, RoleEnum} from "../interfaces/GlobalEnums";
+import {ModelEnum} from "../interfaces/GlobalEnums";
 import {Request, Response} from "express";
 import {signJWT} from "./0.AuthFuncs";
 
@@ -61,7 +62,7 @@ export async function userAuth(req: Request, res: Response): Promise<IRes> {
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IRes> {
-  let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
+  let user: IUser = await controllerJwtGet(ModelEnum.USER, res.locals.jwt) as IUser
   await controllerUpdate(ModelEnum.USER, user, req.body, !!req.body.outOfFlatDates)
   await user.save()
 
@@ -78,11 +79,9 @@ export async function userUpdate(req: Request, res: Response): Promise<IRes> {
  */
 export async function userConnect(req: Request, res: Response): Promise<IRes> {
   await controllerConnect(ModelEnum.USER, req, res)
-  let token = req.body.authLevel != RoleEnum.JOIN_REQUEST ? signJWT(req.body.password) : undefined
 
   return {
-    msg: `Successfully connected user to document`,
-    token
+    msg: `Successfully connected user to document`
   }
 }
 
@@ -91,7 +90,7 @@ export async function userConnect(req: Request, res: Response): Promise<IRes> {
  * @param req
  * @param res
  */
-export async function userPopulate(req: Request, res: Response): Promise<IRes> {
+export async function userGet(req: Request, res: Response): Promise<IRes> {
   let user: IUser = await controllerAuth(ModelEnum.USER, res.locals.jwt) as IUser
   await controllerPopulate(ModelEnum.USER, user)
 

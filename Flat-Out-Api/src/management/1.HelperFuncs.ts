@@ -41,10 +41,10 @@ export async function handleAssociations(doc: IFomObject) {
  * @param doc
  * @param seen
  */
-export async function handleUpdate(type: ModelEnum, doc: IFomObject, seen: Types.ObjectId[] = []){
+export async function handleUpdate(type: ModelEnum, doc: IFomObject, seen: Types.ObjectId[] = []) {
   seen.push(doc._id) // First document is already updated
 
-  for (let a of doc.associations){
+  for (let a of doc.associations) {
     if (seen.some((id: Types.ObjectId) => id.equals(a.doc))) continue
 
     let other: IFomObject | null = await models[a.docModel].findOne({_id: a.doc})

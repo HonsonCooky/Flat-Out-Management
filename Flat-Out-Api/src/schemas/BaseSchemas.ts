@@ -1,6 +1,7 @@
 import {
   CacheObjectType,
-  DefaultAdmin, DefaultFlatmate,
+  DefaultAdmin,
+  DefaultFlatmate,
   DocModelAndRoleType,
   DocName,
   Password,
