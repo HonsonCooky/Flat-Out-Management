@@ -1,10 +1,10 @@
+import {model, Schema} from "mongoose";
+import {LogLevel} from "../interfaces/GlobalEnums";
+
 /** ---------------------------------------------------------------------------------------------------------------
  * LOG SCHEMA:
  * The Log Schema outlines logs to be stored in MongoDB.
  --------------------------------------------------------------------------------------------------------------- */
-import {model, Schema} from "mongoose";
-import {LogLevel} from "../interfaces/GlobalEnums";
-
 export interface ILog {
   level: LogLevel,
   message: string,

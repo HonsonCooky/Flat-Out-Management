@@ -1,49 +1,12 @@
-import {Document, Types} from "mongoose";
-import {ModelEnum, RoleEnum} from "./GlobalEnums";
+import {Types} from "mongoose";
 import {JwtPayload} from "jsonwebtoken"
 
-/**
- * DOC, MODEL AND ROLE: A tuple that connects some id to it's MongoDB model, and a role
- */
-export interface IDocModelAndRole {
-  doc: Types.ObjectId,
-  docModel: ModelEnum
-  role: RoleEnum
-}
-
-/**
- * CACHE OBJECT: A cached object (linked to the user)
- */
-export interface ICacheObject {
-  path: string,
-  obj: any,
-  objModel: ModelEnum,
-  role: RoleEnum,
-}
 
 /**
  * FOM OBJECT: A generic object which can be either a FOMNode or FOMProtectedNode
  */
 export type IFomObject = IFomController | IFomComponent;
 
-/**
- * FOM DOC: Every document in the MongoDB database will have these outlining features
- */
-export interface IFomComponent extends Document<Types.ObjectId> {
-  _id: Types.ObjectId, // Hidden
-  _doc: any,
-  docName: string,
-  password: string, // Hidden
-  uiName: string
-  fomVersion: string,
-  associations: IDocModelAndRole[],
-  readAuthLevel: RoleEnum, // Hidden
-  writeAuthLevel: RoleEnum, // Hidden
-  cache: ICacheObject[],
-  cacheUpdateRequired: boolean,
-  createdAt: Date,
-  updatedAt: Date,
-}
 
 /**
  * FOM CONTROLLER: A controller is a document that maintains a client's information. It enables authentication and
