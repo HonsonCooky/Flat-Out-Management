@@ -3,7 +3,7 @@ import helmet from "helmet";
 import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
 import {env} from "./EnvConfig";
-import {_logger} from "./Logger";
+import {fomLogger} from "./Logger";
 import {extractInformation} from "../middleware/ExtractInformation";
 
 export function startApi() {
@@ -22,7 +22,8 @@ export function startApi() {
 
   // Lets go!
   webAPI.listen(env.express.port, () => {
-    _logger.info("Heroku connected");
-    console.log(`http://localhost:${env.express.port}`)
+    fomLogger.info("Heroku connected");
+    if (env.devMode) console.log(`http://localhost:${env.express.port}`)
+    else  console.log(`https://flat-out-management-api.herokuapp.com`)
   })
 }

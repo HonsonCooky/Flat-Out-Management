@@ -1,6 +1,6 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
-import {_logger} from "../config/Logger";
+import {fomLogger} from "../config/Logger";
 
 const known400ErrorMessages = [
   '400',
@@ -25,11 +25,11 @@ export const errorHandler: ErrorRequestHandler = (err, req: Request, res: Respon
   let msg: string = err.message
 
   if (known400ErrorMessages.some((eMsg: string) => eMsg.includes(msg))) {
-    _logger.warn(msg, err)
+    fomLogger.warn(msg, err)
     res.status(400).send(jsonError(msg))
     return
   }
 
-  _logger.error(msg, err)
+  fomLogger.error(msg, err)
   res.status(500).send(jsonError(msg))
 }

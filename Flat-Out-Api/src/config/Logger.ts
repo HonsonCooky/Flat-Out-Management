@@ -5,19 +5,17 @@ import {env} from "./EnvConfig";
 let localLogs: ILog[] = []
 
 const log = (message: string, object?: any, logLevel?: LogLevel) => {
-  if (env.devMode) return
+  localLogs.push({
+    level: logLevel ? logLevel : LogLevel.INFO,
+    message,
+    object,
+  })
 
-  if (env.mongo.isDbConnected()) {
+  if (!env.devMode && env.mongo.isDbConnected()) {
     localLogs.forEach(log => {
       (new LogModel(log)).save().then()
     })
     localLogs = []
-  } else {
-    localLogs.push({
-      level: logLevel ? logLevel : LogLevel.INFO,
-      message,
-      object,
-    })
   }
 }
 
@@ -30,9 +28,20 @@ const warn = (message: string, object?: any) =>
 const error = (message: string, object?: any) =>
   log(message, object, LogLevel.ERROR)
 
+const get = async () => {
+  if (env.devMode) return localLogs
+  else return (await LogModel.find({})).map((log: ILog) => {
+    return {
+      level: log.level,
+      message: log.message,
+      object: log.object
+    }
+  })
+}
 
-export const _logger = {
+export const fomLogger = {
   info,
   warn,
   error,
+  get
 }
