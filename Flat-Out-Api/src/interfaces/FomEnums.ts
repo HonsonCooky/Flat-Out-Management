@@ -28,13 +28,3 @@ export enum LogLevel {
   WARN = "warn",
   ERROR = "error"
 }
-
-/**
- * SEARCH OPERATOR: Associations are all lumped into one array for ease of deleting users and other functions. The
- * searchAssociations removes duplicate complexity from the core code base. When specifying the filtering parameters
- * of the search, some specifier needs to indicate whether the filters are || or && specifiers.
- */
-export enum SearchOperator {
-  AND,
-  OR
-}

@@ -45,7 +45,7 @@ const fomVersion: string = packageJson.version
  * EXPORT: Export all the above, tied with a bow, in an object
  */
 
-export default {
+export const env = {
   devMode: DATABASE_ENVIRONMENT === '-t01',
   version: fomVersion,
   express: {

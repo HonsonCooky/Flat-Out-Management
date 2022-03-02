@@ -1,4 +1,4 @@
-import {ModelEnum, RoleEnum} from "./GlobalEnums";
+import {ModelEnum, RoleEnum} from "./FomEnums";
 
 
 /**

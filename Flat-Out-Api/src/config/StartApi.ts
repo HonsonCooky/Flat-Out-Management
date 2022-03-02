@@ -2,10 +2,8 @@ import express from "express";
 import helmet from "helmet";
 import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
-import env from "./EnvConfig";
-import _logger from "./Logger";
-import userRoutes from "../routes/UserRoutes";
-import groupRoutes from "../routes/GroupRoutes";
+import {env} from "./EnvConfig";
+import {_logger} from "./Logger";
 import {extractInformation} from "../middleware/ExtractInformation";
 
 export function startApi() {
@@ -18,8 +16,6 @@ export function startApi() {
   // Initialize Routes
   webAPI.all('*', extractInformation)
   webAPI.use('', baseRoute)
-  webAPI.use('/user', userRoutes)
-  webAPI.use('/group', groupRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

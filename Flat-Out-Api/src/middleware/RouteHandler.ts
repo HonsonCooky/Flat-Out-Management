@@ -1,4 +1,4 @@
-import {IRes} from "../interfaces/FomObjects";
+import {IRes} from "../interfaces/IFomJwtContract";
 import {NextFunction, Request, RequestHandler, Response} from "express";
 
 /**

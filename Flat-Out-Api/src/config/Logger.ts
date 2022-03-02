@@ -1,6 +1,6 @@
-import {LogLevel} from "../interfaces/GlobalEnums";
-import {ILog, LogModel} from "../schemas/LogSchema";
-import env from "./EnvConfig";
+import {LogLevel} from "../interfaces/FomEnums";
+import {ILog, LogModel} from "../schemas/util/LogSchema";
+import {env} from "./EnvConfig";
 
 let localLogs: ILog[] = []
 
@@ -31,7 +31,7 @@ const error = (message: string, object?: any) =>
   log(message, object, LogLevel.ERROR)
 
 
-export default {
+export const _logger = {
   info,
   warn,
   error,
