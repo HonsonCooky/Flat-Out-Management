@@ -4,7 +4,6 @@ import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
 import {env} from "./EnvConfig";
 import {fomLogger} from "./Logger";
-import {extractInformation} from "../middleware/ExtractInformation";
 import {userRoutes} from "../routes/UserRoutes";
 
 export function startApi() {
@@ -15,7 +14,6 @@ export function startApi() {
   webAPI.use(express.json())
 
   // Initialize Routes
-  webAPI.all('*', extractInformation)
   webAPI.use('', baseRoute)
   webAPI.use('/user', userRoutes)
 

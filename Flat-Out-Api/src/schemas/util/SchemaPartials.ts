@@ -4,14 +4,26 @@ import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
 import {env} from "../../config/EnvConfig"
 
 /**
- * FOM NAME: A string value which will be displayed client side (_id is used for identification)
+ * FOM NAME: A string value which will be used to validate the username + password login
  */
 export const FOM_NAME: SchemaDefinitionProperty<string> = {
   type: String,
   trim: true,
+  unique: true,
+  sparse: true,
   minlength: 3,
   maxlength: 30,
   required: [true, "Missing Name"],
+}
+
+/**
+ * FOM NICKNAME: A string value which will be displayed client side
+ */
+export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
+  type: String,
+  trim: true,
+  minlength: 3,
+  maxlength: 30,
 }
 
 /**
@@ -30,7 +42,7 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Types.ObjectId,
   required: [true, "Association is missing a reference"],
-  ref: (doc: IFomAssociation) => doc.model
+  refPath: 'model'
 }
 
 // MODEL

@@ -17,7 +17,7 @@ export function saltAndHash(input: string): string {
  * @param a
  * @param b
  */
-export function compareHashes(a: string, b: string): boolean {
+export function compareHashes(a?: string, b?: string): boolean {
   if (!a || !b) return false
   return bcrypt.compareSync(a, b)
 }
