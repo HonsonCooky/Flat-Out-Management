@@ -1,7 +1,9 @@
-import {IFomDocument} from "../interfaces/IFomDocument";
-import {model, Schema} from "mongoose";
-import {FomDocumentSchema} from "./util/FomDocumentSchema";
-import {ModelEnum} from "../interfaces/FomEnums";
+import {IFomDocument} from "../../interfaces/IFomDocument";
+import {model, Schema, Types} from "mongoose";
+import {FomDocumentSchema} from "../util/FomDocumentSchema";
+import {ModelEnum} from "../../interfaces/FomEnums";
+import {FOM_DYNAMIC_UUID} from "../util/SchemaPartials";
+import {CalendarEventSchema, ICalendarEvent} from "./CalendarEventSchema";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -11,12 +13,14 @@ import {ModelEnum} from "../interfaces/FomEnums";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 export interface IUser extends IFomDocument {
-  outOfFlatDates: Date[]
+  dynUuid: Types.ObjectId,
+  outOfFlatDates: ICalendarEvent[]
 }
 
 const UserSchema = new Schema<IUser>({
   ...FomDocumentSchema,
-  outOfFlatDates: [Date]
+  dynUuid: FOM_DYNAMIC_UUID,
+  outOfFlatDates: [CalendarEventSchema]
 }, {timestamps: true})
 
 export const UserModel = model<IUser>(ModelEnum.USER, UserSchema)

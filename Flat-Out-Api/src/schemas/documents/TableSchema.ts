@@ -1,8 +1,8 @@
-import {IFomDocument} from "../interfaces/IFomDocument";
+import {IFomDocument} from "../../interfaces/IFomDocument";
 import {model, Schema} from "mongoose";
-import {FOM_ASSOCIATION} from "./util/SchemaPartials";
-import {FomDocumentSchema} from "./util/FomDocumentSchema";
-import {ModelEnum} from "../interfaces/FomEnums";
+import {FOM_ASSOCIATION} from "../util/SchemaPartials";
+import {FomDocumentSchema} from "../util/FomDocumentSchema";
+import {ModelEnum} from "../../interfaces/FomEnums";
 
 
 /** ------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export interface ITable extends IFomDocument {
 
 const TableSchema = new Schema<ITable>({
   ...FomDocumentSchema,
-  numOfCols: {type: Number, required: [true, `Missing number of columns`]},
+  numOfCols: {type: Number, required: [true, `Missing number of columns`], min: 1, maxlength: 5},
   titleRow: RowSchema,
   contentRows: [RowSchema]
 }, {timestamps: true})

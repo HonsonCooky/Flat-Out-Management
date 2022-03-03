@@ -1,7 +1,8 @@
-import {IFomDocument} from "../interfaces/IFomDocument";
+import {IFomDocument} from "../../interfaces/IFomDocument";
 import {model, Schema} from "mongoose";
-import {FomDocumentSchema} from "./util/FomDocumentSchema";
-import {ModelEnum} from "../interfaces/FomEnums";
+import {FomDocumentSchema} from "../util/FomDocumentSchema";
+import {ModelEnum} from "../../interfaces/FomEnums";
+import {CalendarEventSchema, ICalendarEvent} from "./CalendarEventSchema";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,13 +11,12 @@ import {ModelEnum} from "../interfaces/FomEnums";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 export interface IGroup extends IFomDocument {
-  groupCalendar: Date[]
+  groupCalendar: ICalendarEvent[]
 }
 
 const GroupSchema = new Schema<IGroup>({
   ...FomDocumentSchema,
-  groupCalendar: [Date]
+  groupCalendar: [CalendarEventSchema]
 }, {timestamps: true})
-
 
 export const GroupModel = model<IGroup>(ModelEnum.GROUP, GroupSchema)

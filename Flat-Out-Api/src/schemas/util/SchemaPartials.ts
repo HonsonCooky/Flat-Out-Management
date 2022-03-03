@@ -55,6 +55,17 @@ export const FOM_ASSOCIATION: SchemaDefinitionProperty<IFomAssociation> = {
 }
 
 /**
+ * FOM DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT
+ * authentication)
+ */
+export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
+  type: Types.ObjectId,
+  required: [true, `Missing dynamic UUID`],
+  sparse: true,
+  unique: true,
+}
+
+/**
  * VERSION: Maintains semantic versioning for document.
  */
 const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)

@@ -3,9 +3,9 @@ import {env} from "./EnvConfig";
 import {fomLogger} from "./Logger";
 import {ModelEnum} from "../interfaces/FomEnums";
 import {IFomDocument} from "../interfaces/IFomDocument";
-import {UserModel} from "../schemas/UserSchema";
-import {GroupModel} from "../schemas/GroupSchema";
-import {TableModel} from "../schemas/TableSchema";
+import {UserModel} from "../schemas/documents/UserSchema";
+import {GroupModel} from "../schemas/documents/GroupSchema";
+import {TableModel} from "../schemas/documents/TableSchema";
 import {LogModel} from "../schemas/util/LogSchema";
 
 export function startMongo() {
@@ -19,10 +19,10 @@ export function startMongo() {
     .catch(e => fomLogger.error(`MongoDB connection failed: ${e.message}`))
 
   fomLogger.info(`MODELS: ` +
-  `${UserModel.collection.name}, ` +
-  `${GroupModel.collection.name}, ` +
-  `${TableModel.collection.name}, ` +
-  `${LogModel.collection.name}`)
+    `${UserModel.collection.name}, ` +
+    `${GroupModel.collection.name}, ` +
+    `${TableModel.collection.name}, ` +
+    `${LogModel.collection.name}`)
 }
 
 /**

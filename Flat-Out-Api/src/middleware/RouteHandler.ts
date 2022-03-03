@@ -1,14 +1,14 @@
-import {IRes} from "../interfaces/IFomJwtContract";
 import {NextFunction, Request, RequestHandler, Response} from "express";
+import {IFomRes} from "../interfaces/IFomRes";
 
 /**
  * ROUTE HANDLER: Manage the execution and try catching of all functions being called from a URL call.
  * @param fn
  */
-export function routeHandler(fn: (req: Request, res: Response) => Promise<IRes>): RequestHandler {
+export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRes>): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res)
-      .then(async (iRes: IRes) => res.status(200).send(sanitizeRes(iRes)))
+      .then(async (iRes: IFomRes) => res.status(200).send(sanitizeRes(iRes)))
       .catch((e: any) => next(e))
   }
 }
@@ -18,7 +18,7 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IRes>)
  * necessary to parse back.
  * @param iRes
  */
-function sanitizeRes(iRes: IRes): IRes {
+function sanitizeRes(iRes: IFomRes): IFomRes {
   if (!iRes.item) return iRes
   let {_id, uuid, docName, password, associations, ...rest} = iRes.item._doc
   return {
