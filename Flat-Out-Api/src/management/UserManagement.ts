@@ -2,9 +2,22 @@ import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
 import {documentAuthenticate, documentDelete, documentRegister} from "./ManagementPartials";
 import {ModelEnum} from "../interfaces/FomEnums";
-import {IUser} from "../schemas/documents/UserSchema";
+import {IUser, UserModel} from "../schemas/documents/UserSchema";
 import {Types} from "mongoose";
 import {signJWT} from "./AuthPartials";
+import {IFomJwtContract} from "../interfaces/IFomJwtContract";
+
+
+async function userJwtAuthentication(jwt: IFomJwtContract): Promise<IUser> {
+  let user: IUser | null = await UserModel.findOne({dynUuid: jwt.val}) as IUser
+  if (!user) throw new Error(`400: Invalid JWT`)
+  return user
+}
+
+
+/** ------------------------------------------------------------------------------------------------------------------
+ * User Management Helpers
+ ------------------------------------------------------------------------------------------------------------------*/
 
 /**
  * USER REGISTER: Create a new user document
@@ -49,5 +62,18 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
 
   return {
     msg: `Successfully deleted user ${user.name}`
+  }
+}
+
+/**
+ * USER CONNECT: Connect a user to another document
+ * @param req
+ * @param res
+ */
+export async function userConnect(req: Request, res: Response): Promise<IFomRes> {
+
+
+  return {
+    msg: `Successfully connected user .. to .. ..`
   }
 }
