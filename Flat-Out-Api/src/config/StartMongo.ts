@@ -2,7 +2,7 @@ import {connect, models} from "mongoose";
 import {env} from "./EnvConfig";
 import {fomLogger} from "./Logger";
 import {ModelEnum} from "../interfaces/FomEnums";
-import {IFomDocument} from "../interfaces/IFomDocument";
+import {IFomComponent} from "../interfaces/IFomComponent";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {TableModel} from "../schemas/documents/TableSchema";
@@ -30,11 +30,11 @@ export function startMongo() {
  */
 async function cleanDocuments(type: ModelEnum) {
   fomLogger.info(`Cleaning ${type} documents`)
-  let docs: IFomDocument[] = await models[type].find({})
+  let docs: IFomComponent[] = await models[type].find({})
   let today = new Date()
 
   for (let doc of docs)
-    if (doc.associations.length === 0)
+    if (doc.children.length === 0)
       if ((today.getTime() - new Date(doc.updatedAt).getTime()) > (1000 * 60 * 60 * 24 * 7))
         await doc.deleteOne()
 

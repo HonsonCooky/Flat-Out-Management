@@ -1,9 +1,8 @@
-import {IFomDocument} from "../../interfaces/IFomDocument";
-import {model, Schema, Types} from "mongoose";
-import {FomDocumentSchema} from "../util/FomDocumentSchema";
+import {model, Schema} from "mongoose";
 import {ModelEnum} from "../../interfaces/FomEnums";
-import {FOM_DYNAMIC_UUID} from "../util/SchemaPartials";
-import {CalendarEventSchema, ICalendarEvent} from "./CalendarEventSchema";
+import {EventSchema, ICalendarEvent} from "./EventSchema";
+import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
+import {IFomController} from "../../interfaces/IFomController";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -12,15 +11,13 @@ import {CalendarEventSchema, ICalendarEvent} from "./CalendarEventSchema";
  * Password. Each user will be associated to some Group (their flat), and may contain several lists. Groups
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
-export interface IUser extends IFomDocument {
-  dynUuid: Types.ObjectId,
+export interface IUser extends IFomController {
   outOfFlatDates: ICalendarEvent[]
 }
 
 const UserSchema = new Schema<IUser>({
-  ...FomDocumentSchema,
-  dynUuid: FOM_DYNAMIC_UUID,
-  outOfFlatDates: [CalendarEventSchema]
+  ...FomControllerSchemaDef,
+  outOfFlatDates: [EventSchema]
 }, {timestamps: true})
 
 export const UserModel = model<IUser>(ModelEnum.USER, UserSchema)

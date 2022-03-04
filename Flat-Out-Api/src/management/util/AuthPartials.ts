@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import {env} from "../config/EnvConfig";
+import {env} from "../../config/EnvConfig";
 import jwt from "jsonwebtoken";
-import {IFomJwtContract} from "../interfaces/IFomJwtContract";
+import {IFomJwtContract} from "../../interfaces/IFomJwtContract";
 
 /**
  * SALT AND HASH: Salt and hash a given input

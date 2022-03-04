@@ -1,7 +1,7 @@
-import {IFomDocument} from "../../interfaces/IFomDocument";
+import {IFomComponent} from "../../interfaces/IFomComponent";
 import {model, Schema} from "mongoose";
-import {FOM_ASSOCIATION} from "../util/SchemaPartials";
-import {FomDocumentSchema} from "../util/FomDocumentSchema";
+import {FOM_ASSOCIATION} from "../util/FomSchemaDefinitionProperties";
+import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
 import {ModelEnum} from "../../interfaces/FomEnums";
 
 
@@ -10,7 +10,7 @@ import {ModelEnum} from "../../interfaces/FomEnums";
  * information for each item in a list.
  ------------------------------------------------------------------------------------------------------------------*/
 export interface IRow {
-  cells: string | IFomDocument | Date | undefined[]
+  cells: string | IFomComponent | Date | undefined[]
 }
 
 const RowSchema = new Schema<IRow>({
@@ -21,14 +21,14 @@ const RowSchema = new Schema<IRow>({
 /** ---------------------------------------------------------------------------------------------------------------
  * TABLE SCHEMA: The List Schema is a front for an array of items.
  --------------------------------------------------------------------------------------------------------------- */
-export interface ITable extends IFomDocument {
+export interface ITable extends IFomComponent {
   numOfCols: number,
   titleRow: IRow,
   contentRows: IRow[],
 }
 
 const TableSchema = new Schema<ITable>({
-  ...FomDocumentSchema,
+  ...FomComponentSchemaDef,
   numOfCols: {type: Number, required: [true, `Missing number of columns`], min: 1, maxlength: 5},
   titleRow: RowSchema,
   contentRows: [RowSchema]
