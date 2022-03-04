@@ -20,7 +20,9 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
  */
 function sanitizeRes(iRes: IFomRes): IFomRes {
   if (!iRes.item) return iRes
-  let {_id, name, dynUuid, docName, password, associations, ...rest} = iRes.item.toObject()
+
+  let {_id, name, dynUuid, password, parents, children, ...rest} = iRes.item.toObject()
+  if (!rest.cache) rest.cache = []
   return {
     msg: iRes.msg,
     item: rest,

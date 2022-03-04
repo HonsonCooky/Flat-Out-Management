@@ -3,7 +3,12 @@ import {IFomNode} from "../../interfaces/IFomNode";
 import {models} from "mongoose";
 import {env} from "../../config/EnvConfig";
 
-export function createNode(type: ModelEnum, body: any): IFomNode {
+/**
+ * CREATE NODE: Create a node object (bare-bones object in MONGODB)
+ * @param type
+ * @param body
+ */
+export function nodeCreate(type: ModelEnum, body: any): IFomNode {
   return new models[type]({
     uiName: body.uiName ?? body.name,
     fomVersion: env.version,

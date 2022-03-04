@@ -11,7 +11,7 @@ export interface ICacheObject {
   role: RoleEnum,
 }
 
-export interface ICache {
+export interface IFomCache {
   cacheObjs: ICacheObject[]
   cacheUpdateRequired: boolean,
 }

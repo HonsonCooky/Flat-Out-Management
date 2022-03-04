@@ -8,12 +8,9 @@ import {env} from "../config/EnvConfig";
  * @param res
  * @param next
  */
-export const extractInformation = (req: Request, res: Response, next: NextFunction) => {
+export const extractJwt = (req: Request, res: Response, next: NextFunction) => {
   let token = req.headers.authorization?.split(' ')[1]
-  if (token) res.locals.jwt = jwt.verify(token, env.token.secret)
-
-  res.locals.controller = req.headers.controller
-  res.locals.component = req.headers.component
-
+  if (!token) throw new Error(`400: Request requires authorization`)
+  res.locals.jwt = jwt.verify(token, env.token.secret)
   next()
 }

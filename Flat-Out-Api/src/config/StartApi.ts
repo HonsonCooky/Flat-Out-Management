@@ -6,6 +6,7 @@ import {env} from "./EnvConfig";
 import {fomLogger} from "./Logger";
 import {controllerRoutes} from "../routes/ControllerRoutes";
 import {componentRoutes} from "../routes/ComponentRoutes";
+import {ModelEnum} from "../interfaces/FomEnums";
 
 export function startApi() {
   let webAPI = express()
@@ -16,7 +17,7 @@ export function startApi() {
 
   // Initialize Routes
   webAPI.use('', baseRoute)
-  webAPI.use('/api/controller', controllerRoutes)
+  webAPI.use(`/api/controller/:type(${Object.values(ModelEnum).join('|')})`, controllerRoutes)
   webAPI.use('/api/component(/:type/:id)+', componentRoutes)
 
   // middleware AFTER requests
