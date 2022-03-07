@@ -2,11 +2,10 @@ import express from "express";
 import helmet from "helmet";
 import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
-import {env} from "./EnvConfig";
 import {fomLogger} from "./Logger";
 import {controllerRoutes} from "../routes/ControllerRoutes";
 import {componentRoutes} from "../routes/ComponentRoutes";
-import {ModelEnum} from "../interfaces/FomEnums";
+import {env} from "./EnvConfig";
 
 export function startApi() {
   let webAPI = express()
@@ -17,8 +16,8 @@ export function startApi() {
 
   // Initialize Routes
   webAPI.use('', baseRoute)
-  webAPI.use(`/api/controller/:type(${Object.values(ModelEnum).join('|')})`, controllerRoutes)
-  webAPI.use('/api/component(/:type/:id)+', componentRoutes)
+  webAPI.use(`/api/controller${env.url.type}`, controllerRoutes)
+  webAPI.use(`/api/component${env.url.typeAndId}`, componentRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

@@ -1,7 +1,7 @@
 import {Types} from "mongoose";
-import {IFomNode} from "./IFomNode";
+import {IFomComponent} from "./IFomComponent";
 
-export interface IFomController extends IFomNode {
+export interface IFomController extends Omit<IFomComponent, "parents"> {
   name: string,
   password: string,
   dynUuid: Types.ObjectId
