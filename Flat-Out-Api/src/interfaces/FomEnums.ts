@@ -13,11 +13,11 @@ export enum ModelEnum {
  * ROLE ENUM: Identifies levels of user authorization.
  */
 export enum RoleEnum {
-  ADMIN = 'admin',
-  FLATMATE = 'flatmate',
-  ASSOCIATE = 'associate',
-  JOIN_REQUEST = 'joinRequest',
-  NULL = 'null'
+  OWNER = 'owner',      // Authority to read/write/delete/alter associations
+  WRITE = 'write',      // Authority to read/write
+  READ = 'read',        // Authority to read
+  REQUEST = 'request',  // Asking for some level of authority
+  NULL = 'null'         // No role require
 }
 
 /**

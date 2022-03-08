@@ -8,6 +8,7 @@ import {
 } from "../management/ControllerManagement";
 import {extractJwt} from "../middleware/ExtractJwt";
 import {env} from "../config/EnvConfig";
+import {componentRoutes} from "./ComponentRoutes";
 
 export const controllerRoutes = express.Router()
 
@@ -21,3 +22,6 @@ controllerRoutes.post('/update/major', routeHandler(controllerUpdateMajor))
 controllerRoutes.get('/jwt', extractJwt, routeHandler(controllerJwtAuth))
 controllerRoutes.post('/update/minor', extractJwt, routeHandler(controllerUpdateMinor))
 controllerRoutes.post(`/connect${env.url.typeAndId}`, extractJwt, routeHandler(controllerConnect))
+
+// Component
+controllerRoutes.use(`/:id/component${env.url.typeAndId}`, componentRoutes)

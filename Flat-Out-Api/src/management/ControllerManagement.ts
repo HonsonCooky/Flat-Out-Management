@@ -66,7 +66,6 @@ export async function controllerJwtAuth(req: Request, res: Response): Promise<IF
   }
 }
 
-
 /**
  * CONTROLLER DELETE: Remove a controller.
  * @param req

@@ -4,7 +4,6 @@ import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
 import {fomLogger} from "./Logger";
 import {controllerRoutes} from "../routes/ControllerRoutes";
-import {componentRoutes} from "../routes/ComponentRoutes";
 import {env} from "./EnvConfig";
 
 export function startApi() {
@@ -16,8 +15,7 @@ export function startApi() {
 
   // Initialize Routes
   webAPI.use('', baseRoute)
-  webAPI.use(`/api/controller${env.url.type}`, controllerRoutes)
-  webAPI.use(`/api/component${env.url.typeAndId}`, componentRoutes)
+  webAPI.use(`/api${env.url.type}`, controllerRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

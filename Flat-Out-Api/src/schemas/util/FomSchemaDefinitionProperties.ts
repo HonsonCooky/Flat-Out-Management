@@ -31,7 +31,6 @@ export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
  */
 export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
   type: String,
-  sparse: true,
   required: [true, "Missing password"]
 }
 

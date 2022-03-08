@@ -12,9 +12,7 @@ export function startMongo() {
   connect(env.mongo.connectionStr)
     .then(() => {
       fomLogger.info("MongoDB connected")
-      cleanDocuments(ModelEnum.USER).catch()
-      cleanDocuments(ModelEnum.GROUP).catch()
-      cleanDocuments(ModelEnum.TABLE).catch()
+      Object.values(ModelEnum).forEach((val: ModelEnum) => cleanDocuments(val).catch())
     })
     .catch(e => fomLogger.error(`MongoDB connection failed: ${e.message}`))
 
