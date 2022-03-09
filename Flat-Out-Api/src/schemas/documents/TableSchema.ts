@@ -16,7 +16,7 @@ export interface ITable extends IFomComponent {
 
 const TableSchema = new Schema<ITable>({
   ...FomComponentSchemaDef,
-  numOfCols: {type: Number, required: [true, `Missing number of columns`], min: 1, maxlength: 5},
+  numOfCols: {type: Number, required: [true, `Missing number of columns`], minLength: 1, maxlength: 5},
   titleRow: RowSchema,
   contentRows: {type: [RowSchema], required: [true, 'Missing table values']}
 }, {timestamps: true})

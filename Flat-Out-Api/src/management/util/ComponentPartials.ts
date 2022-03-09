@@ -1,6 +1,7 @@
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {models} from "mongoose";
+import {ModelEnum} from "../../interfaces/FomEnums";
 import {Request} from "express";
 
 /**
@@ -11,16 +12,9 @@ export async function getComponentFromAssociation(association: IFomAssociation):
   return models[association.model].findOne({_id: association.ref});
 }
 
-export function getComponentTypesAndIdsFromUrl(req: Request) {
-  let values: string[] = req.originalUrl.split('/')
 
-}
+const validComponents: string[] = [ModelEnum.GROUP, ModelEnum.TABLE]
 
-/**
- * COMPONENT FROM URL: Get the IFomComponent referenced in the URL.
- * @param req
- */
-export function componentFromUrl(req: Request) {
-  let url: string = req.originalUrl
-  console.log(req.baseUrl, req.originalUrl, req.url)
+export function componentTypeFromUrl(req: Request): ModelEnum {
+  return <ModelEnum>req.params.component
 }

@@ -63,8 +63,9 @@ export const env = {
     secret: SERVER_TOKEN_SECRET,
     expirationDays: SERVER_TOKEN_EXPIRATION_DAYS
   },
-  url: {
-    type: `/:type(${Object.values(ModelEnum).join('|')})`,
-    typeAndId: `(/:type(${Object.values(ModelEnum).join('|')})/:id)+`
+  urlRegExp: {
+    controllerTypeRegExp: `(${[ModelEnum.USER].join('|')})`,
+    componentTypeRegExp: `(${[ModelEnum.GROUP, ModelEnum.TABLE].join('|')})`,
+    idRegExp: `(/:id)`
   }
 }

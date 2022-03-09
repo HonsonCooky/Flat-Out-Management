@@ -15,7 +15,7 @@ export function startApi() {
 
   // Initialize Routes
   webAPI.use('', baseRoute)
-  webAPI.use(`/api${env.url.type}`, controllerRoutes)
+  webAPI.use(`/api/:controller`, controllerRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

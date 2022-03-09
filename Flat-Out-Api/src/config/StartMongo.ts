@@ -12,7 +12,8 @@ export function startMongo() {
   connect(env.mongo.connectionStr)
     .then(() => {
       fomLogger.info("MongoDB connected")
-      Object.values(ModelEnum).forEach((val: ModelEnum) => cleanDocuments(val).catch())
+      Object.values(ModelEnum).forEach((val: ModelEnum) => cleanDocuments(val).catch((_) => {
+      }))
     })
     .catch(e => fomLogger.error(`MongoDB connection failed: ${e.message}`))
 
@@ -28,7 +29,9 @@ export function startMongo() {
  */
 async function cleanDocuments(type: ModelEnum) {
   fomLogger.info(`Cleaning ${type} documents`)
-  let docs: IFomComponent[] = await models[type].find({})
+  let docs: IFomComponent[] = await models[type]?.find({})
+  if (!docs) return
+
   let today = new Date()
 
   for (let doc of docs)

@@ -14,7 +14,7 @@ export interface ILog {
 const LogSchema = new Schema<ILog>({
   level: {type: String, enum: LogLevel, default: LogLevel.INFO},
   message: {type: String, required: [true, "Log missing message?"]},
-  object: {type: String}
+  object: {typeRegExp: String}
 }, {timestamps: true})
 
 export const LogModel = model<ILog>("_logs", LogSchema)

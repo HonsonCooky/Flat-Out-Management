@@ -3,7 +3,7 @@ import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
 import {ModelEnum} from "../../interfaces/FomEnums";
 import {EventSchema, ICalendarEvent} from "./EventSchema";
-import {FOM_NAME} from "../util/FomSchemaDefinitionProperties";
+import {FOM_NAME, FOM_PASSWORD} from "../util/FomSchemaDefinitionProperties";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -18,6 +18,7 @@ export interface IGroup extends IFomComponent {
 const GroupSchema = new Schema<IGroup>({
   ...FomComponentSchemaDef,
   uiName: FOM_NAME,
+  password: FOM_PASSWORD,
   groupCalendar: [EventSchema]
 }, {timestamps: true})
 

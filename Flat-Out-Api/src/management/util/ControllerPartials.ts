@@ -10,8 +10,7 @@ import {Request} from "express";
  * @param req
  */
 export function controllerTypeFromUrl(req: Request): ModelEnum {
-  let validControllers: string[] = [ModelEnum.USER]
-  return <ModelEnum>req.originalUrl.split('/').find((str: string) => validControllers.includes(str))
+  return <ModelEnum>req.params.controller
 }
 
 /**

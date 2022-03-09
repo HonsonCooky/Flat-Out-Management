@@ -6,8 +6,9 @@ import {saltAndHash, signJWT} from "./util/AuthPartials";
 import {models, Types} from "mongoose";
 import {controllerTypeFromUrl, jwtAuth, unamePassAuth} from "./util/ControllerPartials";
 import {IFomComponent} from "../interfaces/IFomComponent";
-import {componentFromUrl, getComponentFromAssociation} from "./util/ComponentPartials";
+import {getComponentFromAssociation} from "./util/ComponentPartials";
 import {IFomAssociation} from "../interfaces/IFomAssociation";
+import {env} from "../config/EnvConfig";
 
 /**
  * CONTROLLER REGISTER: Register a controller (user)
@@ -15,18 +16,19 @@ import {IFomAssociation} from "../interfaces/IFomAssociation";
  * @param _
  */
 export async function controllerRegister(req: Request, _: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
   let {name, uiName, password} = req.body
 
-  await new models[type]({
+  await new models[controllerType]({
     name,
     uiName: uiName ?? name,
     password: saltAndHash(password),
-    dynUuid: new Types.ObjectId()
+    dynUuid: new Types.ObjectId(),
+    fomVersion: env.version
   }).save()
 
   return {
-    msg: `Successfully created ${type} ${name}`
+    msg: `Successfully created ${controllerType} ${uiName}`
   }
 }
 
@@ -36,8 +38,8 @@ export async function controllerRegister(req: Request, _: Response): Promise<IFo
  * @param res
  */
 export async function controllerUnamePassAuth(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await unamePassAuth(type, req.body)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
+  let controller: IFomController = await unamePassAuth(controllerType, req.body)
 
   controller.dynUuid = new Types.ObjectId()
   await controller.save()
@@ -45,7 +47,7 @@ export async function controllerUnamePassAuth(req: Request, res: Response): Prom
   let token = signJWT(controller.dynUuid)
 
   return {
-    msg: `Successfully authenticated ${type} ${controller.name}`,
+    msg: `Successfully authenticated ${controllerType} ${controller.uiName}`,
     item: controller,
     token
   }
@@ -57,11 +59,11 @@ export async function controllerUnamePassAuth(req: Request, res: Response): Prom
  * @param res
  */
 export async function controllerJwtAuth(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await jwtAuth(type, res.locals.jwt)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
+  let controller: IFomController = await jwtAuth(controllerType, res.locals.jwt)
 
   return {
-    msg: `Successfully authenticated ${type} ${controller.name}`,
+    msg: `Successfully authenticated ${controllerType} ${controller.uiName}`,
     item: controller
   }
 }
@@ -72,14 +74,15 @@ export async function controllerJwtAuth(req: Request, res: Response): Promise<IF
  * @param res
  */
 export async function controllerDelete(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await unamePassAuth(type, req.body)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
+  let controller: IFomController = await unamePassAuth(controllerType, req.body)
 
   for (let child of controller.children) {
     let component: IFomComponent | null = await getComponentFromAssociation(child)
     if (!component) continue
 
-    await component.updateOne({parents: component.parents
+    await component.updateOne({
+      parents: component.parents
         .filter((association: IFomAssociation) => !association.ref.equals(controller._id))
     })
   }
@@ -87,7 +90,7 @@ export async function controllerDelete(req: Request, res: Response): Promise<IFo
   await controller.deleteOne()
 
   return {
-    msg: `Successfully deleted ${type} ${controller.name}`,
+    msg: `Successfully deleted ${controllerType} ${controller.uiName}`,
     item: controller
   }
 }
@@ -98,8 +101,8 @@ export async function controllerDelete(req: Request, res: Response): Promise<IFo
  * @param res
  */
 export async function controllerUpdateMajor(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await unamePassAuth(type, req.body)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
+  let controller: IFomController = await unamePassAuth(controllerType, req.body)
 
   let {newName, newPassword} = req.body
   await controller.updateOne({
@@ -108,7 +111,7 @@ export async function controllerUpdateMajor(req: Request, res: Response): Promis
   })
 
   return {
-    msg: `Successfully updated ${type} ${controller.name}`,
+    msg: `Successfully updated ${controllerType} ${controller.uiName}`,
     item: controller
   }
 }
@@ -119,8 +122,8 @@ export async function controllerUpdateMajor(req: Request, res: Response): Promis
  * @param res
  */
 export async function controllerUpdateMinor(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await jwtAuth(type, res.locals.jwt)
+  let controllerType: ModelEnum = controllerTypeFromUrl(req)
+  let controller: IFomController = await jwtAuth(controllerType, res.locals.jwt)
 
   let {uiName} = req.body
   await controller.updateOne({
@@ -128,22 +131,7 @@ export async function controllerUpdateMinor(req: Request, res: Response): Promis
   })
 
   return {
-    msg: `Successfully updated ${type} ${controller.name}`,
+    msg: `Successfully updated ${controllerType} ${controller.uiName}`,
     item: controller
-  }
-}
-
-/**
- * CONTROLLER CONNECT: Connect a controller to some other document.
- * @param req
- * @param res
- */
-export async function controllerConnect(req: Request, res: Response): Promise<IFomRes> {
-  let type: ModelEnum = controllerTypeFromUrl(req)
-  let controller: IFomController = await jwtAuth(type, res.locals.jwt)
-  componentFromUrl(req)
-
-  return {
-    msg: "Successfully"
   }
 }

@@ -4,13 +4,15 @@ import {
   controllerDelete,
   controllerJwtAuth,
   controllerRegister,
-  controllerUnamePassAuth, controllerUpdateMinor, controllerUpdateMajor, controllerConnect
+  controllerUnamePassAuth,
+  controllerUpdateMajor,
+  controllerUpdateMinor
 } from "../management/ControllerManagement";
 import {extractJwt} from "../middleware/ExtractJwt";
 import {env} from "../config/EnvConfig";
-import {componentRoutes} from "./ComponentRoutes";
+import {componentRoutesBasic, componentRoutesPath} from "./ComponentRoutes";
 
-export const controllerRoutes = express.Router()
+export const controllerRoutes = express.Router({mergeParams: true})
 
 // Username + password
 controllerRoutes.post('/register', routeHandler(controllerRegister))
@@ -21,7 +23,7 @@ controllerRoutes.post('/update/major', routeHandler(controllerUpdateMajor))
 // JWT
 controllerRoutes.get('/jwt', extractJwt, routeHandler(controllerJwtAuth))
 controllerRoutes.post('/update/minor', extractJwt, routeHandler(controllerUpdateMinor))
-controllerRoutes.post(`/connect${env.url.typeAndId}`, extractJwt, routeHandler(controllerConnect))
 
 // Component
-controllerRoutes.use(`/:id/component${env.url.typeAndId}`, componentRoutes)
+controllerRoutes.use(`/:component${env.urlRegExp.componentTypeRegExp}`, componentRoutesBasic)
+controllerRoutes.use(`(/:component${env.urlRegExp.componentTypeRegExp}/:id)+`, componentRoutesPath)

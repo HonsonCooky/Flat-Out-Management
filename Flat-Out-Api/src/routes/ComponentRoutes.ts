@@ -1,8 +1,13 @@
 import express from "express";
+import {routeHandler} from "../middleware/RouteHandler";
+import {extractJwt} from "../middleware/ExtractJwt";
+import {componentConnect, componentRegister} from "../management/ComponentManagement";
 
-export const componentRoutes = express.Router()
+export const componentRoutesBasic = express.Router({mergeParams: true})
+export const componentRoutesPath = express.Router({mergeParams: true})
 
-componentRoutes.post('/test', (req, res) => {
-  console.log(req.baseUrl, req.originalUrl)
-  res.send()
-})
+// Basic
+componentRoutesBasic.post('/register', extractJwt, routeHandler(componentRegister))
+
+// Path
+componentRoutesPath.post('/connect', extractJwt, routeHandler(componentConnect))
