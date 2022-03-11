@@ -3,8 +3,8 @@ import helmet from "helmet";
 import baseRoute from "../routes/BaseRoute";
 import {errorHandler} from "../middleware/ErrorHandling";
 import {fomLogger} from "./Logger";
-import {controllerRoutes} from "../routes/ControllerRoutes";
-import {env} from "./EnvConfig";
+import {env} from "./Config";
+import {apiRoutes} from "../routes/ApiRoutes";
 
 export function startApi() {
   let webAPI = express()
@@ -14,8 +14,8 @@ export function startApi() {
   webAPI.use(express.json())
 
   // Initialize Routes
-  webAPI.use('', baseRoute)
-  webAPI.use(`/api/:controller`, controllerRoutes)
+  webAPI.use(baseRoute)
+  webAPI.use(apiRoutes)
 
   // middleware AFTER requests
   webAPI.use(errorHandler)

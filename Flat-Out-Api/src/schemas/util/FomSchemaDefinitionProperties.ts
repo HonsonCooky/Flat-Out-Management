@@ -1,7 +1,7 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
-import {env} from "../../config/EnvConfig"
+import {env} from "../../config/Config"
 
 /**
  * FOM NAME: A string value which will be used to validate the username + password login

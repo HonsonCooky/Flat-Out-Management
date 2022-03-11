@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {env} from "../config/EnvConfig";
+import {env} from "../config/Config";
 import {fomLogger} from "../config/Logger";
 
 /**

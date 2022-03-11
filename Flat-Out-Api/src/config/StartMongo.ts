@@ -1,5 +1,5 @@
 import {connect, models} from "mongoose";
-import {env} from "./EnvConfig";
+import {env} from "./Config";
 import {fomLogger} from "./Logger";
 import {ModelEnum} from "../interfaces/FomEnums";
 import {IFomComponent} from "../interfaces/IFomComponent";

@@ -22,7 +22,6 @@ function sanitizeRes(iRes: IFomRes): IFomRes {
   if (!iRes.item) return iRes
 
   let {_id, name, dynUuid, password, parents, children, ...rest} = iRes.item.toObject()
-  if (!rest.cache) rest.cache = []
   return {
     msg: iRes.msg,
     item: rest,

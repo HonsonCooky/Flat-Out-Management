@@ -1,6 +1,5 @@
 import {config} from "dotenv";
 import {connection} from "mongoose";
-import {ModelEnum} from "../interfaces/FomEnums";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -42,10 +41,6 @@ const packageJson: any = require('../../package.json')
 const fomVersion: string = packageJson.version
 
 /**
- * URL TYPES: Resources are hidden in URLs with this REGEXP
- */
-
-/**
  * EXPORT: Export all the above, tied with a bow, in an object
  */
 export const env = {
@@ -62,10 +57,5 @@ export const env = {
     issuer: SERVER_TOKEN_ISSUER,
     secret: SERVER_TOKEN_SECRET,
     expirationDays: SERVER_TOKEN_EXPIRATION_DAYS
-  },
-  urlRegExp: {
-    controllerTypeRegExp: `(${[ModelEnum.USER].join('|')})`,
-    componentTypeRegExp: `(${[ModelEnum.GROUP, ModelEnum.TABLE].join('|')})`,
-    idRegExp: `(/:id)`
   }
 }
