@@ -1,5 +1,6 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
+import {fomLogger} from "../config/Logger";
 
 /**
  * ROUTE HANDLER: Manage the execution and try catching of all functions being called from a URL call.
@@ -19,9 +20,10 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
  * @param iRes
  */
 function sanitizeRes(iRes: IFomRes): IFomRes {
+  fomLogger.info(iRes.msg)
   if (!iRes.item) return iRes
 
-  let {_id, name, dynUuid, password, parents, children, ...rest} = iRes.item.toObject()
+  let {dynUuid, password, parents, children, ...rest} = iRes.item.toObject()
   return {
     msg: iRes.msg,
     item: rest,

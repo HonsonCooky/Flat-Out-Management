@@ -13,8 +13,7 @@ export function signJWT(controller: IFomController, expiresIn: string = env.toke
   if (!controller) throw new Error(`500: Unable to sign a JWT without some content`)
 
   let payload: IFomJwtContract = {
-    dynUuid: controller.dynUuid,
-    associations: controller.children
+    dynUuid: controller.dynUuid
   }
 
   let options: any = {

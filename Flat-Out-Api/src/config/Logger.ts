@@ -13,7 +13,7 @@ const log = (message: string, object?: any, logLevel?: LogLevel) => {
 
   if (!env.devMode && env.mongo.isDbConnected()) {
     localLogs.forEach(log => {
-      (new LogModel(log)).save().then()
+      (new LogModel(log)).save().then().catch()
     })
     localLogs = []
   }

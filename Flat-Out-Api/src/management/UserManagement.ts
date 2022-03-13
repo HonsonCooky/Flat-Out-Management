@@ -1,33 +1,10 @@
 import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
-import {UserModel} from "../schemas/documents/UserSchema";
-import {compareHashes, saltAndHash} from "./util/AuthPartials";
+import {IUser, UserModel} from "../schemas/documents/UserSchema";
+import {saltAndHash} from "./util/AuthPartials";
 import {Types} from "mongoose";
-import {IFomController} from "../interfaces/IFomController";
 import {signJWT} from "./util/SignJwt";
-import {removeDocumentFromAssociations} from "./util/partials";
-
-
-/**
- * Get a user from the document db
- * @param r
- */
-async function getUser(r: Request | Response): Promise<IFomController> {
-  // If this is a request
-  if ("body" in r) {
-    let {name, password} = (r as Request).body
-    let controller: IFomController | null = await UserModel.findOne({name})
-    if (!controller) throw new Error(`400: Invalid user name`)
-    if (!compareHashes(password, controller.password)) throw new Error(`400: Invalid user authorization`)
-    return controller
-  }
-  // Else it's jwt
-  else {
-    let controller: IFomController | null = await UserModel.findOne({dynUuid: (r as Response).locals.jwt})
-    if (!controller) throw new Error(`400: Invalid JWT`)
-    return controller
-  }
-}
+import {getUser, removeDocumentFromAssociations} from "./util/Partials";
 
 
 /**
@@ -55,12 +32,12 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
  * @param res
  */
 export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
-  let controller: IFomController = await getUser(req)
-  let token: string = signJWT(controller, req.body.expiresIn)
+  let user: IUser = await getUser(req)
+  let token: string = signJWT(user, req.body.expiresIn)
 
   return {
-    msg: `Successfully logged in user ${controller.uiName}`,
-    item: controller,
+    msg: `Successfully logged in user ${user.uiName}`,
+    item: user,
     token
   }
 }
@@ -71,13 +48,13 @@ export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
  * @param res
  */
 export async function userDelete(req: Request, res: Response): Promise<IFomRes> {
-  let controller: IFomController = await getUser(req)
-  await removeDocumentFromAssociations(controller, ...controller.children)
-  await controller.deleteOne()
+  let user: IUser = await getUser(req)
+  await removeDocumentFromAssociations(user, ...user.children)
+  await user.deleteOne()
 
   return {
-    msg: `Successfully deleted user ${controller.uiName}`,
-    item: controller
+    msg: `Successfully deleted user ${user.uiName}`,
+    item: user
   }
 }
 
@@ -88,21 +65,21 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, uiName} = req.body
-  let controller: IFomController
+  let user: IUser
 
   if (newName || newPassword) {
-    controller = await getUser(req)
-    controller.name = newName ?? controller.name
-    controller.password = saltAndHash(newPassword) ?? controller.password
+    user = await getUser(req)
+    user.name = newName ?? user.name
+    user.password = saltAndHash(newPassword) ?? user.password
   } else {
-    controller = await getUser(res)
+    user = await getUser(res)
   }
 
-  controller.uiName = uiName ?? controller.uiName
-  await controller.save()
+  user.uiName = uiName ?? user.uiName
+  await user.save()
 
   return {
-    msg: `Successfully updated user ${controller.uiName}`,
-    item: controller
+    msg: `Successfully updated user ${user.uiName}`,
+    item: user
   }
 }
