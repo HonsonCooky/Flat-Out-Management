@@ -33,6 +33,8 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
  */
 export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
   let user: IUser = await getUser(req)
+  user.dynUuid = new Types.ObjectId()
+  await user.save()
   let token: string = signJWT(user, req.body.expiresIn)
 
   return {

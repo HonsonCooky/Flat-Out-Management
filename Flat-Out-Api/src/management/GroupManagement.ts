@@ -4,7 +4,13 @@ import {IUser} from "../schemas/documents/UserSchema";
 import {GroupModel, IGroup} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthPartials";
 import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
-import {getGroup, getUser, getUserDocAndAssociation, removeDocumentFromAssociations} from "./util/Partials";
+import {
+  connectDocuments,
+  getGroup,
+  getUser,
+  getUserDocAndAssociation,
+  removeDocumentFromAssociations
+} from "./util/Partials";
 
 
 async function groupReRender(group: IGroup) {
@@ -23,22 +29,12 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
 
   let group: IGroup = new GroupModel({
     uiName: uiName ?? name,
-    password: saltAndHash(password),
-    parents: [{
-      ref: user._id,
-      model: ModelEnum.USER,
-      role: RoleEnum.OWNER
-    }]
+    password: saltAndHash(password)
   })
 
-  user.children.push({
-    ref: group._id,
-    model: ModelEnum.GROUP,
-    role: RoleEnum.OWNER
-  })
-
-  await user.save()
-  await group.save()
+  await connectDocuments({item: user, model: ModelEnum.USER},
+    {item: group, model: ModelEnum.GROUP},
+    RoleEnum.OWNER)
 
   return {
     msg: `Successfully registered group ${uiName ?? name} with owner ${user.uiName}`,

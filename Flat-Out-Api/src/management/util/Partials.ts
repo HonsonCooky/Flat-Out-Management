@@ -4,8 +4,31 @@ import {Request, Response} from "express";
 import {GroupModel, IGroup} from "../../schemas/documents/GroupSchema";
 import {IUser, UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthPartials";
-import {RoleEnum} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
 import {IFomComponent} from "../../interfaces/IFomComponent";
+import {IFomController} from "../../interfaces/IFomController";
+
+/**
+ * CONNECT DOCUMENTS: Connect a parent and child together
+ * @param parent
+ * @param child
+ * @param role
+ */
+export async function connectDocuments(
+  parent: {item: IFomController | IFomComponent, model: ModelEnum},
+  child: {item: IFomComponent, model: ModelEnum},
+  role: RoleEnum): Promise<void> {
+
+  parent.item.children = parent.item.children.filter((a: IFomAssociation) => !child.item._id.equals(a.ref))
+  parent.item.children.push({ref: child.item._id, model: child.model, role})
+
+  child.item.parents = child.item.parents.filter((a: IFomAssociation) => !parent.item._id.equals(a.ref))
+  child.item.parents.push({ref: parent.item._id, model: parent.model, role})
+
+  await parent.item.save()
+  await child.item.save()
+}
+
 
 /**
  * REMOVE DOCUMENT FROM ASSOCIATIONS: Before deleting some document, remove its reference from all associations.
