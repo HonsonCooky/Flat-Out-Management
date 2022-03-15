@@ -1,8 +1,7 @@
 import {models, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {Request, Response} from "express";
-import {GroupModel, IGroup} from "../../schemas/documents/GroupSchema";
-import {IUser, UserModel} from "../../schemas/documents/UserSchema";
+import {UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthPartials";
 import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
 import {IFomComponent} from "../../interfaces/IFomComponent";
@@ -15,8 +14,8 @@ import {IFomController} from "../../interfaces/IFomController";
  * @param role
  */
 export async function connectDocuments(
-  parent: {item: IFomController | IFomComponent, model: ModelEnum},
-  child: {item: IFomComponent, model: ModelEnum},
+  parent: { item: IFomController | IFomComponent, model: ModelEnum },
+  child: { item: IFomComponent, model: ModelEnum },
   role: RoleEnum): Promise<void> {
 
   parent.item.children = parent.item.children.filter((a: IFomAssociation) => !child.item._id.equals(a.ref))
@@ -35,8 +34,8 @@ export async function connectDocuments(
  * @param doc
  * @param associations
  */
-export async function removeDocumentFromAssociations(doc: { _id: Types.ObjectId, [key: string]: any },
-                                                     ...associations: IFomAssociation[]) {
+export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
+                                    ...associations: IFomAssociation[]) {
   for (let a of associations) {
     let other: any = await models[a.model].findOne({_id: a.ref})
     if (!other) continue
@@ -54,64 +53,81 @@ export async function removeDocumentFromAssociations(doc: { _id: Types.ObjectId,
 }
 
 /**
- * GET USER: Get a user from the document db
+ * GET USER: Get a controller from the document db
+ * Either the controller is accessed with username and password, or a JWT
  * @param r
  */
-export async function getUser(r: Request | Response): Promise<IUser> {
-  // If this is a request
+export async function getController<T extends IFomController>(r: Request | Response): Promise<T> {
+  let controller: T | null
+
+  // Request means username and password
   if ("body" in r) {
     let {name, password} = (r as Request).body
-    let user: IUser | null = await UserModel.findOne({name})
-    if (!user) throw new Error(`400: Invalid user name`)
-    if (!compareHashes(password, user.password)) throw new Error(`400: Invalid user authorization`)
-    return user
+    controller = await UserModel.findOne({name})
+    if (!controller) throw new Error(`400: Invalid user name`)
+    if (!compareHashes(password, controller.password)) throw new Error(`400: Invalid user authorization`)
   }
-  // Else it's jwt
+  // Response mean JWT
   else {
-    let user: IUser | null = await UserModel.findOne({dynUuid: (r as Response).locals.jwt?.dynUuid})
-    if (!user) throw new Error(`400: Invalid JWT`)
-    return user
+    controller = await UserModel.findOne({dynUuid: (r as Response).locals.jwt?.dynUuid})
+    if (!controller) throw new Error(`400: Invalid JWT`)
   }
+
+  return controller
 }
 
 /**
- * GET GROUP: Get a group, with some error checking
+ * GET COMPONENT URL: Get a component listed in the Url, with some error checking
  * @param req
  */
-export async function getGroup(req: Request): Promise<IGroup> {
-  let group: IGroup | null = await GroupModel.findOne({_id: req.params.id})
-  if (!group) throw new Error(`400: Unable to find group`)
-  return group
+export async function getComponentUrl<T extends IFomComponent>(req: Request): Promise<T> {
+  let {component, id} = req.params
+  let com: T | null = await models[component]?.findOne({_id: id})
+  if (!com) throw new Error(`400: Unable to find ${component} ${id}`)
+  return com
+}
+
+/**
+ * GET COMPONENT BOD: Get the component referenced in the request body
+ * @param req
+ */
+export async function getComponentBod<T extends IFomComponent>(req: Request): Promise<T> {
+  let association: IFomAssociation = req.body.association
+  let com: T | null = await models[association.model].findOne({_id: association.ref})
+  if (!com) throw new Error(`400: Unable to find ${association.model} ${association.ref}`)
+  return com
 }
 
 /**
  * GET ASSOCIATION: Get the association between a document, and it's user (document is always right).
- * @param user
- * @param other
+ * @param parent
+ * @param child
  */
-export async function getAssociation<T extends IFomComponent>(user: IUser, other: T): Promise<IFomAssociation> {
-  let a: IFomAssociation | undefined = other.parents.find((a: IFomAssociation) => user._id.equals(a.ref))
+export async function getAssociation(
+  parent: { _id: Types.ObjectId, [key: string]: any },
+  child: IFomComponent): Promise<IFomAssociation> {
+  let a: IFomAssociation | undefined = child.parents.find((a: IFomAssociation) => parent._id.equals(a.ref))
   if (!a) throw new Error(`400: User is not associated with this group`)
   return a
 }
 
 /**
- * GET USER DOC AND ASSOCIATION: Get the user, and the document and their association
+ * GET PARENT CHILD AND ASSOCIATION: Just get some values (common function)
  * @param req
  * @param res
- * @param getFn
  */
-export async function getUserDocAndAssociation<T extends IFomComponent>(
-  req: Request, res: Response, getFn: (req: Request) => Promise<T>):
-  Promise<{ user: IUser, other: T, association: RoleEnum }> {
+export async function getParentChildAndAssociation<T extends IFomComponent>(
+  req: Request, res: Response): Promise<{ parent: IFomController | IFomComponent, child: T, association: RoleEnum }> {
 
-  let user: IUser = await getUser(res)
-  let other: T = await getFn(req)
-  let association = (await getAssociation<T>(user, other)).role
+  let parent: IFomController | IFomComponent = res.locals.jwt ?
+    await getController(res) :
+    await getComponentBod(req)
+  let child: T = await getComponentUrl(req)
+  let association = (await getAssociation(parent, child)).role
 
   return {
-    user,
-    other,
+    parent,
+    child,
     association
   }
 }

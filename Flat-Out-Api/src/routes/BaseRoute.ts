@@ -7,7 +7,7 @@ import {fomLogger} from "../config/Logger";
  * Heroku + MongoDB backend. Getting logs, or waking up the dyno. Small unassociated functionality resides here.
  */
 
-const baseRoute = express.Router()
+const baseRoute = express.Router({mergeParams: true})
 
 baseRoute.get('', async (req: Request, res: Response) => {
   let logs = await fomLogger.get()

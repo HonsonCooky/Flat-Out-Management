@@ -4,7 +4,7 @@ import {IUser, UserModel} from "../schemas/documents/UserSchema";
 import {saltAndHash} from "./util/AuthPartials";
 import {Types} from "mongoose";
 import {signJWT} from "./util/SignJwt";
-import {getUser, removeDocumentFromAssociations} from "./util/Partials";
+import {getController, preDocRemoval} from "./util/Partials";
 
 
 /**
@@ -32,7 +32,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
  * @param res
  */
 export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getUser(req)
+  let user: IUser = await getController(req) as IUser
   user.dynUuid = new Types.ObjectId()
   await user.save()
   let token: string = signJWT(user, req.body.expiresIn)
@@ -50,8 +50,8 @@ export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
  * @param res
  */
 export async function userDelete(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getUser(req)
-  await removeDocumentFromAssociations(user, ...user.children)
+  let user: IUser = await getController(req) as IUser
+  await preDocRemoval(user, ...user.children)
   await user.deleteOne()
 
   return {
@@ -70,11 +70,11 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   let user: IUser
 
   if (newName || newPassword) {
-    user = await getUser(req)
+    user = await getController(req) as IUser
     user.name = newName ?? user.name
     user.password = saltAndHash(newPassword) ?? user.password
   } else {
-    user = await getUser(res)
+    user = await getController(res) as IUser
   }
 
   user.uiName = uiName ?? user.uiName

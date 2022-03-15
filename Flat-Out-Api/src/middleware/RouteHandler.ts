@@ -9,7 +9,7 @@ import {fomLogger} from "../config/Logger";
 export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRes>): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res)
-      .then(async (iRes: IFomRes) => res.status(200).send(sanitizeRes(iRes)))
+      .then(async (iFomRes: IFomRes) => res.status(200).send(sanitizeRes(iFomRes)))
       .catch((e: any) => next(e))
   }
 }
@@ -17,16 +17,16 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
 /**
  * SANITIZE DOCUMENT: Before parsing a document back to the client, remove sensitive information that is not
  * necessary to parse back.
- * @param iRes
+ * @param iFomRes
  */
-function sanitizeRes(iRes: IFomRes): IFomRes {
-  fomLogger.info(iRes.msg)
-  if (!iRes.item) return iRes
+function sanitizeRes(iFomRes: IFomRes): IFomRes {
+  fomLogger.info(iFomRes.msg)
+  if (!iFomRes.item) return iFomRes
 
-  let {dynUuid, password, parents, children, ...rest} = iRes.item.toObject()
+  let {dynUuid, password, parents, children, ...rest} = iFomRes.item.toObject()
   return {
-    msg: iRes.msg,
+    msg: iFomRes.msg,
     item: rest,
-    token: iRes.token
+    token: iFomRes.token
   }
 }

@@ -2,7 +2,7 @@ import {IFomComponent} from "../../interfaces/IFomComponent";
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
 import {ModelEnum} from "../../interfaces/FomEnums";
-import {EventSchema, ICalendarEvent} from "./EventSchema";
+import {EventSchema, IEvent} from "./EventSchema";
 import {FOM_NAME, FOM_PASSWORD} from "../util/FomSchemaDefinitionProperties";
 
 
@@ -12,7 +12,7 @@ import {FOM_NAME, FOM_PASSWORD} from "../util/FomSchemaDefinitionProperties";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 export interface IGroup extends IFomComponent {
-  groupCalendar: ICalendarEvent[]
+  groupCalendar: IEvent[]
 }
 
 const GroupSchema = new Schema<IGroup>({

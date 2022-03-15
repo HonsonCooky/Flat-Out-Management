@@ -6,13 +6,13 @@ import {FOM_NAME} from "../util/FomSchemaDefinitionProperties";
 /**
  * FOM CALENDAR EVENT: A tuple between a date, title, message, and those involved.
  */
-export interface ICalendarEvent extends IFomComponent {
+export interface IEvent extends IFomComponent {
   date: Date,
   title: string,
   message: string,
 }
 
-export const EventSchema = new Schema<ICalendarEvent>({
+export const EventSchema = new Schema<IEvent>({
   ...FomComponentSchemaDef,
   date: {type: Date, required: [true, "Missing calendar event date"]},
   title: FOM_NAME,

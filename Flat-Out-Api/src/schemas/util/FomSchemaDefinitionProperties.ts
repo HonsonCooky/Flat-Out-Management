@@ -90,3 +90,14 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
     message: ({value}) => `500: Illegal Versioning ${value}`
   }
 }
+
+/**
+ * ROW: Outlines a row inside a table
+ */
+export const FOM_ROW: SchemaDefinitionProperty<any[]> = {
+  type: [String || FOM_ASSOCIATION || Date],
+  validate: {
+    validator: (val: any[]) => val.length > 0 && val.length < 7,
+    msg: '400: Too many columns in table'
+  }
+}

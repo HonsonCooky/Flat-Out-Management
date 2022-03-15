@@ -1,5 +1,5 @@
 import {Schema} from "mongoose";
-import {FOM_ASSOCIATION} from "../util/FomSchemaDefinitionProperties";
+import {FOM_ROW} from "../util/FomSchemaDefinitionProperties";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 
 
@@ -8,9 +8,9 @@ import {IFomAssociation} from "../../interfaces/IFomAssociation";
  * information for each item in a list, where list items have an unknown number of parameters.
  ------------------------------------------------------------------------------------------------------------------*/
 export interface IRow {
-  cells: string | IFomAssociation | Date []
+  cells: (string | IFomAssociation | Date)[]
 }
 
 export const RowSchema = new Schema<IRow>({
-  cells: [{type: String || FOM_ASSOCIATION || Date}]
+  cells: FOM_ROW
 })

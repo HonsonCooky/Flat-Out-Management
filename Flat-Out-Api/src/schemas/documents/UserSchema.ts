@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose";
 import {ModelEnum} from "../../interfaces/FomEnums";
-import {EventSchema, ICalendarEvent} from "./EventSchema";
+import {EventSchema, IEvent} from "./EventSchema";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
 import {IFomController} from "../../interfaces/IFomController";
 
@@ -12,7 +12,7 @@ import {IFomController} from "../../interfaces/IFomController";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 export interface IUser extends IFomController {
-  outOfFlatDates: ICalendarEvent[]
+  outOfFlatDates: IEvent[]
 }
 
 const UserSchema = new Schema<IUser>({
