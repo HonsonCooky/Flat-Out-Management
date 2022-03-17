@@ -1,10 +1,17 @@
 import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
-import {IUser} from "../schemas/documents/UserSchema";
 import {GroupModel, IGroup} from "../schemas/documents/GroupSchema";
-import {saltAndHash} from "./util/AuthPartials";
+import {saltAndHash} from "./util/BcryptPartials";
 import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
-import {connectDocuments, getController, getParentChildAndAssociation, preDocRemoval} from "./util/Partials";
+import {
+  connectDocuments,
+  getParent,
+  getParentChildAndAssociation,
+  getTypeFromDoc,
+  preDocRemoval
+} from "./util/Partials";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
 
 
 async function groupReRender(group: IGroup) {
@@ -18,7 +25,7 @@ async function groupReRender(group: IGroup) {
  * @param res
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getController<IUser>(res)
+  let parent: IFomController | IFomComponent = await getParent(req, res) // This is the intended parent of the table
   let {name, password} = req.body
 
   let group: IGroup = new GroupModel({
@@ -26,12 +33,13 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
     password: saltAndHash(password)
   })
 
-  await connectDocuments({item: user, model: ModelEnum.USER},
+  await connectDocuments(
+    {item: parent, model: getTypeFromDoc(parent)},
     {item: group, model: ModelEnum.GROUP},
     RoleEnum.OWNER)
 
   return {
-    msg: `Successfully registered group ${name} with owner ${user.uiName}`,
+    msg: `Successfully registered group ${name} with owner ${parent.uiName}`,
     item: group
   }
 }
@@ -42,9 +50,10 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function groupGet(req: Request, res: Response): Promise<IFomRes> {
-  let {parent, child, association} = await getParentChildAndAssociation<IGroup>(req, res)
+  let {parent, child, association} = await getParentChildAndAssociation(req, res)
+  let {role} = association
 
-  if (!(association === RoleEnum.OWNER || association === RoleEnum.WRITE || association === RoleEnum.READ))
+  if (!(role === RoleEnum.OWNER || role === RoleEnum.WRITE || role === RoleEnum.READ))
     throw new Error(`400: User does not have permission to read the contents of this object`)
 
   return {
@@ -60,10 +69,11 @@ export async function groupGet(req: Request, res: Response): Promise<IFomRes> {
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword} = req.body
-  let {parent, child, association} = await getParentChildAndAssociation<IGroup>(req, res)
+  let {parent, child, association} = await getParentChildAndAssociation(req, res)
+  let {role} = association
 
   if ((newName || newPassword)) {
-    if (association === RoleEnum.OWNER) {
+    if (role === RoleEnum.OWNER) {
       child.uiName = newName ?? child.uiName
       child.password = saltAndHash(newPassword) ?? child.password
     } else throw new Error(`400: Invalid authorization to complete group update`)
@@ -83,9 +93,10 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
  * @param res
  */
 export async function groupDelete(req: Request, res: Response): Promise<IFomRes> {
-  let {parent, child, association} = await getParentChildAndAssociation<IGroup>(req, res)
+  let {parent, child, association} = await getParentChildAndAssociation(req, res)
+  let {role} = association
 
-  if (association != RoleEnum.OWNER) throw new Error(`400:  Invalid authorization to complete group deletion`)
+  if (role != RoleEnum.OWNER) throw new Error(`400:  Invalid authorization to complete group deletion`)
 
   await preDocRemoval(child, ...[...child.parents, ...child.children])
   await child.deleteOne()

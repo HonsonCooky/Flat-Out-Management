@@ -2,6 +2,7 @@ import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
+import {IRow} from "../documents/TableSchema";
 
 /**
  * FOM NAME: A string value which will be used to validate the username + password login
@@ -94,10 +95,8 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
 /**
  * ROW: Outlines a row inside a table
  */
-export const FOM_ROW: SchemaDefinitionProperty<any[]> = {
+export const FOM_ROW: SchemaDefinitionProperty<IRow> = {
   type: [String || FOM_ASSOCIATION || Date],
-  validate: {
-    validator: (val: any[]) => val.length > 0 && val.length < 7,
-    msg: '400: Too many columns in table'
-  }
+  minlength: 1,
+  maxlength: 7
 }

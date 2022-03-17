@@ -2,23 +2,24 @@ import {IFomComponent} from "../../interfaces/IFomComponent";
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
 import {ModelEnum} from "../../interfaces/FomEnums";
-import {IRow, RowSchema} from "./RowSchema";
+import {FOM_ROW} from "../util/FomSchemaDefinitionProperties";
+import {IFomAssociation} from "../../interfaces/IFomAssociation";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
  * TABLE SCHEMA: The List Schema is a front for an array of items.
  --------------------------------------------------------------------------------------------------------------- */
+export type IRow = (string | IFomAssociation | Date)[]
+
 export interface ITable extends IFomComponent {
-  length: number,
   fields: IRow,
   records: IRow[],
 }
 
 const TableSchema = new Schema<ITable>({
   ...FomComponentSchemaDef,
-  length: {type: Number, required: [true, `Missing number of columns`], minLength: 1, maxlength: 5},
-  fields: RowSchema,
-  records: [RowSchema]
+  fields: FOM_ROW,
+  records: [FOM_ROW]
 }, {timestamps: true})
 
 export const TableModel = model<ITable>(ModelEnum.TABLE, TableSchema)

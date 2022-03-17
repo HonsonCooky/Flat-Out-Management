@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
 import {IUser, UserModel} from "../schemas/documents/UserSchema";
-import {saltAndHash} from "./util/AuthPartials";
+import {saltAndHash} from "./util/BcryptPartials";
 import {Types} from "mongoose";
 import {signJWT} from "./util/SignJwt";
 import {getController, preDocRemoval} from "./util/Partials";
@@ -14,12 +14,14 @@ import {getController, preDocRemoval} from "./util/Partials";
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
   let {name, password, uiName} = req.body
-  await new UserModel({
+  let user: IUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
     dynUuid: new Types.ObjectId()
-  }).save()
+  })
+
+  await user.save()
 
   return {
     msg: `Successfully registered user ${uiName ?? name}`
@@ -27,11 +29,11 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
 }
 
 /**
- * USER LOGIN: Authenticate user
+ * USER GET: Get a user, with Username and Password
  * @param req
  * @param res
  */
-export async function userLogin(req: Request, res: Response): Promise<IFomRes> {
+export async function userGet(req: Request, res: Response): Promise<IFomRes> {
   let user: IUser = await getController(req) as IUser
   user.dynUuid = new Types.ObjectId()
   await user.save()

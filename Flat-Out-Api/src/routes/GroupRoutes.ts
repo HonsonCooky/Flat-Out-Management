@@ -2,7 +2,7 @@ import express from "express";
 import {routeHandler} from "../middleware/RouteHandler";
 import {groupDelete, groupGet, groupRegister, groupUpdate} from "../management/GroupManagement";
 import {extractJwt} from "../middleware/ExtractJwt";
-import {idRegExp} from "./ApiRoutes";
+import {idRegExp} from "./UtilRouteValues";
 
 export const groupRoutes = express.Router({mergeParams: true})
 
