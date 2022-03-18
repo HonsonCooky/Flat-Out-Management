@@ -52,7 +52,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   if ((newName || newPassword)) {
     if (role === RoleEnum.OWNER) {
       child.password = saltAndHash(newPassword) ?? child.password
-    } else throw new Error(`400: Invalid authorization to update table name or password. Only the owner can do this`)
+    } else throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
   }
 
   child.uiName = newName ?? child.uiName

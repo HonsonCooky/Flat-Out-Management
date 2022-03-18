@@ -57,19 +57,19 @@ export async function connectDocuments(
  */
 export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
                                     children: IFomAssociation[], parents?: IFomAssociation[]) {
-  if (parents) for (let a of parents) {
-    let other: any = await models[a.model].findOne({_id: a.ref})
-    if (!other) continue
 
-    if (other.parents) await other.updateOne({
-      parents: other.parents
-        .filter((b: IFomAssociation) => !doc._id.equals(b.ref))
-    })
+  if (parents) for await (let parent of parents
+    .map(async (a: IFomAssociation) => (await models[a.model]
+      .findOne({_id: a.ref}) as IFomController | IFomComponent))) {
+    await parent.updateOne({children: parent.children.filter((b: IFomAssociation) => !doc._id.equals(b.ref))})
+  }
 
-    if (other.children) await other.updateOne({
-      children: other.children
-        .filter((b: IFomAssociation) => !doc._id.equals(b.ref))
-    })
+  for await (let child of children
+    .map(async (a: IFomAssociation) => (await models[a.model]
+      .findOne({_id: a.ref}) as IFomComponent))) {
+    let otherParents = child.parents.filter((b: IFomAssociation) => !doc._id.equals(b.ref))
+    if (otherParents.length === 0) await child.deleteOne()
+    else await child.updateOne({parents: otherParents})
   }
 }
 

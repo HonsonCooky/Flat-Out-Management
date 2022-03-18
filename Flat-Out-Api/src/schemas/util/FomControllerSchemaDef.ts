@@ -3,8 +3,9 @@ import {IFomController} from "../../interfaces/IFomController";
 import {FOM_DYNAMIC_UUID, FOM_NAME, FOM_PASSWORD} from "./FomSchemaDefinitionProperties";
 import {FomComponentSchemaDef} from "./FomComponentSchemaDef";
 
+const {parents, ...FomDocumentSchemaDef} = FomComponentSchemaDef
 export const FomControllerSchemaDef: SchemaDefinition<IFomController> = {
-  ...FomComponentSchemaDef,
+  ...FomDocumentSchemaDef,
   name: FOM_NAME,
   password: FOM_PASSWORD,
   dynUuid: FOM_DYNAMIC_UUID,
