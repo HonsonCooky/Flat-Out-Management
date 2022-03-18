@@ -7,6 +7,26 @@ import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomController} from "../../interfaces/IFomController";
 
+
+/**
+ * ROLE SCORE: Returns the priority of the role. 0 being most important.
+ * @param role
+ */
+export function roleScore(role: RoleEnum): number {
+  switch (role) {
+    case RoleEnum.OWNER:
+      return 0
+    case RoleEnum.WRITE:
+      return 1
+    case RoleEnum.READ:
+      return 2
+    case RoleEnum.REQUEST:
+      return 3
+    default:
+      return 4
+  }
+}
+
 /**
  * CONNECT DOCUMENTS: Connect a parent and child together
  * @param parent
@@ -32,11 +52,12 @@ export async function connectDocuments(
 /**
  * REMOVE DOCUMENT FROM ASSOCIATIONS: Before deleting some document, remove its reference from all associations.
  * @param doc
- * @param associations
+ * @param parents
+ * @param children
  */
 export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
-                                    ...associations: IFomAssociation[]) {
-  for (let a of associations) {
+                                    children: IFomAssociation[], parents?: IFomAssociation[]) {
+  if (parents) for (let a of parents) {
     let other: any = await models[a.model].findOne({_id: a.ref})
     if (!other) continue
 
@@ -154,12 +175,11 @@ export async function getParent(req: Request, res: Response): Promise<IFomContro
  * @param req
  * @param res
  */
-export async function getParentChildAndAssociation(
-  req: Request, res: Response):
-  Promise<{ parent: IFomController | IFomComponent, child: IFomComponent, association: IFomAssociation }> {
+export async function getParentChildAndAssociation<T extends IFomComponent>(req: Request, res: Response):
+  Promise<{ parent: IFomController | IFomComponent, child: T, association: IFomAssociation }> {
 
-  let parent: IFomController | IFomComponent | null = await getParent(req, res)
-  let child: IFomComponent = await getComponentUrl(req)
+  let parent: IFomController | IFomComponent = await getParent(req, res)
+  let child: T = await getComponentUrl(req) as T
   let association = await getAssociation(parent._id, child)
 
   return {

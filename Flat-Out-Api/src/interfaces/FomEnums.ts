@@ -20,6 +20,16 @@ export enum RoleEnum {
 }
 
 /**
+ * TIME INTERVAL UNITS: Identifies how often some update must occur.
+ */
+export enum TimeIntervalUnits {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  ANNUALLY = 'annually'
+}
+
+/**
  * LOG LEVEL: Logged information will have some level of error.
  */
 export enum LogLevel {

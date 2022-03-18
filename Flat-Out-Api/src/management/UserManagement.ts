@@ -53,7 +53,7 @@ export async function userGet(req: Request, res: Response): Promise<IFomRes> {
  */
 export async function userDelete(req: Request, res: Response): Promise<IFomRes> {
   let user: IUser = await getController(req) as IUser
-  await preDocRemoval(user, ...user.children)
+  await preDocRemoval(user, user.children)
   await user.deleteOne()
 
   return {

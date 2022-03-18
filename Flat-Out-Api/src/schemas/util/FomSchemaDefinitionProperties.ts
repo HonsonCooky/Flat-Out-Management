@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum, TimeIntervalUnits} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IRow} from "../documents/TableSchema";
+import {IRow, ITableColumnRotations} from "../documents/TableSchema";
 
 /**
  * FOM NAME: A string value which will be used to validate the username + password login
@@ -99,4 +99,13 @@ export const FOM_ROW: SchemaDefinitionProperty<IRow> = {
   type: [String || FOM_ASSOCIATION || Date],
   minlength: 1,
   maxlength: 7
+}
+
+/**
+ * TABLE OPTIONS: Outlines options that can be set for a table
+ */
+export const FOM_TABLE_OPTIONS_ROTATIONS: SchemaDefinitionProperty<ITableColumnRotations> = {
+  column: {type: String, required: [true, "Missing column number for table rotation"]},
+  intervalUnit: {type: String, enum: TimeIntervalUnits, default: TimeIntervalUnits.WEEKLY},
+  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
 }
