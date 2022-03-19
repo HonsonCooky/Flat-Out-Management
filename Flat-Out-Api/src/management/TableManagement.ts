@@ -14,14 +14,14 @@ import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
  */
 export async function tableRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomController | IFomComponent = await getParent(req, res)
-  let {name, password, fields, records, rotations} = req.body
+  let {name, password, fields, records, config} = req.body
 
   let table: ITable = new TableModel({
     uiName: name,
     password: saltAndHash(password) ?? null,
     fields,
     records,
-    rotations
+    config
   })
 
   await connectDocuments(
@@ -42,7 +42,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, records, addRecords, rotations} = req.body
+  let {newName, newPassword, records, addRecords, config} = req.body
   let {parent, child, association} = await getParentChildAndAssociation<ITable>(req, res)
   let {role} = association
 
@@ -57,7 +57,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
 
   child.uiName = newName ?? child.uiName
   child.records = records ?? child.records
-  child.rotations = rotations ?? child.rotations
+  child.config = config ?? child.config
   if (addRecords) child.records.push(addRecords)
 
   await child.save()

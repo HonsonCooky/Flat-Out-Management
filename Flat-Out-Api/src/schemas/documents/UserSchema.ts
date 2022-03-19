@@ -1,8 +1,9 @@
 import {model, Schema} from "mongoose";
 import {ModelEnum} from "../../interfaces/FomEnums";
-import {EventSchema, IEvent} from "./EventSchema";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
 import {IFomController} from "../../interfaces/IFomController";
+import {IFomEvent} from "../../interfaces/IFomEvent";
+import {FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -12,12 +13,12 @@ import {IFomController} from "../../interfaces/IFomController";
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
 export interface IUser extends IFomController {
-  outOfFlatDates: IEvent[]
+  outOfFlatDates: IFomEvent[]
 }
 
 const UserSchema = new Schema<IUser>({
   ...FomControllerSchemaDef,
-  outOfFlatDates: [EventSchema]
+  outOfFlatDates: [FOM_EVENT]
 }, {timestamps: true})
 
 export const UserModel = model<IUser>(ModelEnum.USER, UserSchema)

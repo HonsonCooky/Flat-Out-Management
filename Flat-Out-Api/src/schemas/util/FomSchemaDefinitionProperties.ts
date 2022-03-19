@@ -1,8 +1,15 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, TimeIntervalUnits} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum, SortByEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IRow, ITableColumnRotations} from "../documents/TableSchema";
+import {IFomTableConfig, ITableRotation, ITableSort} from "../../interfaces/IFomTableConfig";
+import {IFomTableRow} from "../../interfaces/IFomTableRow";
+import {IFomEvent} from "../../interfaces/IFomEvent";
+
+
+/** ------------------------------------------------------------------------------------------------------------------
+ * GENERIC
+ ------------------------------------------------------------------------------------------------------------------ */
 
 /**
  * FOM NAME: A string value which will be used to validate the username + password login
@@ -67,17 +74,6 @@ export const FOM_ASSOCIATION: SchemaDefinitionProperty<IFomAssociation> = {
 }
 
 /**
- * FOM DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT
- * authentication)
- */
-export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
-  type: Types.ObjectId,
-  required: [true, `Missing dynamic UUID`],
-  sparse: true,
-  unique: true,
-}
-
-/**
  * VERSION: Maintains semantic versioning for document.
  */
 const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
@@ -93,9 +89,41 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
 }
 
 /**
+ * EVENT: Some tuple of date, title and message.
+ */
+export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
+  date: {type: Date, required: [true, "Missing calendar event date"]},
+  title: FOM_NAME,
+  message: String
+}
+
+
+/** ------------------------------------------------------------------------------------------------------------------
+ * USER
+ ------------------------------------------------------------------------------------------------------------------ */
+
+/**
+ * FOM DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT
+ * authentication)
+ */
+export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
+  type: Types.ObjectId,
+  required: [true, `Missing dynamic UUID`],
+  sparse: true,
+  unique: true,
+}
+
+/** ------------------------------------------------------------------------------------------------------------------
+ * GROUP
+ ------------------------------------------------------------------------------------------------------------------ */
+
+/** ------------------------------------------------------------------------------------------------------------------
+ * TABLE
+ ------------------------------------------------------------------------------------------------------------------ */
+/**
  * ROW: Outlines a row inside a table
  */
-export const FOM_ROW: SchemaDefinitionProperty<IRow> = {
+export const FOM_ROW: SchemaDefinitionProperty<IFomTableRow> = {
   type: [String || FOM_ASSOCIATION || Date],
   minlength: 1,
   maxlength: 7
@@ -104,8 +132,20 @@ export const FOM_ROW: SchemaDefinitionProperty<IRow> = {
 /**
  * TABLE OPTIONS: Outlines options that can be set for a table
  */
-export const FOM_TABLE_OPTIONS_ROTATIONS: SchemaDefinitionProperty<ITableColumnRotations> = {
+const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<ITableRotation> = {
   column: {type: String, required: [true, "Missing column number for table rotation"]},
-  intervalUnit: {type: String, enum: TimeIntervalUnits, default: TimeIntervalUnits.WEEKLY},
-  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
+  updatedAt: {type: Date, default: Date.now()},
+  intervalUnit: {type: String, enum: TimeIntervalEnum, default: TimeIntervalEnum.WEEKLY},
+  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]}
+}
+
+const FOM_TABLE_CONFIG_SORT: SchemaDefinitionProperty<ITableSort> = {
+  column: {type: String, required: [true, "Missing column number for table sort"]},
+  updatedAt: {type: Date, default: Date.now()},
+  sortType: {type: String, enum: SortByEnum}
+}
+
+export const FOM_TABLE_CONFIG: SchemaDefinitionProperty<IFomTableConfig> = {
+  rotations: [FOM_TABLE_CONFIG_ROTATIONS],
+  sortBy: [FOM_TABLE_CONFIG_SORT]
 }

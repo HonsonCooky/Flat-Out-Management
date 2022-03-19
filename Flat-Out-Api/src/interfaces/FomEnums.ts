@@ -22,11 +22,21 @@ export enum RoleEnum {
 /**
  * TIME INTERVAL UNITS: Identifies how often some update must occur.
  */
-export enum TimeIntervalUnits {
+export enum TimeIntervalEnum {
   DAILY = 'daily',
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
   ANNUALLY = 'annually'
+}
+
+/**
+ * SORT BY ENUM: Identifies different means to sort some list of things
+ */
+export enum SortByEnum {
+  ALPHABETICAL = 'alphabetical',
+  NUMERICAL = 'numerical',
+  LATEST = 'latest',
+  REVERSE = 'reverse'
 }
 
 /**
