@@ -1,13 +1,13 @@
 import {SortByEnum, TimeIntervalEnum} from "./FomEnums";
 
-interface TableConfigField {
-  column: string,
-  updatedAt: Date
+export interface ITableConfigField {
+  column: string
 }
 
-export interface ITableRotation extends TableConfigField {
-  intervalUnit: TimeIntervalEnum,
+export interface ITableRotation extends ITableConfigField {
+  intervalUnit: TimeIntervalEnum
   intervalValue: number
+  nextUpdate: Date
 }
 
 export interface ITableSort {
@@ -15,6 +15,6 @@ export interface ITableSort {
 }
 
 export interface IFomTableConfig {
-  rotations: ITableRotation[],
+  rotations: ITableRotation[]
   order: ITableSort[]
 }

@@ -1,9 +1,9 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, SortByEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum, SortByEnum, TableFieldEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IFomTableConfig, ITableRotation, ITableSort} from "../../interfaces/IFomTableConfig";
-import {IFomTableRow} from "../../interfaces/IFomTableRow";
+import {IFomTableConfig, ITableConfigField, ITableRotation, ITableSort} from "../../interfaces/IFomTableConfig";
+import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../interfaces/IFomTableContents";
 import {IFomEvent} from "../../interfaces/IFomEvent";
 
 
@@ -120,32 +120,65 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /** ------------------------------------------------------------------------------------------------------------------
  * TABLE
  ------------------------------------------------------------------------------------------------------------------ */
-/**
- * ROW: Outlines a row inside a table
- */
-export const FOM_ROW: SchemaDefinitionProperty<IFomTableRow> = {
-  type: [String || FOM_ASSOCIATION || Date],
-  minlength: 1,
-  maxlength: 7
-}
 
 /**
  * TABLE OPTIONS: Outlines options that can be set for a table
  */
-const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<ITableRotation> = {
+const FOM_TABLE_CONFIG_FIELD: SchemaDefinitionProperty<ITableConfigField> = {
   column: {type: String, required: [true, "Missing column number for table rotation"]},
-  updatedAt: {type: Date, default: Date.now()},
+  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
+}
+
+const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<ITableRotation> = {
+  ...FOM_TABLE_CONFIG_FIELD,
   intervalUnit: {type: String, enum: TimeIntervalEnum, default: TimeIntervalEnum.WEEKLY},
   intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]}
 }
 
 const FOM_TABLE_CONFIG_SORT: SchemaDefinitionProperty<ITableSort> = {
-  column: {type: String, required: [true, "Missing column number for table sort"]},
-  updatedAt: {type: Date, default: Date.now()},
+  ...FOM_TABLE_CONFIG_FIELD,
   sortType: {type: String, enum: SortByEnum}
 }
 
 export const FOM_TABLE_CONFIG: SchemaDefinitionProperty<IFomTableConfig> = {
   rotations: [FOM_TABLE_CONFIG_ROTATIONS],
   sortBy: [FOM_TABLE_CONFIG_SORT]
+}
+
+/**
+ * TABLE FIELD: Outlines the value and validation of a tables field
+ */
+const FOM_TABLE_FIELD: SchemaDefinitionProperty<IFomTableField> = {
+  value: String,
+  fieldType: {type: String, enum: TableFieldEnum, default: TableFieldEnum.STRING},
+  columnNumber: {type: Number, required: [true, "Missing field column number"]},
+}
+
+/**
+ * TABLE HEADER: Outlines the list of table fields
+ */
+export const FOM_TABLE_HEADER: SchemaDefinitionProperty<IFomTableHeader> = {
+  type: [FOM_TABLE_FIELD],
+  required: [true, "Missing table header"],
+  minlength: 1,
+  maxlength: 7
+}
+
+/**
+ * CELL: Outlines the value of a given cell
+ */
+const FOM_TABLE_CELL: SchemaDefinitionProperty<IFomTableCell> = {
+  value: {type: String || FOM_ASSOCIATION || Date},
+  field: {type: String, required: [true, "Missing field allocation"]},
+  validate: () => {
+    console.log(this)
+  }
+}
+
+/**
+ * ROW: Outlines a row inside a table
+ */
+export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
+  value: [FOM_TABLE_CELL],
+  rowNumber: {type: Number, required: [true, "Missing record row number"]}
 }

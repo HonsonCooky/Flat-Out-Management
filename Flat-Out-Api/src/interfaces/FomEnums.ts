@@ -20,6 +20,15 @@ export enum RoleEnum {
 }
 
 /**
+ * TABLE FIELD ENUM: Identifies the different types of column contents for each cell
+ */
+export enum TableFieldEnum {
+  STRING = 'string',
+  ASSOCIATION = 'association',
+  DATE = 'date'
+}
+
+/**
  * TIME INTERVAL UNITS: Identifies how often some update must occur.
  */
 export enum TimeIntervalEnum {
