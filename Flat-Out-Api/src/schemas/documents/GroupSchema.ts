@@ -12,7 +12,7 @@ import {IFomEvent} from "../../interfaces/IFomEvent";
  * location for all members of the group (flat). For this
  --------------------------------------------------------------------------------------------------------------- */
 export interface IGroup extends IFomComponent {
-  groupCalendar: IFomEvent[]
+  groupCalendar: IFomEvent[],
 }
 
 const GroupSchema = new Schema<IGroup>({

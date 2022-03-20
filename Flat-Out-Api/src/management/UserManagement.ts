@@ -1,10 +1,10 @@
 import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
 import {IUser, UserModel} from "../schemas/documents/UserSchema";
-import {saltAndHash} from "./util/BcryptPartials";
+import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
-import {signJWT} from "./util/SignJwt";
-import {getController, preDocRemoval} from "./util/Partials";
+import {preDocRemoval} from "./util/GenericPartials";
+import {getController} from "./util/AuthorizationPartials";
 
 
 /**
@@ -34,7 +34,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
  * @param res
  */
 export async function userGet(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getController(req) as IUser
+  let user: IUser = await getController<IUser>(req)
   user.dynUuid = new Types.ObjectId()
   await user.save()
   let token: string = signJWT(user, req.body.expiresIn)
@@ -52,7 +52,7 @@ export async function userGet(req: Request, res: Response): Promise<IFomRes> {
  * @param res
  */
 export async function userDelete(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getController(req) as IUser
+  let user: IUser = await getController<IUser>(req)
   await preDocRemoval(user, user.children)
   await user.deleteOne()
 
@@ -72,11 +72,11 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   let user: IUser
 
   if (newName || newPassword) {
-    user = await getController(req) as IUser
+    user = await getController<IUser>(req)
     user.name = newName ?? user.name
     user.password = saltAndHash(newPassword) ?? user.password
   } else {
-    user = await getController(res) as IUser
+    user = await getController<IUser>(res)
   }
 
   user.uiName = uiName ?? user.uiName

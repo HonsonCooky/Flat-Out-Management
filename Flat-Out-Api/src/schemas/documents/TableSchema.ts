@@ -13,7 +13,7 @@ import {IFomTableConfig} from "../../interfaces/IFomTableConfig";
 export interface ITable extends IFomComponent {
   fields: IFomTableHeader,
   records: IFomTableRecord[],
-  config: IFomTableConfig
+  config: IFomTableConfig,
 }
 
 const TableSchema = new Schema<ITable>({

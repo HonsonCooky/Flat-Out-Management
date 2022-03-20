@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, SortByEnum, TableFieldEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IFomTableConfig, ITableConfigField, ITableRotation, ITableSort} from "../../interfaces/IFomTableConfig";
+import {IFomTableConfig, ITableConfigField, ITableRotation} from "../../interfaces/IFomTableConfig";
 import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../interfaces/IFomTableContents";
 import {IFomEvent} from "../../interfaces/IFomEvent";
 
@@ -126,23 +126,17 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
  */
 const FOM_TABLE_CONFIG_FIELD: SchemaDefinitionProperty<ITableConfigField> = {
   column: {type: String, required: [true, "Missing column number for table rotation"]},
-  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
 }
 
 const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<ITableRotation> = {
   ...FOM_TABLE_CONFIG_FIELD,
   intervalUnit: {type: String, enum: TimeIntervalEnum, default: TimeIntervalEnum.WEEKLY},
-  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]}
-}
-
-const FOM_TABLE_CONFIG_SORT: SchemaDefinitionProperty<ITableSort> = {
-  ...FOM_TABLE_CONFIG_FIELD,
-  sortType: {type: String, enum: SortByEnum}
+  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
+  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
 }
 
 export const FOM_TABLE_CONFIG: SchemaDefinitionProperty<IFomTableConfig> = {
-  rotations: [FOM_TABLE_CONFIG_ROTATIONS],
-  sortBy: [FOM_TABLE_CONFIG_SORT]
+  rotations: [FOM_TABLE_CONFIG_ROTATIONS]
 }
 
 /**
@@ -170,9 +164,6 @@ export const FOM_TABLE_HEADER: SchemaDefinitionProperty<IFomTableHeader> = {
 const FOM_TABLE_CELL: SchemaDefinitionProperty<IFomTableCell> = {
   value: {type: String || FOM_ASSOCIATION || Date},
   field: {type: String, required: [true, "Missing field allocation"]},
-  validate: () => {
-    console.log(this)
-  }
 }
 
 /**

@@ -1,11 +1,12 @@
 import {Request, Response} from "express";
 import {IFomRes} from "../interfaces/IFomRes";
 import {GroupModel, IGroup} from "../schemas/documents/GroupSchema";
-import {saltAndHash} from "./util/BcryptPartials";
+import {saltAndHash} from "./util/AuthenticationPartials";
 import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
-import {connectDocuments, getParent, getParentChildAndAssociation, getTypeFromDoc, roleScore} from "./util/Partials";
+import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
+import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
 
 /**
  * GROUP REGISTER: Create a new group document
@@ -13,7 +14,7 @@ import {IFomComponent} from "../interfaces/IFomComponent";
  * @param res
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
-  let parent: IFomController | IFomComponent = await getParent(req, res) // This is the intended parent of the table
+  let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
   let {name, password} = req.body
 
   let group: IGroup = new GroupModel({
@@ -40,24 +41,21 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword} = req.body
-  let {parent, child, association} = await getParentChildAndAssociation<IGroup>(req, res)
-  let {role} = association
+  let {user, child, role} = await getUserChildAndRole<IGroup>(req, res)
 
-  if (roleScore(role) > roleScore(RoleEnum.WRITE))
-    throw new Error(`400: ${parent.uiName} does not have appropriate authorization over table ${child.uiName}`)
+  if (authLevel(role) > authLevel(RoleEnum.WRITE))
+    throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)
 
-  if ((newName || newPassword)) {
-    if (role === RoleEnum.OWNER) {
-      child.password = saltAndHash(newPassword) ?? child.password
-    } else throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
-  }
+  if (newPassword && role === RoleEnum.OWNER) child.password = saltAndHash(newPassword) ?? child.password
+  else if (newPassword)
+    throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
 
   child.uiName = newName ?? child.uiName
 
   await child.save()
 
   return {
-    msg: `${parent._id} successfully updated ${child.uiName}`,
+    msg: `${user._id} successfully updated ${child.uiName}`,
     item: child
   }
 }
