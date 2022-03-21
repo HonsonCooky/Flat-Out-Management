@@ -1,5 +1,5 @@
-import {ITable} from "../../schemas/documents/TableSchema";
-import {IFomTableConfigField, IFomTableRotation} from "../../interfaces/IFomTableConfig";
+import {IFomTable} from "../../schemas/documents/TableSchema";
+import {IFomTableConfigField, IFomTableRotation} from "../../../../Flat-Out-Interfaces/interfaces/IFomTableConfig";
 
 
 export function getRulesToApply(rules: IFomTableConfigField[]): IFomTableConfigField[] {
@@ -12,7 +12,7 @@ export function calculateNextUpdate(field: IFomTableRotation): Date {
   return new Date()
 }
 
-export function tableRotation(table: ITable): ITable {
+export function tableRotation(table: IFomTable): IFomTable {
   let rules = getRulesToApply(table.config.rotations)
   return table
 }

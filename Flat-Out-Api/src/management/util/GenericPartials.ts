@@ -1,8 +1,8 @@
 import {models, Types} from "mongoose";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
-import {IFomComponent} from "../../interfaces/IFomComponent";
-import {IFomController} from "../../interfaces/IFomController";
+import {IFomAssociation} from "../../../../Flat-Out-Interfaces/interfaces/IFomAssociation";
+import {ModelEnum, RoleEnum} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {IFomComponent} from "../../../../Flat-Out-Interfaces/interfaces/IFomComponent";
+import {IFomController} from "../../../../Flat-Out-Interfaces/interfaces/IFomController";
 
 /**
  * ROLE SCORE: Returns the authority level of the role. 0 being most important.

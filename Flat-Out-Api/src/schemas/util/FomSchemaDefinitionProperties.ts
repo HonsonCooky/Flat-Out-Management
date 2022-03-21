@@ -1,10 +1,10 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum, WeekDays} from "../../interfaces/FomEnums";
+import {IFomAssociation} from "../../../../Flat-Out-Interfaces/interfaces/IFomAssociation";
+import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum, WeekDays} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IFomTableConfig, IFomTableConfigField, IFomTableRotation} from "../../interfaces/IFomTableConfig";
-import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../interfaces/IFomTableContents";
-import {IFomEvent} from "../../interfaces/IFomEvent";
+import {IFomTableConfig, IFomTableConfigField, IFomTableRotation} from "../../../../Flat-Out-Interfaces/interfaces/IFomTableConfig";
+import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../../../Flat-Out-Interfaces/interfaces/IFomTableContents";
+import {IFomEvent} from "../../../../Flat-Out-Interfaces/interfaces/IFomEvent";
 
 
 /** ------------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,13 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
+import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
-import {ITable, TableModel} from "../schemas/documents/TableSchema";
+import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {IFomController} from "../interfaces/IFomController";
-import {IFomComponent} from "../interfaces/IFomComponent";
-import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
+import {IFomController} from "../../../Flat-Out-Interfaces/interfaces/IFomController";
+import {IFomComponent} from "../../../Flat-Out-Interfaces/interfaces/IFomComponent";
+import {ModelEnum, RoleEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
+import {IFomTable} from "../../../Flat-Out-Interfaces/interfaces/IFomTable";
 
 /**
  * TABLE REGISTER: Register a TABLE document
@@ -17,7 +18,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
   let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
   let {name, password, fields, records, config} = req.body
 
-  let table: ITable = new TableModel({
+  let table: IFomTable = new TableModel({
     uiName: name,
     password: saltAndHash(password) ?? null,
     fields,
@@ -44,7 +45,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, records, addRecords, config} = req.body
-  let {user, child, role} = await getUserChildAndRole<ITable>(req, res)
+  let {user, child, role} = await getUserChildAndRole<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleEnum.WRITE))
     throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)

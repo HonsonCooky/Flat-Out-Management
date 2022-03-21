@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import {IFomController} from "../../interfaces/IFomController";
+import {IFomController} from "../../../../Flat-Out-Interfaces/interfaces/IFomController";
 import {env} from "../../config/Config";
-import {IFomJwtContract} from "../../interfaces/IFomJwtContract";
+import {IFomJwtContract} from "../../../../Flat-Out-Interfaces/interfaces/IFomJwtContract";
 import jwt from "jsonwebtoken";
 
 /**

@@ -1,5 +1,5 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
+import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
 import {fomLogger} from "../config/Logger";
 
 const known400ErrorMessages = [

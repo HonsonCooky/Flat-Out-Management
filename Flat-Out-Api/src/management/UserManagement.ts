@@ -1,10 +1,11 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
-import {IUser, UserModel} from "../schemas/documents/UserSchema";
+import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {UserModel} from "../schemas/documents/UserSchema";
 import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
 import {preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
+import {IFomUser} from "../../../Flat-Out-Interfaces/interfaces/IFomUser";
 
 
 /**
@@ -14,7 +15,7 @@ import {getController} from "./util/AuthorizationPartials";
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
   let {name, password, uiName} = req.body
-  let user: IUser = new UserModel({
+  let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
@@ -34,7 +35,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
  * @param res
  */
 export async function userGet(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getController<IUser>(req)
+  let user: IFomUser = await getController<IFomUser>(req)
   user.dynUuid = new Types.ObjectId()
   await user.save()
   let token: string = signJWT(user, req.body.expiresIn)
@@ -52,7 +53,7 @@ export async function userGet(req: Request, res: Response): Promise<IFomRes> {
  * @param res
  */
 export async function userDelete(req: Request, res: Response): Promise<IFomRes> {
-  let user: IUser = await getController<IUser>(req)
+  let user: IFomUser = await getController<IFomUser>(req)
   await preDocRemoval(user, user.children)
   await user.deleteOne()
 
@@ -69,14 +70,14 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, uiName} = req.body
-  let user: IUser
+  let user: IFomUser
 
   if (newName || newPassword) {
-    user = await getController<IUser>(req)
+    user = await getController<IFomUser>(req)
     user.name = newName ?? user.name
     user.password = saltAndHash(newPassword) ?? user.password
   } else {
-    user = await getController<IUser>(res)
+    user = await getController<IFomUser>(res)
   }
 
   user.uiName = uiName ?? user.uiName

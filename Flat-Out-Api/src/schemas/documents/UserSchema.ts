@@ -1,9 +1,8 @@
 import {model, Schema} from "mongoose";
-import {ModelEnum} from "../../interfaces/FomEnums";
+import {ModelEnum} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
-import {IFomController} from "../../interfaces/IFomController";
-import {IFomEvent} from "../../interfaces/IFomEvent";
 import {FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
+import {IFomUser} from "../../../../Flat-Out-Interfaces/interfaces/IFomUser";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -12,13 +11,10 @@ import {FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
  * Password. Each user will be associated to some Group (their flat), and may contain several lists. Groups
  * and Lists are associated by some identifying string. That string will find the Group/List in question.
  --------------------------------------------------------------------------------------------------------------- */
-export interface IUser extends IFomController {
-  outOfFlatDates: IFomEvent[]
-}
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IFomUser>({
   ...FomControllerSchemaDef,
   outOfFlatDates: [FOM_EVENT]
 }, {timestamps: true})
 
-export const UserModel = model<IUser>(ModelEnum.USER, UserSchema)
+export const UserModel = model<IFomUser>(ModelEnum.USER, UserSchema)

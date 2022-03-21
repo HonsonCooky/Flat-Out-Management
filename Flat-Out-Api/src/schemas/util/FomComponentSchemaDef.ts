@@ -1,5 +1,5 @@
 import {SchemaDefinition} from "mongoose";
-import {IFomComponent} from "../../interfaces/IFomComponent";
+import {IFomComponent} from "../../../../Flat-Out-Interfaces/interfaces/IFomComponent";
 import {FOM_ASSOCIATION, FOM_UI_NAME, FOM_VERSION} from "./FomSchemaDefinitionProperties";
 
 export const FomComponentSchemaDef: SchemaDefinition<IFomComponent> = {

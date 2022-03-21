@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../../interfaces/IFomRes";
-import {authLevel, preDocRemoval} from "./GenericPartials";
-import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
-import {getUserChildAndRole} from "./AuthorizationPartials";
+import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {authLevel, preDocRemoval} from "./util/GenericPartials";
+import {ModelEnum, RoleEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {getUserChildAndRole} from "./util/AuthorizationPartials";
 
 /**
  * GROUP GET: Simply get the information inside a group

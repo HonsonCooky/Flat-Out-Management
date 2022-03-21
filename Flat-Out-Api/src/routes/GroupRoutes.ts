@@ -3,7 +3,7 @@ import {routeHandler} from "../middleware/RouteHandler";
 import {groupRegister, groupUpdate} from "../management/GroupManagement";
 import {extractJwt} from "../middleware/ExtractJwt";
 import {idRegExp} from "./UtilRouteValues";
-import {componentDelete, componentGet} from "../management/util/GenericManagement";
+import {componentDelete, componentGet} from "../management/GenericManagement";
 
 export const groupRoutes = express.Router({mergeParams: true})
 

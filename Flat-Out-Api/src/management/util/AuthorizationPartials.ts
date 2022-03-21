@@ -1,11 +1,13 @@
 import {models, Types} from "mongoose";
-import {IFomComponent} from "../../interfaces/IFomComponent";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {IFomController} from "../../interfaces/IFomController";
+import {IFomComponent} from "../../../../Flat-Out-Interfaces/interfaces/IFomComponent";
+import {IFomAssociation} from "../../../../Flat-Out-Interfaces/interfaces/IFomAssociation";
+import {IFomController} from "../../../../Flat-Out-Interfaces/interfaces/IFomController";
 import {Request, Response} from "express";
-import {IUser, UserModel} from "../../schemas/documents/UserSchema";
+import {UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthenticationPartials";
-import {RoleEnum} from "../../interfaces/FomEnums";
+import {RoleEnum} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {IFomUser} from "../../../../Flat-Out-Interfaces/interfaces/IFomUser";
+import {authLevel} from "./GenericPartials";
 
 
 /**
@@ -31,7 +33,8 @@ async function getAssociation(
     // Attempt to get the ref from the item (parent's parent, etc)
     // return this association (which will eventually lead back to the direct association from the
     let foundParentAssociation = await getAssociation(parentGiven, parentFound, seen).catch(_ => null)
-    if (foundParentAssociation) return foundParentAssociation
+    if (foundParentAssociation) return authLevel(foundParentAssociation.role) > authLevel(parentAssociation.role) ?
+      foundParentAssociation : parentAssociation
   }
 
   throw new Error(`400: Unable to find association ${parentGiven} to ${child.uiName}`)
@@ -90,11 +93,13 @@ async function getComponentBod<T extends IFomComponent>(req: Request): Promise<T
  * @param res
  */
 export async function getRegisteringParent(req: Request, res: Response): Promise<IFomController | IFomComponent> {
-  let user: IUser = await getController<IUser>(res)
-  return await getComponentBod(req).catch((e) => {
-    if (req.body.association) throw e
-    else return user
-  })
+  let controller: IFomController = await getController(res)
+  let component: IFomComponent | null =  await getComponentBod(req).catch((e) => null)
+  if (!component) return controller
+
+  let association: IFomAssociation = await getAssociation(controller._id, component)
+  if (authLevel(association.role) > authLevel(RoleEnum.WRITE)) throw new Error(`400: Unauthorized use of component`)
+  return component
 }
 
 /**
@@ -107,7 +112,7 @@ export async function getRegisteringParent(req: Request, res: Response): Promise
 export async function getUserChildAndRole<T extends IFomComponent>(req: Request, res: Response):
   Promise<{ user: IFomController, child: T, role: RoleEnum }> {
 
-  let user: IUser = await getController<IUser>(res)
+  let user: IFomUser = await getController<IFomUser>(res)
   let child: T = await getComponentUrl(req) as T
   let association: IFomAssociation = await getAssociation(user._id, child)
 

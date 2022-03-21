@@ -1,12 +1,13 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
-import {GroupModel, IGroup} from "../schemas/documents/GroupSchema";
+import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {GroupModel} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
+import {ModelEnum, RoleEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
-import {IFomController} from "../interfaces/IFomController";
-import {IFomComponent} from "../interfaces/IFomComponent";
+import {IFomController} from "../../../Flat-Out-Interfaces/interfaces/IFomController";
+import {IFomComponent} from "../../../Flat-Out-Interfaces/interfaces/IFomComponent";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
+import {IFomGroup} from "../../../Flat-Out-Interfaces/interfaces/IFomGroup";
 
 /**
  * GROUP REGISTER: Create a new group document
@@ -17,7 +18,7 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
   let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
   let {name, password} = req.body
 
-  let group: IGroup = new GroupModel({
+  let group: IFomGroup = new GroupModel({
     uiName: name,
     password: saltAndHash(password)
   })
@@ -41,7 +42,7 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword} = req.body
-  let {user, child, role} = await getUserChildAndRole<IGroup>(req, res)
+  let {user, child, role} = await getUserChildAndRole<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleEnum.WRITE))
     throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)
