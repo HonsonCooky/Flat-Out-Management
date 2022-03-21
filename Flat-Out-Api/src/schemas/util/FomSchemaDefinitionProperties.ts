@@ -1,8 +1,8 @@
 import {SchemaDefinitionProperty, Types} from "mongoose";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum} from "../../interfaces/FomEnums";
+import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum, WeekDays} from "../../interfaces/FomEnums";
 import {env} from "../../config/Config"
-import {IFomTableConfig, ITableConfigField, ITableRotation} from "../../interfaces/IFomTableConfig";
+import {IFomTableConfig, IFomTableConfigField, IFomTableRotation} from "../../interfaces/IFomTableConfig";
 import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../interfaces/IFomTableContents";
 import {IFomEvent} from "../../interfaces/IFomEvent";
 
@@ -124,15 +124,16 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /**
  * TABLE OPTIONS: Outlines options that can be set for a table
  */
-const FOM_TABLE_CONFIG_FIELD: SchemaDefinitionProperty<ITableConfigField> = {
+const FOM_TABLE_CONFIG_FIELD: SchemaDefinitionProperty<IFomTableConfigField> = {
   column: {type: String, required: [true, "Missing column number for table rotation"]},
+  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
 }
 
-const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<ITableRotation> = {
+const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<IFomTableRotation> = {
   ...FOM_TABLE_CONFIG_FIELD,
   intervalUnit: {type: String, enum: TimeIntervalEnum, default: TimeIntervalEnum.WEEKLY},
   intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
-  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
+  intervalPOR: {type: Number, enum: WeekDays, default: WeekDays.SUNDAY}
 }
 
 export const FOM_TABLE_CONFIG: SchemaDefinitionProperty<IFomTableConfig> = {

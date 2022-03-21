@@ -39,13 +39,16 @@ export enum TimeIntervalEnum {
 }
 
 /**
- * SORT BY ENUM: Identifies different means to sort some list of things
+ * WEEK DAYS: An enum for weekdays based on JS date .getDays()
  */
-export enum SortByEnum {
-  ALPHABETICAL = 'alphabetical',
-  NUMERICAL = 'numerical',
-  LATEST = 'latest',
-  REVERSE = 'reverse'
+export enum WeekDays {
+  SUNDAY,
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAY,
 }
 
 /**

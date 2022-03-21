@@ -1,8 +1,13 @@
 import {ITable} from "../../schemas/documents/TableSchema";
-import {getRulesToApply} from "./partials";
-import {ITableRotation} from "../../interfaces/IFomTableConfig";
+import {IFomTableConfigField, IFomTableRotation} from "../../interfaces/IFomTableConfig";
 
-export function calculateNextUpdate(field: ITableRotation): Date {
+
+export function getRulesToApply(rules: IFomTableConfigField[]): IFomTableConfigField[] {
+  let today = Date.now()
+  return rules.filter((rule: IFomTableConfigField) => (today - rule.nextUpdate.getTime()) <= 0)
+}
+
+export function calculateNextUpdate(field: IFomTableRotation): Date {
 
   return new Date()
 }

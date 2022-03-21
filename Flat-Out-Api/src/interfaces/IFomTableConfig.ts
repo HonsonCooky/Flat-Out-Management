@@ -1,15 +1,16 @@
-import {TimeIntervalEnum} from "./FomEnums";
+import {TimeIntervalEnum, WeekDays} from "./FomEnums";
 
-export interface ITableConfigField {
+export interface IFomTableConfigField {
   column: string
-}
-
-export interface ITableRotation extends ITableConfigField {
-  intervalUnit: TimeIntervalEnum
-  intervalValue: number
   nextUpdate: Date
 }
 
+export interface IFomTableRotation extends IFomTableConfigField {
+  intervalUnit: TimeIntervalEnum
+  intervalValue: number,
+  intervalPOR: WeekDays
+}
+
 export interface IFomTableConfig {
-  rotations: ITableRotation[]
+  rotations: IFomTableRotation[]
 }
