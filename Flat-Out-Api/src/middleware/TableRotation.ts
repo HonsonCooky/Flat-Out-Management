@@ -1,5 +1,5 @@
-import {IFomTable} from "../../schemas/documents/TableSchema";
-import {IFomTableConfigField, IFomTableRotation} from "../../../../Flat-Out-Interfaces/interfaces/IFomTableConfig";
+import {IFomTableConfigField, IFomTableRotation} from "../../../Flat-Out-Interfaces/interfaces/IFomTableConfig";
+import {IFomTable} from "../../../Flat-Out-Interfaces/interfaces/IFomTable"
 
 
 export function getRulesToApply(rules: IFomTableConfigField[]): IFomTableConfigField[] {

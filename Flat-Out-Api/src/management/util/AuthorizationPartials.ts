@@ -52,17 +52,15 @@ export async function getController<T extends IFomController>(r: Request | Respo
   if ("body" in r) {
     let {name, password} = (r as Request).body
     controller = await UserModel.findOne({name})
-    if (!controller) throw new Error(`400: Invalid user name`)
-    if (!compareHashes(password, controller.password)) throw new Error(`400: Invalid user authorization`)
+    if (controller && compareHashes(password, controller.password)) return controller
   }
   // Response mean JWT
-  else {
+  else if (r.locals?.jwt) {
     let {locals} = (r as Response)
-    controller = await UserModel.findOne({dynUuid: locals.jwt?.dynUuid})
-    if (!controller) throw new Error(`400: Invalid JWT`)
+    if ((controller = await UserModel.findOne({dynUuid: locals.jwt?.dynUuid}))) return controller
   }
 
-  return controller
+  throw new Error(`400: Invalid authentication`)
 }
 
 /**
@@ -110,7 +108,7 @@ export async function getRegisteringParent(req: Request, res: Response): Promise
  * @param res
  */
 export async function getUserChildAndRole<T extends IFomComponent>(req: Request, res: Response):
-  Promise<{ user: IFomController, child: T, role: RoleEnum }> {
+  Promise<{ user: IFomUser, child: T, role: RoleEnum }> {
 
   let user: IFomUser = await getController<IFomUser>(res)
   let child: T = await getComponentUrl(req) as T

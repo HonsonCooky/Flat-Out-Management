@@ -171,6 +171,6 @@ const FOM_TABLE_CELL: SchemaDefinitionProperty<IFomTableCell> = {
  * ROW: Outlines a row inside a table
  */
 export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
-  value: [FOM_TABLE_CELL],
-  rowNumber: {type: Number, required: [true, "Missing record row number"]}
+  value: {type: [FOM_TABLE_CELL], minlength: 1, maxlength: 7},
+  rowNumber: {type: Number, required: [true, "Missing record row number"]},
 }
