@@ -1,8 +1,8 @@
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
-import {ModelEnum} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {ModelEnum} from "../../interfaces/FomEnums";
 import {FOM_TABLE_CONFIG, FOM_TABLE_HEADER, FOM_TABLE_RECORD} from "../util/FomSchemaDefinitionProperties";
-import {IFomTable} from "../../../../Flat-Out-Interfaces/interfaces/IFomTable";
+import {IFomTable} from "../../interfaces/IFomTable";
 
 
 /** ---------------------------------------------------------------------------------------------------------------

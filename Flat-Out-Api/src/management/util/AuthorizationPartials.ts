@@ -1,12 +1,12 @@
 import {models, Types} from "mongoose";
-import {IFomComponent} from "../../../../Flat-Out-Interfaces/interfaces/IFomComponent";
-import {IFomAssociation} from "../../../../Flat-Out-Interfaces/interfaces/IFomAssociation";
-import {IFomController} from "../../../../Flat-Out-Interfaces/interfaces/IFomController";
+import {IFomComponent} from "../../interfaces/IFomComponent";
+import {IFomAssociation} from "../../interfaces/IFomAssociation";
+import {IFomController} from "../../interfaces/IFomController";
 import {Request, Response} from "express";
 import {UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthenticationPartials";
-import {RoleEnum} from "../../../../Flat-Out-Interfaces/interfaces/FomEnums";
-import {IFomUser} from "../../../../Flat-Out-Interfaces/interfaces/IFomUser";
+import {RoleEnum} from "../../interfaces/FomEnums";
+import {IFomUser} from "../../interfaces/IFomUser";
 import {authLevel} from "./GenericPartials";
 
 
@@ -92,7 +92,7 @@ async function getComponentBod<T extends IFomComponent>(req: Request): Promise<T
  */
 export async function getRegisteringParent(req: Request, res: Response): Promise<IFomController | IFomComponent> {
   let controller: IFomController = await getController(res)
-  let component: IFomComponent | null =  await getComponentBod(req).catch((e) => null)
+  let component: IFomComponent | null =  await getComponentBod(req).catch((_) => null)
   if (!component) return controller
 
   let association: IFomAssociation = await getAssociation(controller._id, component)

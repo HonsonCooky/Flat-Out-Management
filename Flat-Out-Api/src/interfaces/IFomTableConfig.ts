@@ -8,7 +8,7 @@ export interface IFomTableConfigField {
 export interface IFomTableRotation extends IFomTableConfigField {
   intervalUnit: TimeIntervalEnum
   intervalValue: number,
-  intervalPOR: WeekDays
+  intervalPOR?: WeekDays
 }
 
 export interface IFomTableConfig {

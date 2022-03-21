@@ -1,13 +1,13 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {IFomRes} from "../interfaces/IFomRes";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {IFomController} from "../../../Flat-Out-Interfaces/interfaces/IFomController";
-import {IFomComponent} from "../../../Flat-Out-Interfaces/interfaces/IFomComponent";
-import {ModelEnum, RoleEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
+import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomTable} from "../../../Flat-Out-Interfaces/interfaces/IFomTable";
+import {IFomTable} from "../interfaces/IFomTable";
 
 /**
  * TABLE REGISTER: Register a TABLE document

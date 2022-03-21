@@ -1,4 +1,4 @@
-import {LogLevel} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {LogLevel} from "../interfaces/FomEnums";
 import {ILog, LogModel} from "../schemas/util/LogSchema";
 import {env} from "./Config";
 

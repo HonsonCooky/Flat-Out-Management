@@ -1,5 +1,5 @@
 import express from "express";
-import {ModelEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {ModelEnum} from "../interfaces/FomEnums";
 import {userRoutes} from "./UserRoutes";
 import {groupRoutes} from "./GroupRoutes";
 import {tableRoutes} from "./TableRoutes";

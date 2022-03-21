@@ -1,5 +1,5 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {IFomRes} from "../interfaces/IFomRes";
 import {fomLogger} from "../config/Logger";
 
 /**

@@ -1,5 +1,5 @@
 import {SchemaDefinition} from "mongoose";
-import {IFomController} from "../../../../Flat-Out-Interfaces/interfaces/IFomController";
+import {IFomController} from "../../interfaces/IFomController";
 import {FOM_DYNAMIC_UUID, FOM_NAME, FOM_PASSWORD} from "./FomSchemaDefinitionProperties";
 import {FomComponentSchemaDef} from "./FomComponentSchemaDef";
 

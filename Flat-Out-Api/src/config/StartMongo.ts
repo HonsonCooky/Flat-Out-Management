@@ -1,8 +1,8 @@
 import {connect, models} from "mongoose";
 import {env} from "./Config";
 import {fomLogger} from "./Logger";
-import {ModelEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
-import {IFomComponent} from "../../../Flat-Out-Interfaces/interfaces/IFomComponent";
+import {ModelEnum} from "../interfaces/FomEnums";
+import {IFomComponent} from "../interfaces/IFomComponent";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {TableModel} from "../schemas/documents/TableSchema";

@@ -1,13 +1,13 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../../../Flat-Out-Interfaces/interfaces/IFomRes";
+import {IFomRes} from "../interfaces/IFomRes";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {ModelEnum, RoleEnum} from "../../../Flat-Out-Interfaces/interfaces/FomEnums";
+import {ModelEnum, RoleEnum} from "../interfaces/FomEnums";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
-import {IFomController} from "../../../Flat-Out-Interfaces/interfaces/IFomController";
-import {IFomComponent} from "../../../Flat-Out-Interfaces/interfaces/IFomComponent";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomGroup} from "../../../Flat-Out-Interfaces/interfaces/IFomGroup";
+import {IFomGroup} from "../interfaces/IFomGroup";
 
 /**
  * GROUP REGISTER: Create a new group document
