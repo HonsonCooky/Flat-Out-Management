@@ -1,8 +1,7 @@
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
-import {ModelEnum} from "../../interfaces/FomEnums";
-import {FOM_TABLE_CONFIG, FOM_TABLE_HEADER, FOM_TABLE_RECORD} from "../util/FomSchemaDefinitionProperties";
-import {IFomTable} from "../../interfaces/IFomTable";
+import {FOM_TABLE_CONFIG_ROTATION, FOM_TABLE_RECORD} from "../util/FomSchemaDefinitionProperties";
+import {ModelType, IFomTable} from "flat-out-interfaces";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -10,9 +9,9 @@ import {IFomTable} from "../../interfaces/IFomTable";
  --------------------------------------------------------------------------------------------------------------- */
 const TableSchema = new Schema<IFomTable>({
   ...FomComponentSchemaDef,
-  fields: FOM_TABLE_HEADER,
   records: [FOM_TABLE_RECORD],
-  config: FOM_TABLE_CONFIG
+  fieldIndexes: [Number],
+  rotationConfigs: [FOM_TABLE_CONFIG_ROTATION]
 }, {timestamps: true})
 
-export const TableModel = model<IFomTable>(ModelEnum.TABLE, TableSchema)
+export const TableModel = model<IFomTable>(ModelType.TABLE, TableSchema)

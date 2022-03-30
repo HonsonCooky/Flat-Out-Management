@@ -1,11 +1,10 @@
 import {Request, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
 import {preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
-import {IFomUser} from "../interfaces/IFomUser";
+import {IFomRes, IFomUser} from "flat-out-interfaces";
 
 
 /**

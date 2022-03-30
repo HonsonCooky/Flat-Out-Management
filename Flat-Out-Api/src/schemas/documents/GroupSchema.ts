@@ -1,8 +1,7 @@
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
-import {ModelEnum} from "../../interfaces/FomEnums";
 import {FOM_EVENT, FOM_NAME, FOM_PASSWORD} from "../util/FomSchemaDefinitionProperties";
-import {IFomGroup} from "../../interfaces/IFomGroup";
+import {ModelType, IFomGroup} from "flat-out-interfaces";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -17,4 +16,4 @@ const GroupSchema = new Schema<IFomGroup>({
   groupCalendar: [FOM_EVENT]
 }, {timestamps: true})
 
-export const GroupModel = model<IFomGroup>(ModelEnum.GROUP, GroupSchema)
+export const GroupModel = model<IFomGroup>(ModelType.GROUP, GroupSchema)

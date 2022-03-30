@@ -1,5 +1,5 @@
 import express from "express";
-import {ModelEnum} from "../interfaces/FomEnums";
+import {ModelType} from "flat-out-interfaces";
 import {userRoutes} from "./UserRoutes";
 import {groupRoutes} from "./GroupRoutes";
 import {tableRoutes} from "./TableRoutes";
@@ -7,6 +7,6 @@ import {tableRoutes} from "./TableRoutes";
 
 export const apiRoutes = express.Router({mergeParams: true})
 
-apiRoutes.use(`/api/:controller(${ModelEnum.USER})`, userRoutes)
-apiRoutes.use(`/api/:component(${ModelEnum.GROUP})`, groupRoutes)
-apiRoutes.use(`/api/:component(${ModelEnum.TABLE})`, tableRoutes)
+apiRoutes.use(`/api/:controller(${ModelType.USER})`, userRoutes)
+apiRoutes.use(`/api/:component(${ModelType.GROUP})`, groupRoutes)
+apiRoutes.use(`/api/:component(${ModelType.TABLE})`, tableRoutes)

@@ -1,10 +1,15 @@
-import {SchemaDefinitionProperty, Types} from "mongoose";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum, TableFieldEnum, TimeIntervalEnum, WeekDays} from "../../interfaces/FomEnums";
+import {SchemaDefinitionProperty, Types, Schema} from "mongoose";
 import {env} from "../../config/Config"
-import {IFomTableConfig, IFomTableConfigField, IFomTableRotation} from "../../interfaces/IFomTableConfig";
-import {IFomTableCell, IFomTableField, IFomTableHeader, IFomTableRecord} from "../../interfaces/IFomTableContents";
-import {IFomEvent} from "../../interfaces/IFomEvent";
+import {
+  IFomAssociation,
+  IFomEvent,
+  IFomTableCell,
+  IFomTableRecord,
+  IFomTableRotation,
+  ModelType,
+  RoleType,
+  TimeIntervals, WeekDays,
+} from "flat-out-interfaces";
 
 
 /** ------------------------------------------------------------------------------------------------------------------
@@ -47,23 +52,23 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
  */
 // REF
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
-  type: Types.ObjectId,
+  type: Schema.Types.ObjectId,
   required: [true, "Association is missing a reference"],
   refPath: 'model'
 }
 
 // MODEL
-const FOM_ASSOCIATION_MODEL: SchemaDefinitionProperty<ModelEnum> = {
+const FOM_ASSOCIATION_MODEL: SchemaDefinitionProperty<ModelType> = {
   type: String,
-  enum: ModelEnum,
+  enum: ModelType,
   required: [true, "Association is missing a model type"]
 }
 
 // ROLE
-const FOM_ASSOCIATION_ROLE: SchemaDefinitionProperty<RoleEnum> = {
-  type: String,
-  enum: RoleEnum,
-  default: RoleEnum.NULL
+const FOM_ASSOCIATION_ROLE: SchemaDefinitionProperty<RoleType> = {
+  type: Number,
+  enum: RoleType,
+  default: RoleType.MENTIONED
 }
 
 // ASSOCIATION
@@ -107,7 +112,7 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
  * authentication)
  */
 export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
-  type: Types.ObjectId,
+  type: Schema.Types.ObjectId,
   required: [true, `Missing dynamic UUID`],
   sparse: true,
   unique: true,
@@ -124,39 +129,12 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /**
  * TABLE OPTIONS: Outlines options that can be set for a table
  */
-const FOM_TABLE_CONFIG_FIELD: SchemaDefinitionProperty<IFomTableConfigField> = {
+export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotation> = {
   column: {type: String, required: [true, "Missing column number for table rotation"]},
-  nextUpdate: {type: Date, required: [true, "Missing next update value"]}
-}
-
-const FOM_TABLE_CONFIG_ROTATIONS: SchemaDefinitionProperty<IFomTableRotation> = {
-  ...FOM_TABLE_CONFIG_FIELD,
-  intervalUnit: {type: String, enum: TimeIntervalEnum, default: TimeIntervalEnum.WEEKLY},
+  update: {type: {}, required: [true, "Missing update values"]},
+  intervalUnit: {type: String, enum: TimeIntervals, default: TimeIntervals.WEEKLY},
   intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
-  intervalPOR: {type: Number, enum: WeekDays, default: WeekDays.SUNDAY}
-}
-
-export const FOM_TABLE_CONFIG: SchemaDefinitionProperty<IFomTableConfig> = {
-  rotations: [FOM_TABLE_CONFIG_ROTATIONS]
-}
-
-/**
- * TABLE FIELD: Outlines the value and validation of a tables field
- */
-const FOM_TABLE_FIELD: SchemaDefinitionProperty<IFomTableField> = {
-  value: String,
-  fieldType: {type: String, enum: TableFieldEnum, default: TableFieldEnum.STRING},
-  columnNumber: {type: Number, required: [true, "Missing field column number"]},
-}
-
-/**
- * TABLE HEADER: Outlines the list of table fields
- */
-export const FOM_TABLE_HEADER: SchemaDefinitionProperty<IFomTableHeader> = {
-  type: [FOM_TABLE_FIELD],
-  required: [true, "Missing table header"],
-  minlength: 1,
-  maxlength: 7
+  intervalPOR: {type: Number, enum: WeekDays}
 }
 
 /**

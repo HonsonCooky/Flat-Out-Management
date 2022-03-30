@@ -1,22 +1,19 @@
 import {models, Types} from "mongoose";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {ModelEnum, RoleEnum} from "../../interfaces/FomEnums";
-import {IFomComponent} from "../../interfaces/IFomComponent";
-import {IFomController} from "../../interfaces/IFomController";
+import {IFomAssociation, IFomComponent, IFomController, ModelType, RoleType} from "flat-out-interfaces";
 
 /**
  * ROLE SCORE: Returns the authority level of the role. 0 being most important.
  * @param role
  */
-export function authLevel(role: RoleEnum): number {
+export function authLevel(role: RoleType): number {
   switch (role) {
-    case RoleEnum.OWNER:
+    case RoleType.OWNER:
       return 0
-    case RoleEnum.WRITE:
+    case RoleType.WRITE:
       return 1
-    case RoleEnum.READ:
+    case RoleType.READ:
       return 2
-    case RoleEnum.REQUEST:
+    case RoleType.REQUEST:
       return 3
     default:
       return 4
@@ -27,10 +24,10 @@ export function authLevel(role: RoleEnum): number {
  * GET TYPE FROM DOC: Getters above will find some document, but this method will help identify what that document is.
  * @param doc
  */
-export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelEnum {
-  if ("outOfFlatDates" in doc) return ModelEnum.USER
-  if ("groupCalendar" in doc) return ModelEnum.GROUP
-  if ("records" in doc) return ModelEnum.TABLE
+export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelType {
+  if ("outOfFlatDates" in doc) return ModelType.USER
+  if ("groupCalendar" in doc) return ModelType.GROUP
+  if ("records" in doc) return ModelType.TABLE
   throw new Error(`500: Unable to find document type`)
 }
 
@@ -41,9 +38,9 @@ export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelEnum {
  * @param role
  */
 export async function connectDocuments(
-  parent: { item: IFomController | IFomComponent, model: ModelEnum },
-  child: { item: IFomComponent, model: ModelEnum },
-  role: RoleEnum): Promise<void> {
+  parent: { item: IFomController | IFomComponent, model: ModelType },
+  child: { item: IFomComponent, model: ModelType },
+  role: RoleType): Promise<void> {
 
   parent.item.children = parent.item.children.filter((a: IFomAssociation) => !child.item._id.equals(a.ref))
   parent.item.children.push({ref: child.item._id, model: child.model, role})

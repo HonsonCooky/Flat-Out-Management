@@ -1,13 +1,9 @@
 import {models, Types} from "mongoose";
-import {IFomComponent} from "../../interfaces/IFomComponent";
-import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {IFomController} from "../../interfaces/IFomController";
 import {Request, Response} from "express";
 import {UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthenticationPartials";
-import {RoleEnum} from "../../interfaces/FomEnums";
-import {IFomUser} from "../../interfaces/IFomUser";
 import {authLevel} from "./GenericPartials";
+import {IFomComponent, IFomAssociation, IFomController, RoleType, IFomUser} from "flat-out-interfaces"
 
 
 /**
@@ -92,11 +88,11 @@ async function getComponentBod<T extends IFomComponent>(req: Request): Promise<T
  */
 export async function getRegisteringParent(req: Request, res: Response): Promise<IFomController | IFomComponent> {
   let controller: IFomController = await getController(res)
-  let component: IFomComponent | null =  await getComponentBod(req).catch((_) => null)
+  let component: IFomComponent | null = await getComponentBod(req).catch((_) => null)
   if (!component) return controller
 
   let association: IFomAssociation = await getAssociation(controller._id, component)
-  if (authLevel(association.role) > authLevel(RoleEnum.WRITE)) throw new Error(`400: Unauthorized use of component`)
+  if (authLevel(association.role) > authLevel(RoleType.WRITE)) throw new Error(`400: Unauthorized use of component`)
   return component
 }
 
@@ -108,7 +104,7 @@ export async function getRegisteringParent(req: Request, res: Response): Promise
  * @param res
  */
 export async function getUserChildAndRole<T extends IFomComponent>(req: Request, res: Response):
-  Promise<{ user: IFomUser, child: T, role: RoleEnum }> {
+  Promise<{ user: IFomUser, child: T, role: RoleType }> {
 
   let user: IFomUser = await getController<IFomUser>(res)
   let child: T = await getComponentUrl(req) as T

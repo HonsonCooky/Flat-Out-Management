@@ -1,8 +1,7 @@
 import {model, Schema} from "mongoose";
-import {ModelEnum} from "../../interfaces/FomEnums";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
 import {FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
-import {IFomUser} from "../../interfaces/IFomUser";
+import {ModelType, IFomUser} from "flat-out-interfaces";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -17,4 +16,4 @@ const UserSchema = new Schema<IFomUser>({
   outOfFlatDates: [FOM_EVENT]
 }, {timestamps: true})
 
-export const UserModel = model<IFomUser>(ModelEnum.USER, UserSchema)
+export const UserModel = model<IFomUser>(ModelType.USER, UserSchema)

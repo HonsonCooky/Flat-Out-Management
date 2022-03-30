@@ -1,18 +1,17 @@
 import {connect, models} from "mongoose";
 import {env} from "./Config";
 import {fomLogger} from "./Logger";
-import {ModelEnum} from "../interfaces/FomEnums";
-import {IFomComponent} from "../interfaces/IFomComponent";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {LogModel} from "../schemas/util/LogSchema";
+import {ModelType, IFomComponent} from "flat-out-interfaces";
 
 export function startMongo() {
   connect(env.mongo.connectionStr)
     .then(() => {
       fomLogger.info("MongoDB connected")
-      Object.values(ModelEnum).forEach((val: ModelEnum) => cleanDocuments(val).catch((_) => {
+      Object.values(ModelType).forEach((val: ModelType) => cleanDocuments(val).catch((_) => {
       }))
     })
     .catch(e => fomLogger.error(`MongoDB connection failed: ${e.message}`))
@@ -27,7 +26,7 @@ export function startMongo() {
 /**
  * CLEAN DOCUMENTS: Delete any documents that have no associations AND were last updated one week ago
  */
-async function cleanDocuments(type: ModelEnum) {
+async function cleanDocuments(type: ModelType) {
   fomLogger.info(`Cleaning ${type} documents`)
   let docs: IFomComponent[] = await models[type]?.find({})
   if (!docs) return

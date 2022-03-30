@@ -1,6 +1,6 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
 import {fomLogger} from "../config/Logger";
+import {IFomRes} from "flat-out-interfaces";
 
 /**
  * ROUTE HANDLER: Manage the execution and try catching of all functions being called from a URL call.
