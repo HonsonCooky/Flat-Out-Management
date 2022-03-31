@@ -1,7 +1,7 @@
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
-import {FOM_TABLE_CONFIG_ROTATION, FOM_TABLE_RECORD} from "../util/FomSchemaDefinitionProperties";
-import {ModelType, IFomTable} from "flat-out-interfaces";
+import {FOM_TABLE_COMPOUND, FOM_TABLE_CONFIG_ROTATION} from "../util/FomSchemaDefinitionProperties";
+import {IFomTable, ModelType} from "flat-out-interfaces";
 
 
 /** ---------------------------------------------------------------------------------------------------------------
@@ -9,8 +9,7 @@ import {ModelType, IFomTable} from "flat-out-interfaces";
  --------------------------------------------------------------------------------------------------------------- */
 const TableSchema = new Schema<IFomTable>({
   ...FomComponentSchemaDef,
-  records: [FOM_TABLE_RECORD],
-  fieldIndexes: [Number],
+  records: FOM_TABLE_COMPOUND,
   rotationConfigs: [FOM_TABLE_CONFIG_ROTATION]
 }, {timestamps: true})
 

@@ -1,12 +1,12 @@
 import {IFomAssociation} from "./interfaces/IFomAssociation";
 import {IFomComponent} from "./interfaces/IFomComponent";
 import {IFomController} from "./interfaces/IFomController";
-import {EventType, LogLevel, ModelType, RoleType, TimeIntervals, WeekDays} from "./interfaces/IFomEnums";
+import {EventType, LogLevel, ModelType, RoleType, TimeIntervals} from "./interfaces/IFomEnums";
 import {IFomEvent} from "./interfaces/IFomEvent";
 import {IFomGroup} from "./interfaces/IFomGroup";
 import {IFomJwtContract} from "./interfaces/IFomJwtContract";
 import {IFomRes} from "./interfaces/IFomRes";
-import {IFomTable, IFomTableCell, IFomTableRecord, IFomTableRotation} from "./interfaces/IFomTable";
+import {IFomTable, IFomTableRecord, IFomTableRotationConfig,} from "./interfaces/IFomTable";
 import {IFomUser} from "./interfaces/IFomUser";
 
 export {
@@ -18,9 +18,8 @@ export {
   IFomJwtContract,
   IFomRes,
   IFomTable,
-  IFomTableRotation,
   IFomTableRecord,
-  IFomTableCell,
+  IFomTableRotationConfig,
   IFomUser
 }
 export {
@@ -28,6 +27,5 @@ export {
   RoleType,
   EventType,
   TimeIntervals,
-  WeekDays,
   LogLevel,
 }

@@ -1,23 +1,28 @@
 import {IFomComponent} from "./IFomComponent";
-import {TimeIntervals, WeekDays} from "./IFomEnums";
+import {TimeIntervals} from "./IFomEnums";
 import {IFomAssociation} from "./IFomAssociation";
 
-export type IFomTableCell = { value: string | IFomAssociation | Date}
-export type IFomTableRecord = { cells: IFomTableCell[], rowNumber: number }
+/**
+ * TABLE RECORD: Outlines the different data values allowed in a table cell.
+ */
+export type IFomTableRecord = (string | IFomAssociation | Date)[]
 
-export interface IFomTableRotation {
-  column: string
-  update?: {
-    next?: Date,
-    start?: Date,
-  }
-  intervalUnit: TimeIntervals
+/**
+ * TABLE ROTATION CONFIG: Outlines the necessary settings for a table rotation configuration
+ */
+export interface IFomTableRotationConfig {
+  column: number
+  startDate: Date
+  nextUpdate?: Date
   intervalValue: number,
-  intervalPOR?: WeekDays
+  intervalUnit: TimeIntervals
 }
 
+/**
+ * TABLE: A table document
+ */
 export interface IFomTable extends IFomComponent {
+  fieldIndexes: number[],
   records: IFomTableRecord[],
-  fieldIndexes: number[]
-  rotationConfigs: IFomTableRotation[],
+  rotations: IFomTableRotationConfig[],
 }

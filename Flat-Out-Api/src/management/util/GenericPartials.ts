@@ -42,14 +42,19 @@ export async function connectDocuments(
   child: { item: IFomComponent, model: ModelType },
   role: RoleType): Promise<void> {
 
-  parent.item.children = parent.item.children.filter((a: IFomAssociation) => !child.item._id.equals(a.ref))
-  parent.item.children.push({ref: child.item._id, model: child.model, role})
+  if (
+    parent.item.children.some((a: IFomAssociation) => a.ref.equals(child.item._id)) ||
+    child.item.parents.some((a: IFomAssociation) => a.ref.equals(parent.item._id))
+  ) return
 
-  child.item.parents = child.item.parents.filter((a: IFomAssociation) => !parent.item._id.equals(a.ref))
-  child.item.parents.push({ref: parent.item._id, model: parent.model, role})
+  await parent.item.updateOne({
+    children: [...parent.item.children, {ref: child.item._id, model: child.model, role}]
+  })
 
-  await parent.item.save()
-  await child.item.save()
+  await child.item.updateOne({
+    parents: [...child.item.parents, {ref: parent.item._id, model: parent.model, role}]
+  })
+
 }
 
 

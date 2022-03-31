@@ -19,6 +19,8 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
     password: saltAndHash(password)
   })
 
+  await group.save()
+
   await connectDocuments(
     {item: parent, model: getTypeFromDoc(parent)},
     {item: group, model: ModelType.GROUP},

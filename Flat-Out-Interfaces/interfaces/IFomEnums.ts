@@ -39,19 +39,6 @@ export enum TimeIntervals {
 }
 
 /**
- * WEEK DAYS: An enum for weekdays based on JS date .getDays()
- */
-export enum WeekDays {
-  SUNDAY,
-  MONDAY,
-  TUESDAY,
-  WEDNESDAY,
-  THURSDAY,
-  FRIDAY,
-  SATURDAY,
-}
-
-/**
  * LOG LEVEL: Logged information will have some level of error.
  */
 export enum LogLevel {

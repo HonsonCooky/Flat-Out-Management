@@ -1,14 +1,17 @@
-import {SchemaDefinitionProperty, Types, Schema} from "mongoose";
+import {Schema, SchemaDefinitionProperty, Types} from "mongoose";
 import {env} from "../../config/Config"
 import {
   IFomAssociation,
   IFomEvent,
-  IFomTableCell,
+  IFomTable,
+  IFomTableCompound,
   IFomTableRecord,
-  IFomTableRotation,
+  IFomTableRotationConfig,
+  IFomTableRotationUpdateField,
   ModelType,
   RoleType,
-  TimeIntervals, WeekDays,
+  TimeIntervals,
+  WeekDays
 } from "flat-out-interfaces";
 
 
@@ -26,7 +29,7 @@ export const FOM_NAME: SchemaDefinitionProperty<string> = {
   sparse: true,
   minlength: 3,
   maxlength: 30,
-  required: [true, "Missing Name"],
+  required: true,
 }
 
 /**
@@ -44,7 +47,7 @@ export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
  */
 export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
   type: String,
-  required: [true, "Missing password"]
+  required: true
 }
 
 /**
@@ -53,7 +56,7 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
 // REF
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
-  required: [true, "Association is missing a reference"],
+  required: true,
   refPath: 'model'
 }
 
@@ -61,7 +64,9 @@ const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
 const FOM_ASSOCIATION_MODEL: SchemaDefinitionProperty<ModelType> = {
   type: String,
   enum: ModelType,
-  required: [true, "Association is missing a model type"]
+  validate: function (val: number) {
+    return 0 <= val && val < Object.keys(ModelType).length
+  }
 }
 
 // ROLE
@@ -86,7 +91,7 @@ const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
 export const FOM_VERSION: SchemaDefinitionProperty<string> = {
   type: String,
   default: env.version,
-  required: [true, `Missing 'Version'`],
+  required: true,
   validate: {
     validator: (value: string) => verRegex.test(value),
     message: ({value}) => `500: Illegal Versioning ${value}`
@@ -97,7 +102,7 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
  * EVENT: Some tuple of date, title and message.
  */
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
-  date: {type: Date, required: [true, "Missing calendar event date"]},
+  date: {type: Date, required: true},
   title: FOM_NAME,
   message: String
 }
@@ -113,7 +118,7 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
  */
 export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
-  required: [true, `Missing dynamic UUID`],
+  required: true,
   sparse: true,
   unique: true,
 }
@@ -129,26 +134,50 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /**
  * TABLE OPTIONS: Outlines options that can be set for a table
  */
-export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotation> = {
-  column: {type: String, required: [true, "Missing column number for table rotation"]},
-  update: {type: {}, required: [true, "Missing update values"]},
-  intervalUnit: {type: String, enum: TimeIntervals, default: TimeIntervals.WEEKLY},
-  intervalValue: {type: Number, required: [true, "Missing interval value for table rotation"]},
-  intervalPOR: {type: Number, enum: WeekDays}
+// Row
+const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
+  type: [String || FOM_ASSOCIATION || Date]
+}
+
+// Record
+export const FOM_TABLE_COMPOUND: SchemaDefinitionProperty<IFomTableCompound> = {
+  values: [FOM_TABLE_RECORD],
+  fieldIndexes: [Number]
 }
 
 /**
- * CELL: Outlines the value of a given cell
+ * TABLE ROTATION CONFIGURATION: Outlines options that can be set for a table
  */
-const FOM_TABLE_CELL: SchemaDefinitionProperty<IFomTableCell> = {
-  value: {type: String || FOM_ASSOCIATION || Date},
-  field: {type: String, required: [true, "Missing field allocation"]},
+// Update field
+const FOM_TABLE_UPDATE_FIELD: SchemaDefinitionProperty<IFomTableRotationUpdateField> = {
+  next: Date,
+  start: {type: Date, required: true}
 }
 
-/**
- * ROW: Outlines a row inside a table
- */
-export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
-  value: {type: [FOM_TABLE_CELL], minlength: 1, maxlength: 7},
-  rowNumber: {type: Number, required: [true, "Missing record row number"]},
+// Configuration
+export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotationConfig> = {
+  column: {
+    type: Number,
+    required: true,
+    validate: function (val: number) {
+      let table: IFomTable = this as IFomTable
+      return table ? 0 <= val && val < table.records.values.length : false
+    }
+  },
+  update: FOM_TABLE_UPDATE_FIELD,
+  intervalUnit: {
+    type: Number,
+    enum: TimeIntervals,
+    validate: function (val: number) {
+      return 0 <= val && val < Object.keys(TimeIntervals).length
+    }
+  },
+  intervalValue: {type: Number, required: true},
+  intervalPOR: {
+    type: Number,
+    enum: WeekDays,
+    validate: function (val: number) {
+      return 0 <= val && val < Object.keys(WeekDays).length
+    }
+  }
 }

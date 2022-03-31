@@ -1,7 +1,9 @@
 import {Document, Types} from "mongoose";
 import {IFomAssociation} from "./IFomAssociation";
 
-
+/**
+ * COMPONENT: Outlines a document, which maintains information for the db.
+ */
 export interface IFomComponent extends Document<Types.ObjectId> {
   _id: Types.ObjectId,
   uiName: string,

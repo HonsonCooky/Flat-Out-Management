@@ -13,7 +13,7 @@ export interface ILog {
 
 const LogSchema = new Schema<ILog>({
   level: {type: Number, enum: LogLevel, default: LogLevel.INFO},
-  message: {type: String, required: [true, "Log missing message?"]},
+  message: {type: String, required: true},
   object: {typeRegExp: String}
 }, {timestamps: true})
 

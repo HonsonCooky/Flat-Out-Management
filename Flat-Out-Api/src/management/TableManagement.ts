@@ -17,10 +17,12 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
   let table: IFomTable = new TableModel({
     uiName: name,
     password: saltAndHash(password) ?? null,
-    fieldIndexes,
     records,
-    rotationConfigs
+    fieldIndexes,
+    rotationConfigs,
   })
+
+  await table.save()
 
   await connectDocuments(
     {item: parent, model: getTypeFromDoc(parent)},
