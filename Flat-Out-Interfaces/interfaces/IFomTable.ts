@@ -22,6 +22,7 @@ export interface IFomTableRotationConfig {
  * TABLE: A table document
  */
 export interface IFomTable extends IFomComponent {
+  columns: number,
   fieldIndexes: number[],
   records: IFomTableRecord[],
   rotations: IFomTableRotationConfig[],

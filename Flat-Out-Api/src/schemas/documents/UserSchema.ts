@@ -1,19 +1,19 @@
 import {model, Schema} from "mongoose";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
-import {FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
-import {ModelType, IFomUser} from "flat-out-interfaces";
+import {FOM_COLOR_ASSOCIATION, FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
+import {IFomUser, ModelType} from "flat-out-interfaces";
 
 
-/** ---------------------------------------------------------------------------------------------------------------
- * USER SCHEMA:
- * The User Schema is an aggregate of information on some user. The normal information is collected. Name, Email,
- * Password. Each user will be associated to some Group (their flat), and may contain several lists. Groups
- * and Lists are associated by some identifying string. That string will find the Group/List in question.
- --------------------------------------------------------------------------------------------------------------- */
-
+/**
+ * USER SCHEMA: Translates the IFomUser interface into a mongoose.Schema.
+ * User objects are used to maintain information about the user.
+ *
+ * - outOfFlatDates: IFomEvents which detail information to maintain the users itinerary
+ */
 const UserSchema = new Schema<IFomUser>({
   ...FomControllerSchemaDef,
-  outOfFlatDates: [FOM_EVENT]
+  outOfFlatDates: [FOM_EVENT],
+  colorAssociation: FOM_COLOR_ASSOCIATION
 }, {timestamps: true})
 
 export const UserModel = model<IFomUser>(ModelType.USER, UserSchema)

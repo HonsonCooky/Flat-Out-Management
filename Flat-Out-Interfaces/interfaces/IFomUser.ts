@@ -6,4 +6,5 @@ import {IFomEvent} from "./IFomEvent";
  */
 export interface IFomUser extends IFomController {
   outOfFlatDates: IFomEvent[]
+  colorAssociation: string,
 }

@@ -3,7 +3,7 @@ import {Request, Response} from "express";
 import {UserModel} from "../../schemas/documents/UserSchema";
 import {compareHashes} from "./AuthenticationPartials";
 import {authLevel} from "./GenericPartials";
-import {IFomComponent, IFomAssociation, IFomController, RoleType, IFomUser} from "flat-out-interfaces"
+import {IFomAssociation, IFomComponent, IFomController, IFomUser, RoleType} from "flat-out-interfaces"
 
 
 /**

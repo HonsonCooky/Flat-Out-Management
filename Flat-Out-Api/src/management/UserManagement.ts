@@ -13,11 +13,12 @@ import {IFomRes, IFomUser} from "flat-out-interfaces";
  * @param res
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, uiName} = req.body
+  let {name, password, uiName, uiColor} = req.body
   let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
+    colorAssociation: uiColor ?? `#${Math.floor(Math.random() * 16777215).toString(16)}`,
     dynUuid: new Types.ObjectId()
   })
 

@@ -5,7 +5,7 @@ import {EventType} from "./IFomEnums";
  */
 export interface IFomEvent {
   date: Date,
-  type: EventType,
-  title: string,
+  eType: EventType,
+  header: string,
   message: string,
 }

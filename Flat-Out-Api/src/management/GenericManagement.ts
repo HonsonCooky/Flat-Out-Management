@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {authLevel, preDocRemoval} from "./util/GenericPartials";
 import {getUserChildAndRole} from "./util/AuthorizationPartials";
-import {ModelType, RoleType, IFomRes} from "flat-out-interfaces";
+import {IFomRes, ModelType, RoleType} from "flat-out-interfaces";
 
 /**
  * GROUP GET: Simply get the information inside a group

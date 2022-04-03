@@ -1,4 +1,4 @@
-import {TimeIntervals, WeekDays, IFomTableRotation} from "flat-out-interfaces";
+import {IFomTableRotation, TimeIntervals, WeekDays} from "flat-out-interfaces";
 
 /**
  * GET NEXT WEEK DAY: From the current date, find the next viable

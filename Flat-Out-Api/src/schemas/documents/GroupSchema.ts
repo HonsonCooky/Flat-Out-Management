@@ -1,14 +1,18 @@
 import {model, Schema} from "mongoose";
 import {FomComponentSchemaDef} from "../util/FomComponentSchemaDef";
 import {FOM_EVENT, FOM_NAME, FOM_PASSWORD} from "../util/FomSchemaDefinitionProperties";
-import {ModelType, IFomGroup} from "flat-out-interfaces";
+import {IFomGroup, ModelType} from "flat-out-interfaces";
 
 
-/** ---------------------------------------------------------------------------------------------------------------
- * GROUP SCHEMA:
- * The Group Schema contains an object, which provides access to a group. Is its essence, a group is a hub. A central
- * location for all members of the group (flat). For this
- --------------------------------------------------------------------------------------------------------------- */
+/**
+ * GROUP SCHEMA: Translates the IFomGroup interface into a mongoose.Schema
+ * Group objects are used to maintain information about a group.
+ *
+ * - UiName: Overwrites uiName such that it has to be unique.
+ * - Password: Overrides password such that it is mandatory.
+ * - groupCalendar: Maintains a record of public facing events from each user. Such that the rest of the group knows
+ * each user's itinerary.
+ */
 const GroupSchema = new Schema<IFomGroup>({
   ...FomComponentSchemaDef,
   uiName: FOM_NAME,

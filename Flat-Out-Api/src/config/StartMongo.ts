@@ -5,7 +5,7 @@ import {UserModel} from "../schemas/documents/UserSchema";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {LogModel} from "../schemas/util/LogSchema";
-import {ModelType, IFomComponent} from "flat-out-interfaces";
+import {IFomComponent, ModelType} from "flat-out-interfaces";
 
 export function startMongo() {
   connect(env.mongo.connectionStr)

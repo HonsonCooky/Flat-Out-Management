@@ -1,26 +1,29 @@
 import {Schema, SchemaDefinitionProperty, Types} from "mongoose";
 import {env} from "../../config/Config"
 import {
+  EventType,
   IFomAssociation,
   IFomEvent,
   IFomTable,
-  IFomTableCompound,
   IFomTableRecord,
   IFomTableRotationConfig,
-  IFomTableRotationUpdateField,
   ModelType,
   RoleType,
-  TimeIntervals,
-  WeekDays
+  TimeIntervals
 } from "flat-out-interfaces";
 
+
+function getParent<T>(t: any): T {
+  if (!t) throw new Error('500: Unable to get parent with null')
+  return t.parent();
+}
 
 /** ------------------------------------------------------------------------------------------------------------------
  * GENERIC
  ------------------------------------------------------------------------------------------------------------------ */
 
 /**
- * FOM NAME: A string value which will be used to validate the username + password login
+ * NAME: A string value which will be used to validate the username + password login
  */
 export const FOM_NAME: SchemaDefinitionProperty<string> = {
   type: String,
@@ -33,7 +36,7 @@ export const FOM_NAME: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * FOM NICKNAME: A string value which will be displayed client side
+ * UI NAME: A string value which will be displayed client side
  */
 export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
   type: String,
@@ -43,7 +46,7 @@ export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * FOM PASSWORD: A string value, which is required, but can also be null
+ * PASSWORD: A string value, which is required, but can also be null
  */
 export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
   type: String,
@@ -51,7 +54,7 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * FOM ASSOCIATION: A tuple of different SchemaDefinitionProperty
+ * ASSOCIATION: A tuple of different SchemaDefinitionProperty, outlining a connection from this to another document.
  */
 // REF
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
@@ -64,9 +67,7 @@ const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
 const FOM_ASSOCIATION_MODEL: SchemaDefinitionProperty<ModelType> = {
   type: String,
   enum: ModelType,
-  validate: function (val: number) {
-    return 0 <= val && val < Object.keys(ModelType).length
-  }
+  required: true
 }
 
 // ROLE
@@ -103,7 +104,8 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
  */
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   date: {type: Date, required: true},
-  title: FOM_NAME,
+  eType: {type: Number, enum: EventType, default: EventType.USER},
+  header: FOM_NAME,
   message: String
 }
 
@@ -113,14 +115,26 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
  ------------------------------------------------------------------------------------------------------------------ */
 
 /**
- * FOM DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT
- * authentication)
+ * DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT authentication)
  */
 export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
   required: true,
   sparse: true,
   unique: true,
+}
+
+/**
+ * COLOR ASSOCIATION: Outlines a color associated with some user. For UI intentions, must be unique (allows easy
+ * association of users).
+ */
+export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
+  type: String,
+  required: true,
+  unique: true,
+  validate: function (uiColor: string): boolean {
+    return (/#[0-9a-f]{6}/).test(uiColor)
+  }
 }
 
 /** ------------------------------------------------------------------------------------------------------------------
@@ -130,54 +144,49 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /** ------------------------------------------------------------------------------------------------------------------
  * TABLE
  ------------------------------------------------------------------------------------------------------------------ */
+/**
+ * TABLE COLUMNS: Outlines the total number of columns.
+ */
+export const FOM_TABLE_COLUMNS: SchemaDefinitionProperty<number> = {
+  type: Number,
+  required: true
+}
 
 /**
- * TABLE OPTIONS: Outlines options that can be set for a table
+ * TABLE FIELD INDEXES: Outlines which rows inside a table, are headers. Mostly used for UI, but also rotations.
  */
-// Row
-const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
+export const FOM_TABLE_FIELD_INDEXES: SchemaDefinitionProperty<number> = {
+  type: Number,
+  validate: function (val: number) {
+    let table: any = this
+    return table ? 0 <= val && val < table.records.length : false
+  }
+}
+
+/**
+ * TABLE RECORD: Outlines a row in the table, outlining a list of valid object types inside a cell.
+ */
+export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
   type: [String || FOM_ASSOCIATION || Date]
 }
 
-// Record
-export const FOM_TABLE_COMPOUND: SchemaDefinitionProperty<IFomTableCompound> = {
-  values: [FOM_TABLE_RECORD],
-  fieldIndexes: [Number]
-}
-
 /**
- * TABLE ROTATION CONFIGURATION: Outlines options that can be set for a table
+ * TABLE CONFIG ROTATION: Outlines the configurations for a table rotation
  */
-// Update field
-const FOM_TABLE_UPDATE_FIELD: SchemaDefinitionProperty<IFomTableRotationUpdateField> = {
-  next: Date,
-  start: {type: Date, required: true}
-}
-
-// Configuration
 export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotationConfig> = {
   column: {
     type: Number,
-    required: true,
     validate: function (val: number) {
-      let table: IFomTable = this as IFomTable
-      return table ? 0 <= val && val < table.records.values.length : false
+      let table: IFomTable = getParent<IFomTable>(this)
+      console.log(table.columns)
+      return 0 <= val && val < table.columns
     }
   },
-  update: FOM_TABLE_UPDATE_FIELD,
+  startDate: {type: Date, default: new Date()},
+  nextUpdate: Date,
+  intervalValue: {type: Number, default: 1},
   intervalUnit: {
     type: Number,
-    enum: TimeIntervals,
-    validate: function (val: number) {
-      return 0 <= val && val < Object.keys(TimeIntervals).length
-    }
+    enum: TimeIntervals
   },
-  intervalValue: {type: Number, required: true},
-  intervalPOR: {
-    type: Number,
-    enum: WeekDays,
-    validate: function (val: number) {
-      return 0 <= val && val < Object.keys(WeekDays).length
-    }
-  }
 }

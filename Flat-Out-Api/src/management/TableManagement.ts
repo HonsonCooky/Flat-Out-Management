@@ -12,14 +12,15 @@ import {IFomComponent, IFomController, IFomRes, IFomTable, ModelType, RoleType} 
  */
 export async function tableRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
-  let {name, password, fieldIndexes, records, rotationConfigs} = req.body
+  let {name, password, fieldIndexes, records, rotations} = req.body
 
   let table: IFomTable = new TableModel({
     uiName: name,
     password: saltAndHash(password) ?? null,
-    records,
+    columns: Math.max(...records.map((row: any[]) => row.length)),
     fieldIndexes,
-    rotationConfigs,
+    records,
+    rotations,
   })
 
   await table.save()
@@ -42,7 +43,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, records, addRecords, rotationConfigs} = req.body
+  let {newName, newPassword, fieldIndexes, records, addRecords, rotations, rotation} = req.body
   let {user, child, role} = await getUserChildAndRole<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITE))
@@ -53,9 +54,11 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
     throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
 
   child.uiName = newName ?? child.uiName
+  child.fieldIndexes = fieldIndexes ?? child.fieldIndexes
   child.records = records ?? child.records
-  child.rotationConfigs = rotationConfigs ?? child.rotationConfigs
+  child.rotations = rotations ?? child.rotations
   if (addRecords) child.records.push(addRecords)
+  if (rotation) child.rotations.push(rotation)
 
   await child.save()
 
