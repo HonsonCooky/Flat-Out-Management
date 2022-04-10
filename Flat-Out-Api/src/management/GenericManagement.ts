@@ -1,7 +1,9 @@
 import {Request, Response} from "express";
 import {authLevel, preDocRemoval} from "./util/GenericPartials";
 import {getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomRes, ModelType, RoleType} from "flat-out-interfaces";
+import {IFomGroup, IFomRes, IFomTable, ModelType, RoleType} from "flat-out-interfaces";
+import {tableRenew} from "./TableManagement";
+import {groupRenew} from "./GroupManagement";
 
 /**
  * GROUP GET: Simply get the information inside a group
@@ -15,6 +17,11 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
   let type: ModelType = <ModelType>req.params.component
   if (authLevel(role) > authLevel(RoleType.READ))
     throw new Error(`400: Invalid authorization to get ${type}`)
+
+  switch (type) {
+    case ModelType.TABLE: await tableRenew(child as IFomTable); break;
+    case ModelType.GROUP: await groupRenew(child as IFomGroup); break;
+  }
 
   return {
     msg: `${user._id} successfully got ${type} ${child.uiName}`,

@@ -4,6 +4,12 @@ import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
 import {IFomComponent, IFomController, IFomRes, IFomTable, ModelType, RoleType} from "flat-out-interfaces";
+import {tableRotations} from "./util/TableRotations";
+
+export async function tableRenew(table: IFomTable){
+  tableRotations(table)
+  await table.save()
+}
 
 /**
  * TABLE REGISTER: Register a TABLE document
@@ -23,7 +29,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
     rotations,
   })
 
-  await table.save()
+  await tableRenew(table)
 
   await connectDocuments(
     {item: parent, model: getTypeFromDoc(parent)},
@@ -60,7 +66,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   if (addRecords) child.records.push(addRecords)
   if (rotation) child.rotations.push(rotation)
 
-  await child.save()
+  await tableRenew(child as IFomTable)
 
   return {
     msg: `${user._id} successfully updated table ${child.uiName}`,

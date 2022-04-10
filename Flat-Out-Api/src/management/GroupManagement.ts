@@ -5,6 +5,10 @@ import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartial
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
 import {IFomComponent, IFomController, IFomGroup, IFomRes, ModelType, RoleType} from "flat-out-interfaces";
 
+export async function groupRenew(group: IFomGroup) {
+  await group.save()
+}
+
 /**
  * GROUP REGISTER: Create a new group document
  * @param req
@@ -19,7 +23,7 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
     password: saltAndHash(password)
   })
 
-  await group.save()
+  await groupRenew(group)
 
   await connectDocuments(
     {item: parent, model: getTypeFromDoc(parent)},
@@ -51,7 +55,7 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
 
   child.uiName = newName ?? child.uiName
 
-  await child.save()
+  await groupRenew(child as IFomGroup)
 
   return {
     msg: `${user._id} successfully updated ${child.uiName}`,

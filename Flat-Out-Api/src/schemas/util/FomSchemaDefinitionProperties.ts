@@ -176,9 +176,9 @@ export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
 export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotationConfig> = {
   column: {
     type: Number,
+    unique: true,
     validate: function (val: number) {
       let table: IFomTable = getParent<IFomTable>(this)
-      console.log(table.columns)
       return 0 <= val && val < table.columns
     }
   },
