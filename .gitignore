@@ -1,6 +1,6 @@
-/Flat-Out-Api/node_modules/
-/Flat-Out-Api/package-lock.json
-/Flat-Out-Api/.env
+/flat_out_api/node_modules/
+/flat_out_api/package-lock.json
+/flat_out_api/.env
 /Flat-Out-Mobile/node_modules/
 /Flat-Out-Interfaces/node_modules/
 /Flat-Out-Interfaces/package-lock.json
