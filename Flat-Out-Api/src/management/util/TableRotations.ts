@@ -75,21 +75,18 @@ function getNextAndJumps(config: IFomTableRotationConfig, date: Date, jumps: num
  */
 function rotateColumn(config: IFomTableRotationConfig, table: IFomTable, jumps: number) {
   let col = config.column
-  let numOfEntries = table.records.length
-  jumps = jumps % numOfEntries
-  let newTable = Array(numOfEntries)
+  let recordLength = table.records.length
+  jumps = jumps % (recordLength - table.fieldIndexes.length)
+  let newTable = Array(recordLength)
 
-  for (let i = 0; i < numOfEntries; i++) {
-    newTable[i] = Array(table.columns)
+  for (let i = 0; i < recordLength; i++) {
     newTable[i] = [...table.records[i]]
-
     if (table.fieldIndexes.includes(i)) continue
+
     let j = i - jumps
-    j = j < 0 ? numOfEntries + j : j
+    j = j < 0 ? recordLength + j : j
+    j = findNonField(j, recordLength, table.fieldIndexes)
 
-    console.log(i, j, jumps, numOfEntries, table.records)
-
-    j = findNonField(j, numOfEntries, table.fieldIndexes)
     newTable[i][col] = table.records[j][col]
   }
   table.records = newTable
