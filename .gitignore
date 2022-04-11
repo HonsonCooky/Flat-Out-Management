@@ -4,3 +4,49 @@
 /Flat-Out-Mobile/node_modules/
 /Flat-Out-Interfaces/node_modules/
 /Flat-Out-Interfaces/package-lock.json
+# Miscellaneous
+flat_out_app/*.class
+flat_out_app/*.log
+flat_out_app/*.pyc
+flat_out_app/*.swp
+flat_out_app/.DS_Store
+flat_out_app/.atom/
+flat_out_app/.buildlog/
+flat_out_app/.history
+flat_out_app/.svn/
+
+# IntelliJ related
+flat_out_app/*.iml
+flat_out_app/*.ipr
+flat_out_app/*.iws
+flat_out_app/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+flat_out_app/**/doc/api/
+flat_out_app/**/ios/Flutter/.last_build_id
+flat_out_app/.dart_tool/
+flat_out_app/.flutter-plugins
+flat_out_app/.flutter-plugins-dependencies
+flat_out_app/.packages
+flat_out_app/.pub-cache/
+flat_out_app/.pub/
+flat_out_app/build/
+
+# Web related
+flat_out_app/lib/generated_plugin_registrant.dart
+
+# Symbolication related
+flat_out_app/app.*.symbols
+
+# Obfuscation related
+flat_out_app/app.*.map.json
+
+# Android Studio will place build artifacts here
+flat_out_app/android/app/debug
+flat_out_app/android/app/profile
+flat_out_app/android/app/release
