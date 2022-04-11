@@ -3,8 +3,12 @@ import {GroupModel} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomComponent, IFomController, IFomGroup, IFomRes, ModelType, RoleType} from "flat-out-interfaces";
 import {groupCalendar} from "./util/GroupCalendar";
+import {IFomGroup} from "../interfaces/IFomGroup";
+import {IFomRes} from "../interfaces/IFomRes";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
+import {ModelType, RoleType} from "../interfaces/IFomEnums";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)

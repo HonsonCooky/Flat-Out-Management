@@ -1,9 +1,12 @@
 import {Request, Response} from "express";
 import {authLevel, preDocRemoval} from "./util/GenericPartials";
 import {getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomGroup, IFomRes, IFomTable, ModelType, RoleType} from "flat-out-interfaces";
 import {tableRenew} from "./TableManagement";
 import {groupRenew} from "./GroupManagement";
+import {IFomRes} from "../interfaces/IFomRes";
+import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {IFomTable} from "../interfaces/IFomTable";
+import {IFomGroup} from "../interfaces/IFomGroup";
 
 /**
  * GROUP GET: Simply get the information inside a group

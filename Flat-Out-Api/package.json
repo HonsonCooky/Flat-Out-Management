@@ -4,7 +4,6 @@
   "description": "Heroku-NodeJS based backend for APK",
   "main": "src/index.ts",
   "scripts": {
-    "build": "npm i flat-out-interfaces-*.tgz",
     "start": "ts-node src/index.ts",
     "dev": "nodemon -x ts-node src/index.ts"
   },
@@ -17,7 +16,6 @@
     "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "flat-out-interfaces": "file:flat-out-interfaces-1.0.0.tgz",
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.0",

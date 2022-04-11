@@ -3,8 +3,12 @@ import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartial
 import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
-import {IFomComponent, IFomController, IFomRes, IFomTable, ModelType, RoleType} from "flat-out-interfaces";
 import {tableRotations} from "./util/TableRotations";
+import {IFomTable} from "../interfaces/IFomTable";
+import {IFomRes} from "../interfaces/IFomRes";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
+import {ModelType, RoleType} from "../interfaces/IFomEnums";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)

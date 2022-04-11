@@ -1,4 +1,8 @@
-import {EventType, IFomAssociation, IFomEvent, IFomGroup, IFomUser, ModelType} from "flat-out-interfaces";
+import {IFomGroup} from "../../interfaces/IFomGroup";
+import {EventType, ModelType} from "../../interfaces/IFomEnums";
+import {IFomAssociation} from "../../interfaces/IFomAssociation";
+import {IFomUser} from "../../interfaces/IFomUser";
+import {IFomEvent} from "../../interfaces/IFomEvent";
 
 export async function groupCalendar(group: IFomGroup) {
   group.groupCalendar = (await group.populate({path: 'parents.ref'}))

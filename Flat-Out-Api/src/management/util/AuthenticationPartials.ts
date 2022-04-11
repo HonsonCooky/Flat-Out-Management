@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import {env} from "../../config/Config";
 import jwt from "jsonwebtoken";
-import {IFomController, IFomJwtContract} from "flat-out-interfaces";
+import {IFomController} from "../../interfaces/IFomController";
+import {IFomJwtContract} from "../../interfaces/IFomJwtContract";
 
 /**
  * SALT AND HASH: Salt and hash a given input

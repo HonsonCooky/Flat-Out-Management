@@ -1,8 +1,8 @@
 import express from "express";
-import {ModelType} from "flat-out-interfaces";
 import {userRoutes} from "./UserRoutes";
 import {groupRoutes} from "./GroupRoutes";
 import {tableRoutes} from "./TableRoutes";
+import {ModelType} from "../interfaces/IFomEnums";
 
 
 export const apiRoutes = express.Router({mergeParams: true})

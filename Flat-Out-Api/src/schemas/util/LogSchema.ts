@@ -1,5 +1,5 @@
 import {model, Schema} from "mongoose";
-import {LogLevel} from "flat-out-interfaces";
+import {LogLevel} from "../../interfaces/IFomEnums";
 
 /** ---------------------------------------------------------------------------------------------------------------
  * LOG SCHEMA:

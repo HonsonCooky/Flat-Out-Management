@@ -1,6 +1,6 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
 import {fomLogger} from "../config/Logger";
-import {IFomRes} from "flat-out-interfaces";
+import {IFomRes} from "../interfaces/IFomRes";
 
 const known400ErrorMessages = [
   '400',

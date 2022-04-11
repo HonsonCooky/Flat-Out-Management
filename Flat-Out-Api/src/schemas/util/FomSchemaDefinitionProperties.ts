@@ -1,16 +1,9 @@
 import {Schema, SchemaDefinitionProperty, Types} from "mongoose";
 import {env} from "../../config/Config"
-import {
-  EventType,
-  IFomAssociation,
-  IFomEvent,
-  IFomTable,
-  IFomTableRecord,
-  IFomTableRotationConfig,
-  ModelType,
-  RoleType,
-  TimeIntervals
-} from "flat-out-interfaces";
+import {EventType, ModelType, RoleType, TimeIntervals} from "../../interfaces/IFomEnums";
+import {IFomAssociation} from "../../interfaces/IFomAssociation";
+import {IFomEvent} from "../../interfaces/IFomEvent";
+import {IFomTable, IFomTableRecord, IFomTableRotationConfig} from "../../interfaces/IFomTable";
 
 
 function getParent<T>(t: any): T {

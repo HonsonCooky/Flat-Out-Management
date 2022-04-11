@@ -4,8 +4,12 @@ import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
 import {preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
-import {IFomAssociation, IFomGroup, IFomRes, IFomUser, ModelType} from "flat-out-interfaces";
 import {groupCalendar} from "./util/GroupCalendar";
+import {IFomRes} from "../interfaces/IFomRes";
+import {IFomUser} from "../interfaces/IFomUser";
+import {IFomAssociation} from "../interfaces/IFomAssociation";
+import {ModelType} from "../interfaces/IFomEnums";
+import {IFomGroup} from "../interfaces/IFomGroup";
 
 
 /**

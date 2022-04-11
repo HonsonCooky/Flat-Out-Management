@@ -1,9 +1,10 @@
-import {IFomTable, IFomTableRotationConfig, TimeIntervals} from "flat-out-interfaces";
-
 /**
  * TABLE ROTATIONS: For this table, evaluate every configuration and apply necessary table rotations
  * @param table
  */
+import {IFomTable, IFomTableRotationConfig} from "../../interfaces/IFomTable";
+import {TimeIntervals} from "../../interfaces/IFomEnums";
+
 export function tableRotations(table: IFomTable) {
   for (let r of table.rotations) {
     let oldNext = r.nextUpdate ?? r.startDate

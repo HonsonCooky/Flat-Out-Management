@@ -6,7 +6,8 @@ import {
   FOM_TABLE_FIELD_INDEXES,
   FOM_TABLE_RECORD
 } from "../util/FomSchemaDefinitionProperties";
-import {IFomTable, ModelType} from "flat-out-interfaces";
+import {IFomTable} from "../../interfaces/IFomTable";
+import {ModelType} from "../../interfaces/IFomEnums";
 
 
 /**

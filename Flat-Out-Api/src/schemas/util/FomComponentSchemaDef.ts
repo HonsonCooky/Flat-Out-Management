@@ -1,6 +1,6 @@
 import {SchemaDefinition} from "mongoose";
-import {IFomComponent} from "flat-out-interfaces";
 import {FOM_ASSOCIATION, FOM_UI_NAME, FOM_VERSION} from "./FomSchemaDefinitionProperties";
+import {IFomComponent} from "../../interfaces/IFomComponent";
 
 /**
  * COMPONENT SCHEMA DEF: Translates the IFomComponent interface into a schema definition.

@@ -1,7 +1,8 @@
 import {model, Schema} from "mongoose";
 import {FomControllerSchemaDef} from "../util/FomControllerSchemaDef";
 import {FOM_COLOR_ASSOCIATION, FOM_EVENT} from "../util/FomSchemaDefinitionProperties";
-import {IFomUser, ModelType} from "flat-out-interfaces";
+import {IFomUser} from "../../interfaces/IFomUser";
+import {ModelType} from "../../interfaces/IFomEnums";
 
 
 /**
