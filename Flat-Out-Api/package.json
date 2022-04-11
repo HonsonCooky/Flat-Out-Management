@@ -4,9 +4,9 @@
   "description": "Heroku-NodeJS based backend for APK",
   "main": "src/index.ts",
   "scripts": {
+    "build": "npm i ../Flat-Out-Interfaces/flat-out-interfaces-*.tgz",
     "start": "ts-node src/index.ts",
-    "dev": "nodemon -x ts-node src/index.ts",
-    "install_custom": "npm i ../Flat-Out-Interfaces/flat-out-interfaces-*.tgz"
+    "dev": "nodemon -x ts-node src/index.ts"
   },
   "license": "MIT",
   "dependencies": {
