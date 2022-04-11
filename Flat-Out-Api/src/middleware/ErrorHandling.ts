@@ -1,34 +1,35 @@
-import {ErrorRequestHandler} from "express";
-import {IRes} from "../interfaces/_fomObjects";
-import _logger from "../config/_logger";
-
-
-/** -----------------------------------------------------------------------------------------------------------------
- * EXPRESS ERROR HANDLER:
- * Error handler (express middleware) that sends error messages which can be directly displayed by the client.
- * This removes computation on the client side, as the information is already calculated here on the server side.
- ----------------------------------------------------------------------------------------------------------------- */
-
-function jsonError(msg: string): IRes {
-  return {msg: msg}
-}
+import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
+import {fomLogger} from "../config/Logger";
+import {IFomRes} from "flat-out-interfaces";
 
 const known400ErrorMessages = [
   '400',
   'duplicate',
-  'validation failed',
-  'Cast to ObjectId failed'
+  'validation failed'
 ]
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, _) => {
+function jsonError(msg: string): IFomRes {
+  return {msg: msg.replace(/400: /g, '').replace(/500: /g, '')}
+}
+
+/**
+ * ERROR HANDLER: Express middleware component, allowing the function of the express app to simply throw an error
+ * when necessary, which will be caught here. This will log the error, whilst also gently parsing the error back to
+ * the client.
+ * @param err
+ * @param req
+ * @param res
+ * @param _
+ */
+export const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response, _: NextFunction) => {
   let msg: string = err.message
 
-  _logger.error(msg, err)
-
-  for (let i = 0; i < known400ErrorMessages.length; i++) if (msg.includes(known400ErrorMessages[i])) {
-    res.status(400).send(jsonError(msg.replace(/400: /g, '')))
+  if (known400ErrorMessages.some((eMsg: string) => eMsg.includes(msg))) {
+    fomLogger.warn(msg, err)
+    res.status(400).send(jsonError(msg))
     return
   }
 
+  fomLogger.error(msg, err)
   res.status(500).send(jsonError(msg))
 }
