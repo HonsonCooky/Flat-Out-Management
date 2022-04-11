@@ -6,7 +6,7 @@ import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPar
 import {IFomComponent, IFomController, IFomRes, IFomTable, ModelType, RoleType} from "flat-out-interfaces";
 import {tableRotations} from "./util/TableRotations";
 
-export async function tableRenew(table: IFomTable){
+export async function tableRenew(table: IFomTable) {
   tableRotations(table)
   await table.save()
 }

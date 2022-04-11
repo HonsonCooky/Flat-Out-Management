@@ -111,5 +111,8 @@
   "exclude": [
     "node_modules"
   ],
-  "include": ["interfaces", "index.ts"]
+  "include": [
+    "interfaces",
+    "index.ts"
+  ]
 }

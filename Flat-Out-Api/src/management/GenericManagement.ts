@@ -19,8 +19,12 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
     throw new Error(`400: Invalid authorization to get ${type}`)
 
   switch (type) {
-    case ModelType.TABLE: await tableRenew(child as IFomTable); break;
-    case ModelType.GROUP: await groupRenew(child as IFomGroup); break;
+    case ModelType.TABLE:
+      await tableRenew(child as IFomTable);
+      break;
+    case ModelType.GROUP:
+      await groupRenew(child as IFomGroup);
+      break;
   }
 
   return {
