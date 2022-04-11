@@ -8,4 +8,5 @@ export interface IFomEvent {
   eType: EventType,
   header: string,
   message: string,
+  colorAssociation: string,
 }

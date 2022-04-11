@@ -4,8 +4,10 @@ import {saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
 import {IFomComponent, IFomController, IFomGroup, IFomRes, ModelType, RoleType} from "flat-out-interfaces";
+import {groupCalendar} from "./util/GroupCalendar";
 
 export async function groupRenew(group: IFomGroup) {
+  await groupCalendar(group)
   await group.save()
 }
 

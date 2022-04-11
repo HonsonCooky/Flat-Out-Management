@@ -4,7 +4,8 @@ import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
 import {preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
-import {IFomRes, IFomUser} from "flat-out-interfaces";
+import {IFomAssociation, IFomGroup, IFomRes, IFomUser, ModelType} from "flat-out-interfaces";
+import {groupCalendar} from "./util/GroupCalendar";
 
 
 /**
@@ -69,7 +70,7 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, uiName} = req.body
+  let {newName, newPassword, uiName, outOfFlatDates, outOfFlatDate} = req.body
   let user: IFomUser
 
   if (newName || newPassword) {
@@ -81,6 +82,13 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   }
 
   user.uiName = uiName ?? user.uiName
+
+  if (outOfFlatDates || outOfFlatDate) {
+    if (outOfFlatDates) user.outOfFlatDates = outOfFlatDates
+    else user.outOfFlatDates.push(outOfFlatDate)
+    await dateUpdate(user)
+  }
+
   await user.save()
 
   return {
@@ -88,3 +96,16 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
     item: user
   }
 }
+
+/**
+ *
+ * @param user
+ */
+async function dateUpdate(user: IFomUser) {
+  (await user.populate({path: 'children.ref'}))
+    .children
+    .filter((a: IFomAssociation) => a.model === ModelType.GROUP)
+    .map((a: any) => a.ref as IFomGroup)
+    .forEach((g: IFomGroup) => groupCalendar(g))
+}
+

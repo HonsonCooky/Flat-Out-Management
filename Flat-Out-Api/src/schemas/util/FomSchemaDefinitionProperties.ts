@@ -60,7 +60,9 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
   required: true,
-  refPath: 'model'
+  ref: function () {
+    return (this as any).model
+  }
 }
 
 // MODEL
@@ -100,13 +102,27 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
 }
 
 /**
+ * COLOR ASSOCIATION: Outlines a color associated with some user. For UI intentions, must be unique (allows easy
+ * association of users).
+ */
+export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
+  type: String,
+  default: "#ffffff",
+  unique: true,
+  validate: function (uiColor: string): boolean {
+    return (/#[0-9a-f]{6}/).test(uiColor)
+  }
+}
+
+/**
  * EVENT: Some tuple of date, title and message.
  */
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   date: {type: Date, required: true},
   eType: {type: Number, enum: EventType, default: EventType.USER},
   header: FOM_NAME,
-  message: String
+  message: String,
+  colorAssociation: FOM_COLOR_ASSOCIATION
 }
 
 
@@ -122,19 +138,6 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   required: true,
   sparse: true,
   unique: true,
-}
-
-/**
- * COLOR ASSOCIATION: Outlines a color associated with some user. For UI intentions, must be unique (allows easy
- * association of users).
- */
-export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
-  type: String,
-  required: true,
-  unique: true,
-  validate: function (uiColor: string): boolean {
-    return (/#[0-9a-f]{6}/).test(uiColor)
-  }
 }
 
 /** ------------------------------------------------------------------------------------------------------------------
