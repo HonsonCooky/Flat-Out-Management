@@ -1,7 +1,0 @@
-<component name="InspectionProjectProfileManager">
-  <profile version="1.0">
-    <option name="myName" value="Project Default" />
-    <inspection_tool class="LatexLineBreak" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="LatexUnresolvedReference" enabled="false" level="WARNING" enabled_by_default="false" />
-  </profile>
-</component>
