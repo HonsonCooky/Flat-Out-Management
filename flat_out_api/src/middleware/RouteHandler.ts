@@ -23,10 +23,12 @@ function sanitizeRes(iFomRes: IFomRes): IFomRes {
   fomLogger.info(iFomRes.msg)
   if (!iFomRes.item) return iFomRes
 
-  let {dynUuid, password, ...rest} = iFomRes.item.toObject()
+  let {_id, dynUuid, password, ...rest} = iFomRes.item.toObject()
+  rest.id = iFomRes.item._id
+  rest.token = iFomRes.token
+
   return {
     msg: iFomRes.msg,
-    item: rest,
-    token: iFomRes.token
+    item: rest
   }
 }
