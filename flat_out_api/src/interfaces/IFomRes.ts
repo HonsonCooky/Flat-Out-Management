@@ -5,5 +5,4 @@
 export type IFomRes = {
   msg: string,
   item?: any,
-  token?: string
 }
