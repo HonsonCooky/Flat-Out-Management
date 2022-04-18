@@ -8,6 +8,6 @@ import {componentDelete, componentGet} from "../management/GenericManagement";
 export const groupRoutes = express.Router({mergeParams: true})
 
 groupRoutes.post('/register', extractJwt(), routeHandler(groupRegister))
-groupRoutes.get(`${idRegExp}/get`, extractJwt(), routeHandler(componentGet))
+groupRoutes.post(`${idRegExp}/get`, extractJwt(), routeHandler(componentGet))
 groupRoutes.post(`${idRegExp}/update`, extractJwt(), routeHandler(groupUpdate))
 groupRoutes.delete(`${idRegExp}/delete`, extractJwt(), routeHandler(componentDelete))
