@@ -18,12 +18,15 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  * @param res
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, uiName, uiColor} = req.body
+  let {name, password, uiName} = req.body
+  let randColor = Math.floor(Math.random() * 16777215).toString(16)
+  if (randColor.length < 6) randColor = `0${randColor}`
+
   let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
-    colorAssociation: uiColor ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
+    colorAssociation: `#${randColor}`,
     dynUuid: new Types.ObjectId()
   })
 
@@ -74,7 +77,7 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, uiName, outOfFlatDates, outOfFlatDate} = req.body
+  let {newName, newPassword, uiName, uiColor, outOfFlatDates, outOfFlatDate} = req.body
   let user: IFomUser
 
   if (newName || newPassword) {
@@ -86,6 +89,7 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   }
 
   user.uiName = uiName ?? user.uiName
+  user.colorAssociation = uiColor ?? user.colorAssociation
 
   if (outOfFlatDates || outOfFlatDate) {
     if (outOfFlatDates) user.outOfFlatDates = outOfFlatDates
