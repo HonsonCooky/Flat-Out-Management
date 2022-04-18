@@ -23,7 +23,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
-    colorAssociation: uiColor ?? `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+    colorAssociation: uiColor ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
     dynUuid: new Types.ObjectId()
   })
 
