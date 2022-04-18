@@ -102,7 +102,7 @@ export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
   type: String,
   default: "#ffffff",
   unique: true,
-  spared: true,
+  sparse: true,
   validate: function (uiColor: string): boolean {
     return (/#[0-9a-f]{6}/).test(uiColor)
   }
