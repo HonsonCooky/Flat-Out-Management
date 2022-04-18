@@ -15,14 +15,13 @@ class FomUser extends FomController {
       String name,
       String uiName,
       String fomVersion,
-      List<FomAssociation> parents,
       List<FomAssociation> children,
       DateTime createdAt,
       DateTime updatedAt,
       String token,
       this.outOfFlatDates,
       this.colorAssociation)
-      : super(id, name, uiName, fomVersion, parents, children, createdAt, updatedAt, token);
+      : super(id, name, uiName, fomVersion, children, createdAt, updatedAt, token);
 
   factory FomUser.fromJson(Map<String, dynamic> json) => _$FomUserFromJson(json);
 

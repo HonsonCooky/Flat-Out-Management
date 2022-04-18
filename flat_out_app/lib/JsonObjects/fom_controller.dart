@@ -1,24 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'fom_association.dart';
+import 'fom_db_object.dart';
 
 part 'fom_controller.g.dart';
 
 @JsonSerializable()
-class FomController {
-  String id;
+class FomController extends FomDbObject {
   String name;
-  String uiName;
-  String fomVersion;
-  List<FomAssociation> parents;
-  List<FomAssociation> children;
-  DateTime createdAt;
-  DateTime updatedAt;
   String token;
 
-
-  FomController(this.id, this.name, this.uiName, this.fomVersion, this.parents, this.children, this.createdAt,
-      this.updatedAt, this.token);
+  FomController(id, this.name, uiName, fomVersion, children, createdAt, updatedAt, this.token)
+      : super(id, uiName, fomVersion, children, createdAt, updatedAt);
 
   factory FomController.fromJson(Map<String, dynamic> json) => _$FomControllerFromJson(json);
 
