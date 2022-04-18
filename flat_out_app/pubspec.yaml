@@ -32,13 +32,14 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.4
   json_annotation: ^4.4.0
-
+  path_provider: ^2.0.9
+  google_fonts: ^2.3.1
+  
 dev_dependencies:
+  build_runner: ^2.1.10
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
-  build_runner: ^2.0.0
-  json_serializable: ^6.0.0
+  json_serializable: ^6.1.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
