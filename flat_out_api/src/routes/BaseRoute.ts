@@ -12,11 +12,11 @@ const baseRoute = express.Router({mergeParams: true})
 baseRoute.get('', async (req: Request, res: Response) => {
   let logs = await fomLogger.get()
   res.status(200).send({
-    msg: {
+    msg: `${{
       Heroku: true,
       MongoDB: env.mongo.isDbConnected(),
       logs
-    }
+    }}`
   })
 })
 
