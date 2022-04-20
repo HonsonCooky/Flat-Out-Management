@@ -10,17 +10,8 @@ class FomUser extends FomController {
   List<FomEvent> outOfFlatDates;
   String colorAssociation;
 
-  FomUser(
-      String id,
-      String name,
-      String uiName,
-      String fomVersion,
-      List<FomAssociation> children,
-      DateTime createdAt,
-      DateTime updatedAt,
-      String token,
-      this.outOfFlatDates,
-      this.colorAssociation)
+  FomUser(String id, String name, String uiName, String fomVersion, List<FomAssociation> children, DateTime createdAt,
+      DateTime updatedAt, String token, this.outOfFlatDates, this.colorAssociation)
       : super(id, name, uiName, fomVersion, children, createdAt, updatedAt, token);
 
   factory FomUser.fromJson(Map<String, dynamic> json) => _$FomUserFromJson(json);

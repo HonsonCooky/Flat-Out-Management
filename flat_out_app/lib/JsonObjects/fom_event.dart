@@ -11,9 +11,9 @@ class FomEvent {
   String message;
   String colorAssociation;
 
-
   FomEvent(this.date, this.eType, this.header, this.message, this.colorAssociation);
 
   factory FomEvent.fromJson(Map<String, dynamic> json) => _$FomEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$FomEventToJson(this);
 }

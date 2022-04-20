@@ -1,39 +1,48 @@
-import 'package:flat_out_app/Components/Molecules/generic_user_info_page.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+import '../../BusinessLogic/http_requests.dart';
+import 'auth_page.dart';
+
+class LoginPage extends AuthPage {
   final TextEditingController usernameVal = new TextEditingController();
   final TextEditingController passwordVal = new TextEditingController();
-  
-  Future<bool> attemptLogin() async {
-    print(usernameVal.text);
-    print(passwordVal.text);
-    
+
+  @override
+  String get title => "Login Page";
+
+  @override
+  String get action => "Login";
+
+  @override
+  Future<bool> attempt(BuildContext context) async {
+    var res = await FomReq.userLogin(usernameVal.text, passwordVal.text);
     return false;
   }
 
   @override
+  State<StatefulWidget> createState() => LoginPageState();
+}
+
+class LoginPageState extends State<LoginPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GenericUserInfoExtract(
-        title: "Login",
+    return Container(
+      child: Column(
         children: [
           TextField(
-            controller: usernameVal,
+            controller: widget.usernameVal,
             decoration: InputDecoration(
               hintText: "Username",
             ),
           ),
           TextField(
-            controller: passwordVal,
+            controller: widget.passwordVal,
             obscureText: true,
             decoration: InputDecoration(
               hintText: "Password",
             ),
-          )
+          ),
         ],
-        btnText: "Go",
-        onSubmit: attemptLogin,
       ),
     );
   }

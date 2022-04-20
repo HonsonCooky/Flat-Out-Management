@@ -1,4 +1,3 @@
-
 import 'package:flat_out_app/JsonObjects/Utils/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -14,11 +13,10 @@ class FomTableRotationConfig {
 
   FomTableRotationConfig(this.column, this.startDate, this.nextUpdate, this.intervalValue, this.intervalUnit);
 
-
   factory FomTableRotationConfig.fromJson(Map<String, dynamic> json) => _$FomTableRotationConfigFromJson(json);
+
   Map<String, dynamic> toJson() => _$FomTableRotationConfigToJson(this);
 }
-
 
 @JsonSerializable()
 class FomTable {
@@ -27,9 +25,9 @@ class FomTable {
   List<dynamic> records;
   List<FomTableRotationConfig> rotations;
 
-
   FomTable(this.columns, this.fieldIndexes, this.records, this.rotations);
 
   factory FomTable.fromJson(Map<String, dynamic> json) => _$FomTableFromJson(json);
+
   Map<String, dynamic> toJson() => _$FomTableToJson(this);
 }

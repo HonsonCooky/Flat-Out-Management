@@ -13,7 +13,6 @@ class FomGroup extends FomComponent {
       DateTime createdAt, DateTime updatedAt, this.groupCalendar)
       : super(id, uiName, fomVersion, parents, children, createdAt, updatedAt);
 
-
   factory FomGroup.fromJson(Map<String, dynamic> json) => _$FomGroupFromJson(json);
 
   @override
