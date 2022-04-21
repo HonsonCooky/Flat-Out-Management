@@ -18,4 +18,9 @@ class FomUser extends FomController {
 
   @override
   Map<String, dynamic> toJson() => _$FomUserToJson(this);
+
+  @override
+  String toString() {
+    return super.toString() + '\n \t FomUser{outOfFlatDates: $outOfFlatDates, colorAssociation: $colorAssociation}';
+  }
 }

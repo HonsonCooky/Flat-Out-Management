@@ -11,4 +11,9 @@ class FomRes {
   FomRes(this.msg, this.statusCode, this.item);
 
   factory FomRes.fromJson(Map<String, dynamic> json) => _$FomResFromJson(json);
+
+  @override
+  String toString() {
+    return 'FomRes{msg: $msg, statusCode: $statusCode, item: $item}';
+  }
 }

@@ -15,4 +15,9 @@ class FomController extends FomDbObject {
   factory FomController.fromJson(Map<String, dynamic> json) => _$FomControllerFromJson(json);
 
   Map<String, dynamic> toJson() => _$FomControllerToJson(this);
+
+  @override
+  String toString() {
+    return super.toString() + '\n \t FomController{name: $name, token: $token}';
+  }
 }

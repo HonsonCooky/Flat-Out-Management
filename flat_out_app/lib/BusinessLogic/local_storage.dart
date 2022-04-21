@@ -10,38 +10,50 @@ class LocalStorage {
     return directory.path;
   }
 
-  static Future<File> _localFile(Partition partition, String key) async {
+  static Future<File> _localFile(Partition partition, [String? key = null]) async {
     final path = await _localPath;
-    return File('$path/$partition/$key');
+    return File('$path/${partition}${key != null ? "/$key" : ""}');
   }
 
   static Future<Directory> _localDir(Partition partition) async {
-    final path = await _localPath;
-    return Directory("$partition");
+    return Directory("${partition}");
   }
 
-  static Future<void> write(Partition partition, String key, String contents) async {
+  static Future<void> write(Partition partition, String contents, [String? key = null]) async {
     File f = await _localFile(partition, key);
     f.writeAsStringSync(contents);
   }
 
-  static Future<String> read(Partition partition, String key) async {
-    File f = await _localFile(partition, key);
-    return f.readAsString();
+  static Future<String> read(Partition partition, [String? key = null]) async {
+    try {
+      File f = await _localFile(partition, key);
+      return f.readAsString();
+    } catch (_) {
+      return "";
+    }
   }
 
   static Future<List<String>> readAll(Partition partition) async {
-    List<File> fs = (await _localDir(partition)).listSync().whereType<File>().toList();
-    return fs.map((e) => e.readAsStringSync()).toList();
+    try {
+      List<File> fs = (await _localDir(partition)).listSync().whereType<File>().toList();
+      return fs.map((e) => e.readAsStringSync()).toList();
+    } catch (_) {
+      return List.empty();
+    }
   }
 
-  static Future<void> delete(Partition partition, String key) async {
+  static Future<void> delete(Partition partition, [String? key = null]) async {
     File f = await _localFile(partition, key);
     f.deleteSync();
   }
 
-  static Future<void> deleteAll(Partition partition, String key) async {
+  static Future<void> deleteAll(Partition partition) async {
     Directory dir = await _localDir(partition);
     dir.deleteSync(recursive: true);
+  }
+
+  static Future<String> toDirString() async {
+    final path = await _localPath;
+    return Directory('$path').listSync(recursive: true).map((e) => e.absolute).toList().join("\n");
   }
 }

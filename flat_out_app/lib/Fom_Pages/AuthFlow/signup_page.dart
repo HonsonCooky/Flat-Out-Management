@@ -8,18 +8,11 @@ class SignupPage extends AuthPage {
   final TextEditingController nicknameVal = new TextEditingController();
   final TextEditingController userPassword = new TextEditingController();
   final TextEditingController userPassword2 = new TextEditingController();
-  
-  @override
-  String get title => "Signup Page";
-
-  @override
-  String get action => "Signup";
 
   @override
   Future<bool> attempt(BuildContext context) async {
     if (userPassword.text != userPassword2.text) {
-      print("here");
-      errorToast("Some passwords don't match", context);
+      errorToast("Passwords don't match", context);
       return false;
     }
 
@@ -27,17 +20,16 @@ class SignupPage extends AuthPage {
     if (uRes.statusCode == 200) {
       successToast("Successfully registered ${usernameVal.text}", context);
       return true;
-    } else {
-      errorToast("${uRes.msg}", context);
-      return false;
     }
+    errorToast("${uRes.msg}", context);
+    return false;
   }
 
   @override
-  State<StatefulWidget> createState() => SignupPageState();
+  State<StatefulWidget> createState() => _SignupPageState();
 }
 
-class SignupPageState extends State<SignupPage> {
+class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -18,4 +18,9 @@ class FomDbObject {
   factory FomDbObject.fromJson(Map<String, dynamic> json) => _$FomDbObjectFromJson(json);
 
   Map<String, dynamic> toJson() => _$FomDbObjectToJson(this);
+
+  @override
+  String toString() {
+    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion, children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
 }

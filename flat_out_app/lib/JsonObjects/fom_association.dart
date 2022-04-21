@@ -15,4 +15,9 @@ class FomAssociation {
   factory FomAssociation.fromJson(Map<String, dynamic> json) => _$FomAssociationFromJson(json);
 
   Map<String, dynamic> toJson() => _$FomAssociationToJson(this);
+
+  @override
+  String toString() {
+    return 'FomAssociation{ref: $ref, model: $model, role: $role}';
+  }
 }

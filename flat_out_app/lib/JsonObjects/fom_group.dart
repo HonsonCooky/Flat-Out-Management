@@ -17,4 +17,9 @@ class FomGroup extends FomComponent {
 
   @override
   Map<String, dynamic> toJson() => _$FomGroupToJson(this);
+
+  @override
+  String toString() {
+    return super.toString() + '\n \t FomGroup{groupCalendar: $groupCalendar}';
+  }
 }

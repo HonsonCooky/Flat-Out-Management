@@ -15,4 +15,9 @@ class FomComponent extends FomDbObject {
   factory FomComponent.fromJson(Map<String, dynamic> json) => _$FomComponentFromJson(json);
 
   Map<String, dynamic> toJson() => _$FomComponentToJson(this);
+
+  @override
+  String toString() {
+    return 'FomComponent{parents: $parents}';
+  }
 }

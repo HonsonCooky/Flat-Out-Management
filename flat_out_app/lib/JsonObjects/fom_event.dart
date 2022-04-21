@@ -16,4 +16,9 @@ class FomEvent {
   factory FomEvent.fromJson(Map<String, dynamic> json) => _$FomEventFromJson(json);
 
   Map<String, dynamic> toJson() => _$FomEventToJson(this);
+
+  @override
+  String toString() {
+    return 'FomEvent{date: $date, eType: $eType, header: $header, message: $message, colorAssociation: $colorAssociation}';
+  }
 }

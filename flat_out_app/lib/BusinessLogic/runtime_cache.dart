@@ -18,32 +18,60 @@ class RuntimeCache extends ChangeNotifier {
 
   List<FomTable> get tables => _tables;
 
-  void setUser(FomUser? value) {
-    _user = value;
+  Future<RuntimeCache> setUser(FomUser? value, [Function? onErr = null]) async {
+    try {
+      _user = value;
+      if (value == null) {
+        await LocalStorage.deleteAll(Partition.USER);
+        await LocalStorage.deleteAll(Partition.GROUP);
+        await LocalStorage.deleteAll(Partition.TABLE);
+      } else {
+        await LocalStorage.write(Partition.USER, json.encode(value));
+      }
+    } catch (_) {
+      if (onErr != null) onErr();
+    }
     notifyListeners();
+    return this;
   }
 
-  void addGroup(FomGroup value) {
-    _groups.add(value);
+  Future<RuntimeCache> addGroup(FomGroup value, [Function? onErr = null]) async {
+    try {
+      _groups.add(value);
+      await LocalStorage.write(Partition.GROUP, json.encode(value), "/${value.id}");
+    } catch (_) {
+      if (onErr != null) onErr();
+    }
     notifyListeners();
+    return this;
   }
 
-  void addTable(FomTable value) {
-    _tables.add(value);
+  Future<RuntimeCache> addTable(FomTable value, [Function? onErr = null]) async {
+    try {
+      _tables.add(value);
+      await LocalStorage.write(Partition.TABLE, json.encode(value), "/${value.id}");
+    } catch (_) {
+      if (onErr != null) onErr();
+    }
     notifyListeners();
+    return this;
   }
 
-  Future<void> init() async {
-    FomUser? user = FomUser.fromJson(json.decode(await LocalStorage.read(Partition.USER, "")));
-    List<FomGroup> groups =
-        (await LocalStorage.readAll(Partition.GROUP)).map((e) => FomGroup.fromJson(json.decode(e))).toList();
-    List<FomTable> tables =
-        (await LocalStorage.readAll(Partition.TABLE)).map((e) => FomTable.fromJson(json.decode(e))).toList();
+  Future<RuntimeCache> init([Function? onErr = null]) async {
+    try {
+      FomUser? user = FomUser.fromJson(json.decode(await LocalStorage.read(Partition.USER)));
+      List<FomGroup> groups =
+          (await LocalStorage.readAll(Partition.GROUP)).map((e) => FomGroup.fromJson(json.decode(e))).toList();
+      List<FomTable> tables =
+          (await LocalStorage.readAll(Partition.TABLE)).map((e) => FomTable.fromJson(json.decode(e))).toList();
 
-    _user = user;
-    _groups = groups;
-    _tables = tables;
-    print(_user);
+      _user = user;
+      _groups = groups;
+      _tables = tables;
+    } catch (e) {
+      if (onErr != null) onErr();
+    }
     notifyListeners();
+    return this;
   }
 }
