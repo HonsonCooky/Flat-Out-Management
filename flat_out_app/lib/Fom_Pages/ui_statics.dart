@@ -1,3 +1,6 @@
 class UiStatics {
-  static final double leftGap = 20, rightGap = leftGap, verticalComponentGap = 50;
+  static final double leftGap = 50;
+  static final double rightGap = leftGap;
+  static final double verticalComponentGap = 50;
+  static final double appBarHeight = 140;
 }

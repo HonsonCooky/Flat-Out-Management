@@ -44,12 +44,16 @@ class LocalStorage {
 
   static Future<void> delete(Partition partition, [String? key = null]) async {
     File f = await _localFile(partition, key);
-    f.deleteSync();
+    try {
+      f.deleteSync();
+    } catch (_) {}
   }
 
   static Future<void> deleteAll(Partition partition) async {
-    Directory dir = await _localDir(partition);
-    dir.deleteSync(recursive: true);
+    try {
+      Directory dir = await _localDir(partition);
+      dir.deleteSync(recursive: true);
+    } catch (e) {}
   }
 
   static Future<String> toDirString() async {

@@ -1,6 +1,15 @@
-import 'package:flat_out_app/Components/molecules/toast_page.dart';
+import 'package:flat_out_app/Components/Atoms/loading.dart';
+import 'package:flat_out_app/Fom_Pages/CustomPaint/blobs_background.dart';
 import 'package:flutter/material.dart';
 
-abstract class AuthPage extends ToastPage {
-  Future<bool> attempt(BuildContext context);
+class AuthPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => AuthPageState();
+}
+
+class AuthPageState extends State<AuthPage> {
+  @override
+  Widget build(BuildContext context) {
+    return BlobBackground();
+  }
 }

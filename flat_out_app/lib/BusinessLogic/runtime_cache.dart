@@ -22,15 +22,19 @@ class RuntimeCache extends ChangeNotifier {
     try {
       _user = value;
       if (value == null) {
-        await LocalStorage.deleteAll(Partition.USER);
+        await LocalStorage.delete(Partition.USER);
         await LocalStorage.deleteAll(Partition.GROUP);
         await LocalStorage.deleteAll(Partition.TABLE);
+        _user = null;
+        _groups = [];
+        _tables = [];
       } else {
         await LocalStorage.write(Partition.USER, json.encode(value));
       }
     } catch (_) {
       if (onErr != null) onErr();
     }
+    print(await LocalStorage.toDirString());
     notifyListeners();
     return this;
   }

@@ -4,14 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 class FomThemes {
   static ThemeData light() {
     return ThemeData(
-      primarySwatch: Colors.brown,
-      primaryColor: const Color(0xff6a9144),
-      appBarTheme: AppBarTheme(color: const Color(0xff6a9144)),
-      primaryColorLight: Colors.brown,
-      canvasColor: const Color(0xffe6e4e4),
-      focusColor: Colors.lightGreen,
-      errorColor: const Color(0xffff6c00),
-      cardColor: Colors.lightGreen,
+      primarySwatch: Colors.grey,
+      primaryColor: Color(0xffe94174),
+      secondaryHeaderColor: Color(0xffdead5c),
+      scaffoldBackgroundColor: Color(0xffe8e5e0),
+      dividerColor: Color(0xff383e64),
+      focusColor: Color(0xff736aae),
+      hoverColor: Color(0xff736aae),
+      highlightColor: Color(0xff736aae),
+      splashColor: Color(0xff736aae),
       textTheme: GoogleFonts.getTextTheme(
           "Merriweather Sans",
           TextTheme(

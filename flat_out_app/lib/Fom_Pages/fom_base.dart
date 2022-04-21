@@ -1,6 +1,7 @@
 import 'package:flat_out_app/BusinessLogic/runtime_cache.dart';
 import 'package:flat_out_app/Fom_Pages/AppFlow/home/home.dart';
-import 'package:flat_out_app/Fom_Pages/AuthFlow/auth_router.dart';
+import 'package:flat_out_app/Fom_Pages/AuthFlow/auth_page.dart';
+import 'package:flat_out_app/Fom_Pages/AuthFlow/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,7 @@ class FomBaseState extends State {
     Widget flow = Provider.of<RuntimeCache>(context, listen: true).user != null &&
             Provider.of<RuntimeCache>(context, listen: true).groups.length > 0
         ? HomePage()
-        : AuthRouter();
+        : AuthPage();
     final ThemeMode themeMode = Provider.of<ThemeNotifier>(context, listen: true).currentTheme();
 
     return MaterialApp(
