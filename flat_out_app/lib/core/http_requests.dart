@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import '../JsonObjects/fom_res.dart';
+import 'jsons/fom_res.dart';
 
 const String _base = "https://flat-out-management-api.herokuapp.com";
 

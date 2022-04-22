@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'Utils/enums.dart';
+import 'utils/enums.dart';
 
 part 'fom_association.g.dart';
 

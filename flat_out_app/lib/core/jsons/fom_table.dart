@@ -1,8 +1,8 @@
-import 'package:flat_out_app/JsonObjects/Utils/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'fom_association.dart';
 import 'fom_component.dart';
+import 'utils/enums.dart';
 
 part 'fom_table.g.dart';
 

@@ -1,7 +1,7 @@
-import 'package:flat_out_app/JsonObjects/fom_db_object.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'fom_association.dart';
+import 'fom_db_object.dart';
 
 part 'fom_component.g.dart';
 

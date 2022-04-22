@@ -1,0 +1,25 @@
+import 'package:flutter/material.dart';
+
+class ParentChildPageChange extends PageRouteBuilder {
+  final Widget page;
+
+  ParentChildPageChange({required this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
+}

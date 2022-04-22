@@ -1,7 +1,8 @@
-import 'package:flat_out_app/JsonObjects/fom_association.dart';
-import 'package:flat_out_app/JsonObjects/fom_controller.dart';
-import 'package:flat_out_app/JsonObjects/fom_event.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'fom_association.dart';
+import 'fom_controller.dart';
+import 'fom_event.dart';
 
 part 'fom_user.g.dart';
 

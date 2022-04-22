@@ -1,5 +1,6 @@
-import 'package:flat_out_app/JsonObjects/Utils/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'utils/enums.dart';
 
 part 'fom_event.g.dart';
 
