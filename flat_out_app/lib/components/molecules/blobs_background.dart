@@ -16,17 +16,15 @@ class BlobBackground extends StatelessWidget {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: scaffoldColor,
-        // appBar: AppBar(
-        //   backgroundColor: Color(0x000000),
-        //   elevation: 0,
-        // ),
+        appBar: AppBar(
+          backgroundColor: Color(0x000000),
+          elevation: 0,
+        ),
         body: CustomPaint(
           size: MediaQuery.of(context).size,
           painter: _BlobBackgroundPaint(topColor: topColor, bottomColor: bottomColor),
           child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: child),
+              width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, child: child),
         ),
       ),
     );
@@ -67,15 +65,29 @@ class _BlobBackgroundPaint extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var p1 = Paint()..color = topColor ?? Color(0xffdead5c);
+    var p1Color = topColor ?? Color(0xffdead5c);
+    var p2Color = bottomColor ?? Color(0xffe94174);
+    
+    var p1 = Paint()
+      ..shader = LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomRight,
+              colors: [p1Color, p1Color.withGreen(p1Color.green - 50).withBlue(p1Color.blue - 50)])
+          .createShader(Rect.fromCenter(center: Offset(0, 100), width: size.width, height: size.height / 3));
     var pShadow1 = Paint()
-      ..color = topColor?.withOpacity(0.0625) ?? Color(0x44dead5c)
+      ..color = p1Color.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 20;
 
-    var p2 = Paint()..color = bottomColor ?? Color(0xffe94174);
+    var p2 = Paint()
+      ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomRight,
+          colors: [p2Color, p2Color.withGreen(p1Color.green - 50).withBlue(p1Color.blue + 100)])
+          .createShader(Rect.fromCenter(center: Offset(0, size.height + 100), width: size.width, height: size.height / 
+          3));
     var pShadow2 = Paint()
-      ..color = bottomColor?.withOpacity(0.0625) ?? Color(0x44e94174)
+      ..color = p2Color.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 20;
     ;
@@ -83,11 +95,11 @@ class _BlobBackgroundPaint extends CustomPainter {
     Path path1 = _bezierPath(0, size.height / 3, size);
     Path path2 = _bezierPathInvert(0, size.height, size);
 
-    canvas.drawPath(path1, p1);
     canvas.drawPath(path1, pShadow1);
+    canvas.drawPath(path1, p1);
 
-    canvas.drawPath(path2, p2);
     canvas.drawPath(path2, pShadow2);
+    canvas.drawPath(path2, p2);
   }
 
   @override

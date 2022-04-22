@@ -1,5 +1,5 @@
 import 'package:flat_out_app/core/jsons/fom_user.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_home.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class FomBaseState extends State {
     // Connect to providers
     FomUser? u = Provider.of<RuntimeCache>(context, listen: true).user;
     List<FomGroup> gs = Provider.of<RuntimeCache>(context, listen: true).groups;
-    
+
     // Find the base parent for current flow
     Widget flow = (u == null || gs.length == 0) ? AuthHomePage() : HomePage();
     final ThemeMode themeMode = Provider.of<ThemeNotifier>(context, listen: true).currentTheme();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FomRoundButton extends StatelessWidget {
   final List<Widget> children;
-  final BorderRadius rad;
+  final BorderRadiusGeometry rad;
   final double width;
   final void Function() onPressed;
 
@@ -13,19 +13,20 @@ class FomRoundButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: width),
-      child: ElevatedButton(
+      margin: EdgeInsets.only(right: width, bottom: width / 20),
+      child: MaterialButton(
         onPressed: () {
           onPressed();
         },
         child: Row(
           children: children,
         ),
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: rad),
-          padding: EdgeInsets.all(7),
-          elevation: 4,
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: rad,
         ),
+        color: Theme.of(context).buttonTheme.colorScheme?.primary,
       ),
     );
   }
