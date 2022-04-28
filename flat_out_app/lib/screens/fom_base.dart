@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../components/utils/fom_theme.dart';
+import '../core/blocs/runtime_cache.dart';
+import '../core/blocs/theme_notifier.dart';
 import '../core/jsons/fom_group.dart';
-import '../core/runtime_cache.dart';
-import '../core/theme_notifier.dart';
 
 class FomBase extends StatefulWidget {
   const FomBase({Key? key}) : super(key: key);
@@ -19,20 +19,17 @@ class FomBase extends StatefulWidget {
 class FomBaseState extends State {
   @override
   Widget build(BuildContext context) {
-    // Connect to providers
     FomUser? u = Provider.of<RuntimeCache>(context, listen: true).user;
     List<FomGroup> gs = Provider.of<RuntimeCache>(context, listen: true).groups;
     ThemeMode themeMode = Provider.of<ThemeNotifier>(context, listen: true).currentTheme();
 
-    // Find the base parent for current flow
     Widget flow = (u == null || gs.length == 0) ? AuthFlow() : AppFlow();
 
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: FomThemes.light(),
-      darkTheme: FomThemes.dark(),
-      themeMode: themeMode,
-      home: flow,
-    );
+        debugShowCheckedModeBanner: false,
+        theme: FomThemes.light(),
+        darkTheme: FomThemes.dark(),
+        themeMode: themeMode,
+        home: flow);
   }
 }

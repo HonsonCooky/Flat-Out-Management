@@ -2,17 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import 'jsons/fom_res.dart';
+import '../jsons/fom_res.dart';
 
 const String _base = "https://flat-out-management-api.herokuapp.com";
 
 class FomReq {
   static FomRes _err = FomRes("Error: Something went wrong. Check your network connection", 500, null);
 
-  /**
-   * Error messages come through in the default MongoDB style. Rewrite said message such that the user can have a
-   * clear understanding of what went wrong.
-   */
   static String _sanitizeErrorMsg(String msg) {
     String newMsg = msg;
     if (msg.contains("validation failed")) {
