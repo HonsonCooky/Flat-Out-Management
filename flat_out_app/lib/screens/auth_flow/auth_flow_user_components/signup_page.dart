@@ -1,8 +1,7 @@
-import 'package:flat_out_app/core/blocs/http_requests.dart';
+import 'package:flat_out_app/components/molecules/toast_page.dart';
+import 'package:flat_out_app/core/http_requests.dart';
+import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:flutter/material.dart';
-
-import '../../../components/molecules/toast_page.dart';
-import '../../../core/jsons/fom_res.dart';
 
 class SignupPage extends ToastPage {
   @override

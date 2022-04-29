@@ -1,5 +1,5 @@
-import 'package:flat_out_app/core/blocs/auth_page_notifier.dart';
-import 'package:flat_out_app/core/blocs/ui_statics.dart';
+import 'package:flat_out_app/core/ui_functional_components/auth_page_notifier.dart';
+import 'package:flat_out_app/core/ui_functional_components//ui_statics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

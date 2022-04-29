@@ -14,6 +14,6 @@ class FomRes {
 
   @override
   String toString() {
-    return 'FomRes{msg: $msg, statusCode: $statusCode, item: $item}';
+    return 'FomRes{msg: $msg, item: $item, statusCode: $statusCode}';
   }
 }

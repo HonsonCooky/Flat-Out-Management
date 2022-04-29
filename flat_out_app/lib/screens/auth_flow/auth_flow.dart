@@ -1,8 +1,7 @@
 import 'package:flat_out_app/components/atoms/unfocus_wrapper.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_components/auth_page_body.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/auth_header.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/auth_page_body.dart';
 import 'package:flutter/material.dart';
-
-import 'auth_flow_components/auth_header.dart';
 
 class AuthFlow extends StatefulWidget {
   @override

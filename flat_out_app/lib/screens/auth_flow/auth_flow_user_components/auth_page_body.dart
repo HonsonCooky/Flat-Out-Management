@@ -1,9 +1,8 @@
-import 'package:flat_out_app/core/blocs/auth_page_notifier.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_components/signup_page.dart';
+import 'package:flat_out_app/core/ui_functional_components/auth_page_notifier.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/login_page.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'login_page.dart';
 
 class AuthPageBody extends StatefulWidget {
   @override

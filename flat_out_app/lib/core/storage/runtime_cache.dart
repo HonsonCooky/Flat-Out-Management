@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:flat_out_app/core/jsons/fom_group.dart';
+import 'package:flat_out_app/core/jsons/fom_table.dart';
+import 'package:flat_out_app/core/jsons/fom_user.dart';
+import 'package:flat_out_app/core/storage/local_storage.dart';
 import 'package:flutter/cupertino.dart';
-
-import '../../core/jsons/fom_group.dart';
-import '../../core/jsons/fom_table.dart';
-import '../../core/jsons/fom_user.dart';
-import 'local_storage.dart';
+import 'package:http/http.dart';
 
 class RuntimeCache extends ChangeNotifier {
   static FomUser? _user;
@@ -17,51 +17,41 @@ class RuntimeCache extends ChangeNotifier {
   List<FomGroup> get groups => _groups;
 
   List<FomTable> get tables => _tables;
-
-  Future<RuntimeCache> setUser(FomUser? value, [Function? onErr = null]) async {
-    try {
-      _user = value;
-      if (value == null) {
-        await LocalStorage.delete(Partition.USER);
-        await LocalStorage.deleteAll(Partition.GROUP);
-        await LocalStorage.deleteAll(Partition.TABLE);
-        _user = null;
-        _groups = [];
-        _tables = [];
-      } else {
-        await LocalStorage.write(Partition.USER, json.encode(value));
-      }
-    } catch (_) {
-      if (onErr != null) onErr();
-    }
-    print(await LocalStorage.toDirString());
-    notifyListeners();
-    return this;
+  
+  Future<void> _clearAll() async {
+    _user = null;
+    _groups = [];
+    _tables = [];
+    LocalStorage.delete(Partition.USER);
+    LocalStorage.deleteAll(Partition.GROUP).catchError((e) {});
+    LocalStorage.deleteAll(Partition.TABLE).catchError((e) {});
   }
 
-  Future<RuntimeCache> addGroup(FomGroup value, [Function? onErr = null]) async {
+  Future<void> setUser(FomUser? value) async {
+    notifyListeners();
+  }
+
+  Future<void> addGroup(FomGroup value) async {
     try {
       _groups.add(value);
       await LocalStorage.write(Partition.GROUP, json.encode(value), "/${value.id}");
-    } catch (_) {
-      if (onErr != null) onErr();
+    } catch (e) {
+      throw ClientException("Unable to access local storage\n${e}");
     }
     notifyListeners();
-    return this;
   }
 
-  Future<RuntimeCache> addTable(FomTable value, [Function? onErr = null]) async {
+  Future<void> addTable(FomTable value, [Function? onErr = null]) async {
     try {
       _tables.add(value);
       await LocalStorage.write(Partition.TABLE, json.encode(value), "/${value.id}");
-    } catch (_) {
-      if (onErr != null) onErr();
+    } catch (e) {
+      throw ClientException("Unable to access local storage\n${e}");
     }
     notifyListeners();
-    return this;
   }
 
-  Future<RuntimeCache> init([Function? onErr = null]) async {
+  Future<void> init([Function? onErr = null]) async {
     try {
       FomUser? user = FomUser.fromJson(json.decode(await LocalStorage.read(Partition.USER)));
       List<FomGroup> groups =
@@ -73,9 +63,8 @@ class RuntimeCache extends ChangeNotifier {
       _groups = groups;
       _tables = tables;
     } catch (e) {
-      if (onErr != null) onErr();
+      throw ClientException("Unable to access local storage\n${e}");
     }
     notifyListeners();
-    return this;
   }
 }

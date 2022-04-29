@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:flat_out_app/core/jsons/fom_db_object.dart';
+import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:http/http.dart';
-
-import '../jsons/fom_res.dart';
 
 const String _base = "https://flat-out-management-api.herokuapp.com";
 
@@ -35,6 +35,13 @@ class FomReq {
     return newMsg;
   }
 
+  static FomRes _toFomRes<T extends FomDbObject>(Response res) {
+    FomRes fRes = FomRes.fromJson(jsonDecode(res.body));
+    fRes.statusCode = res.statusCode;
+    fRes.msg = _sanitizeErrorMsg(fRes.msg);
+    return fRes;
+  }
+
   static Future<FomRes> _post(String subUrl, Map jsonBody, [String authHeader = ""]) async {
     Uri url = Uri.parse("$_base/api/$subUrl");
     try {
@@ -49,13 +56,6 @@ class FomReq {
   static Future<FomRes> ping() async {
     Uri url = Uri.parse("$_base");
     return _toFomRes(await get(url));
-  }
-
-  static FomRes _toFomRes(Response res) {
-    FomRes fRes = FomRes.fromJson(jsonDecode(res.body));
-    fRes.statusCode = res.statusCode;
-    fRes.msg = _sanitizeErrorMsg(fRes.msg);
-    return fRes;
   }
 
   static Future<FomRes> userRegister(String username, String nickname, String password) async {

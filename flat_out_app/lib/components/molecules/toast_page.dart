@@ -23,4 +23,15 @@ abstract class ToastPage extends StatefulWidget {
       backgroundColor: Theme.of(context).errorColor,
     ));
   }
+
+  void fuckMeToast(String id, BuildContext context) {
+    final s = ScaffoldMessenger.of(context);
+    s.showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      margin: EdgeInsets.all(20.0),
+      dismissDirection: DismissDirection.horizontal,
+      content: Text("The developer of this app did an oopsie\nReference: ${id}"),
+      backgroundColor: Theme.of(context).errorColor,
+    ));
+  }
 }
