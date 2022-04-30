@@ -1,30 +1,12 @@
-import 'package:flat_out_app/components/atoms/unfocus_wrapper.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/auth_header.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/auth_page_body.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_auth_flow.dart';
 import 'package:flutter/material.dart';
 
-class AuthFlow extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _AuthFlowState();
-}
-
-class _AuthFlowState extends State<AuthFlow> {
+class AuthFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return UnFocusWrapper(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Column(
-          children: [
-            AuthHeader(),
-            Divider(
-                thickness: 5,
-                indent: MediaQuery.of(context).size.width / 10,
-                endIndent: MediaQuery.of(context).size.width / 10),
-            AuthPageBody(),
-          ],
-        ),
-      ),
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 300),
+      child: UserAuthFlow(),
     );
   }
 }

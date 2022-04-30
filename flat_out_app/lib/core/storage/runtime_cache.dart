@@ -28,13 +28,16 @@ class RuntimeCache extends ChangeNotifier {
   }
 
   Future<void> setUser(FomUser? value) async {
+    _clearAll();
+    LocalStorage.write(Partition.USER, jsonEncode(value)).catchError((e){});
+    _user = value;
     notifyListeners();
   }
 
   Future<void> addGroup(FomGroup value) async {
     try {
       _groups.add(value);
-      await LocalStorage.write(Partition.GROUP, json.encode(value), "/${value.id}");
+      await LocalStorage.write(Partition.GROUP, jsonEncode(value), "/${value.id}");
     } catch (e) {
       throw ClientException("Unable to access local storage\n${e}");
     }
@@ -44,7 +47,7 @@ class RuntimeCache extends ChangeNotifier {
   Future<void> addTable(FomTable value, [Function? onErr = null]) async {
     try {
       _tables.add(value);
-      await LocalStorage.write(Partition.TABLE, json.encode(value), "/${value.id}");
+      await LocalStorage.write(Partition.TABLE, jsonEncode(value), "/${value.id}");
     } catch (e) {
       throw ClientException("Unable to access local storage\n${e}");
     }
@@ -55,9 +58,9 @@ class RuntimeCache extends ChangeNotifier {
     try {
       FomUser? user = FomUser.fromJson(json.decode(await LocalStorage.read(Partition.USER)));
       List<FomGroup> groups =
-          (await LocalStorage.readAll(Partition.GROUP)).map((e) => FomGroup.fromJson(json.decode(e))).toList();
+          (await LocalStorage.readAll(Partition.GROUP)).map((e) => FomGroup.fromJson(jsonDecode(e))).toList();
       List<FomTable> tables =
-          (await LocalStorage.readAll(Partition.TABLE)).map((e) => FomTable.fromJson(json.decode(e))).toList();
+          (await LocalStorage.readAll(Partition.TABLE)).map((e) => FomTable.fromJson(jsonDecode(e))).toList();
 
       _user = user;
       _groups = groups;

@@ -1,14 +1,18 @@
-import 'package:flat_out_app/core/ui_functional_components/auth_page_notifier.dart';
 import 'package:flat_out_app/core/ui_functional_components//ui_statics.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class AuthHeader extends StatefulWidget {
+class UserAuthHeader extends StatefulWidget {
+  late final bool isLoginPage;
+  late final void Function(bool) swapPage;
+  
+  UserAuthHeader({required this.isLoginPage, required this.swapPage});
+
   @override
-  State<StatefulWidget> createState() => _AuthHeaderState();
+  State<StatefulWidget> createState() => _UserAuthHeaderState();
 }
 
-class _AuthHeaderState extends State<AuthHeader> with TickerProviderStateMixin {
+class _UserAuthHeaderState extends State<UserAuthHeader> with TickerProviderStateMixin {
+  
   late final AnimationController _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
   late final Tween<double> _pointTween =
       Tween<double>(begin: UiStatics.headerInset, end: MediaQuery.of(context).size.width - UiStatics.headerInset);
@@ -25,7 +29,6 @@ class _AuthHeaderState extends State<AuthHeader> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final AuthPage curPage = Provider.of<AuthPageNotifier>(context, listen: true).currentPage();
 
     return Container(
       child: Column(
@@ -60,14 +63,14 @@ class _AuthHeaderState extends State<AuthHeader> with TickerProviderStateMixin {
                 TextButton(
                     onPressed: () {
                       FocusManager.instance.primaryFocus?.unfocus();
-                      context.read<AuthPageNotifier>().switchPage(AuthPage.login);
+                      widget.swapPage(true);
                       _controller.reverse();
                     },
                     style: ButtonStyle(
-                        foregroundColor: curPage == AuthPage.login
+                        foregroundColor: widget.isLoginPage
                             ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4?.color)
                             : MaterialStateProperty.all(Theme.of(context).textTheme.headline5?.color),
-                        textStyle: curPage == AuthPage.login
+                        textStyle: widget.isLoginPage
                             ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4)
                             : MaterialStateProperty.all(Theme.of(context).textTheme.headline5)),
                     child: Text("Login")),
@@ -78,14 +81,14 @@ class _AuthHeaderState extends State<AuthHeader> with TickerProviderStateMixin {
                 TextButton(
                     onPressed: () {
                       FocusManager.instance.primaryFocus?.unfocus();
-                      context.read<AuthPageNotifier>().switchPage(AuthPage.signup);
+                      widget.swapPage(false);
                       _controller.forward();
                     },
                     style: ButtonStyle(
-                        foregroundColor: curPage == AuthPage.signup
+                        foregroundColor: !widget.isLoginPage
                             ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4?.color)
                             : MaterialStateProperty.all(Theme.of(context).textTheme.headline5?.color),
-                        textStyle: curPage == AuthPage.signup
+                        textStyle: !widget.isLoginPage
                             ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4)
                             : MaterialStateProperty.all(Theme.of(context).textTheme.headline5)),
                     child: Text("Signup"))
