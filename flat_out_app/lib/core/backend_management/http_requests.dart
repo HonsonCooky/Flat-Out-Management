@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flat_out_app/core/jsons/fom_association.dart';
 import 'package:flat_out_app/core/jsons/fom_db_object.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:http/http.dart';
@@ -9,6 +10,9 @@ const String _base = "https://flat-out-management-api.herokuapp.com";
 class FomReq {
   static FomRes _err = FomRes("Error: Something went wrong. Check your network connection", 500, null);
 
+  /**
+   * Alter the error messages from the HTTP request. 
+   */
   static String _sanitizeErrorMsg(String msg) {
     String newMsg = msg;
     if (msg.contains("validation failed")) {
@@ -72,5 +76,9 @@ class FomReq {
 
   static Future<FomRes> userLogin(String username, String password) async {
     return _post('user/get', {'name': username, 'password': password});
+  }
+  
+  static Future<FomRes> groupGet(FomAssociation association, String? token) async {
+    return _post('group/${association.ref}/get', json.decode(""), token!);
   }
 }

@@ -7,8 +7,9 @@ abstract class ToastPage extends StatefulWidget {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.all(20.0),
-        content: Text(msg),
-        backgroundColor: Color(0xff92e941),
+        content: Text(
+          msg,
+        ),
       ),
     );
   }
@@ -19,7 +20,7 @@ abstract class ToastPage extends StatefulWidget {
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.all(20.0),
       dismissDirection: DismissDirection.horizontal,
-      content: Text(msg),
+      content: Text(msg, style: Theme.of(context).textTheme.bodyText2),
       backgroundColor: Theme.of(context).errorColor,
     ));
   }
@@ -30,7 +31,8 @@ abstract class ToastPage extends StatefulWidget {
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.all(20.0),
       dismissDirection: DismissDirection.horizontal,
-      content: Text("The developer of this app did an oopsie\nReference: ${id}"),
+      content: Text("The developer of this app did an oopsie\nReference: ${id}",
+          style: Theme.of(context).textTheme.bodyText2),
       backgroundColor: Theme.of(context).errorColor,
     ));
   }

@@ -1,10 +1,15 @@
 import 'package:flat_out_app/components/atoms/auth_text_field.dart';
 import 'package:flat_out_app/components/molecules/toast_page.dart';
-import 'package:flat_out_app/core/http_requests.dart';
+import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends ToastPage {
+  final void Function(bool) swapPage;
+  
+  SignupPage(this.swapPage);
+  
+
   @override
   State<StatefulWidget> createState() => _SignupPageState();
 }
@@ -22,9 +27,10 @@ class _SignupPageState extends State<SignupPage> {
     } else {
       try {
         FomRes res = await FomReq.userRegister(uName.text, uiName.text, pWord.text);
-        if (res.statusCode == 200)
+        if (res.statusCode == 200) {
           widget.successToast(res.msg, context);
-        else
+          widget.swapPage(true);
+        } else
           widget.errorToast(res.msg, context);
       } catch (_) {
         widget.errorToast("Unable to send request", context);

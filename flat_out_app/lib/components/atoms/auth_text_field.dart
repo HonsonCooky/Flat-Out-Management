@@ -18,9 +18,13 @@ class AuthTextField extends StatelessWidget {
       obscureText: obscureText,
       cursorColor: Theme.of(context).primaryColor,
       decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Theme.of(context).primaryColor.withAlpha(150)),
-          errorText: error),
+        hintText: hintText,
+        hintStyle: TextStyle(color: Theme.of(context).primaryColor.withAlpha(150)),
+        errorText: error,
+        errorBorder: UnderlineInputBorder(
+          borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)
+        ),
+      ),
       onChanged: onChanged,
     );
   }

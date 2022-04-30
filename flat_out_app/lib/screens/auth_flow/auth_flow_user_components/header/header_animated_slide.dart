@@ -1,4 +1,3 @@
-import 'package:flat_out_app/core/ui_functional_components/ui_statics.dart';
 import 'package:flutter/cupertino.dart';
 
 class HeaderAnimatedSlide extends StatefulWidget {
@@ -13,7 +12,7 @@ class HeaderAnimatedSlide extends StatefulWidget {
 
 class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
   late final Tween<double> _pointTween =
-  Tween<double>(begin: UiStatics.headerInset, end: MediaQuery.of(context).size.width - UiStatics.headerInset);
+  Tween<double>(begin: 90, end: MediaQuery.of(context).size.width - 90);
   late final Animation<double> _pointAnimation = _pointTween.animate(widget.controller)
     ..addListener(() {
       setState(() {});

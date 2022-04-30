@@ -25,35 +25,23 @@ class LocalStorage {
   }
 
   static Future<String> read(Partition partition, [String? key = null]) async {
-    try {
-      File f = await _localFile(partition, key);
-      return f.readAsString();
-    } catch (_) {
-      return "";
-    }
+    File f = await _localFile(partition, key);
+    return f.readAsString();
   }
 
   static Future<List<String>> readAll(Partition partition) async {
-    try {
-      List<File> fs = (await _localDir(partition)).listSync().whereType<File>().toList();
-      return fs.map((e) => e.readAsStringSync()).toList();
-    } catch (_) {
-      return List.empty();
-    }
+    List<File> fs = (await _localDir(partition)).listSync().whereType<File>().toList();
+    return fs.map((e) => e.readAsStringSync()).toList();
   }
 
   static Future<void> delete(Partition partition, [String? key = null]) async {
     File f = await _localFile(partition, key);
-    try {
-      f.deleteSync();
-    } catch (_) {}
+    f.deleteSync();
   }
 
   static Future<void> deleteAll(Partition partition) async {
-    try {
-      Directory dir = await _localDir(partition);
-      dir.deleteSync(recursive: true);
-    } catch (e) {}
+    Directory dir = await _localDir(partition);
+    dir.deleteSync(recursive: true);
   }
 
   static Future<String> toDirString() async {
