@@ -19,14 +19,13 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
   let {name, password, uiName} = req.body
-  let randColor = Math.floor(Math.random() * 16777215).toString(16)
-  if (randColor.length < 6) randColor = `0${randColor}`
+  let randColor = '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
 
   let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
-    colorAssociation: `#${randColor}`,
+    colorAssociation: randColor,
     dynUuid: new Types.ObjectId()
   })
 
