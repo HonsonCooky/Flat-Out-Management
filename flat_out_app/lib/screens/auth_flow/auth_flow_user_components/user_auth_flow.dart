@@ -1,8 +1,8 @@
 import 'package:flat_out_app/components/atoms/unfocus_wrapper.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_auth_header.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_auth_page_body.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_login_page.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_signup_page.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/header/user_auth_header.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/user_auth_page_body.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/login_page.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/signup_page.dart';
 import 'package:flutter/material.dart';
 
 class UserAuthFlow extends StatefulWidget {

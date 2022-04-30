@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 class AuthFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
+    Widget curFlow = UserAuthFlow();
+    
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
-      child: UserAuthFlow(),
+      child: curFlow,
     );
   }
 }

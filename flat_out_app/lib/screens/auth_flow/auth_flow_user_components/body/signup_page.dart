@@ -1,31 +1,34 @@
+import 'package:flat_out_app/components/atoms/auth_text_field.dart';
 import 'package:flat_out_app/components/molecules/toast_page.dart';
 import 'package:flat_out_app/core/http_requests.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/storage/runtime_cache.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class LoginPage extends ToastPage {
+class SignupPage extends ToastPage {
   @override
-  State<StatefulWidget> createState() => _LoginPageState();
+  State<StatefulWidget> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final TextEditingController uName = TextEditingController();
+  final TextEditingController uiName = TextEditingController();
   final TextEditingController pWord = TextEditingController();
+  final TextEditingController pWordCon = TextEditingController();
   bool isLoading = false;
 
-  void login() async {
-    try {
-      FomRes res = await FomReq.userLogin(uName.text, pWord.text);
-      if (res.statusCode == 200) {
-        await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
-        widget.successToast(res.msg, context);
-      } else
-        widget.errorToast(res.msg, context);
-    } catch (_) {
-      widget.fuckMeToast("Log001", context);
+  void signup() async {
+    if (pWord.text != pWordCon.text) {
+      widget.errorToast("Passwords do not match", context);
+    } else {
+      try {
+        FomRes res = await FomReq.userRegister(uName.text, uiName.text, pWord.text);
+        if (res.statusCode == 200)
+          widget.successToast(res.msg, context);
+        else
+          widget.errorToast(res.msg, context);
+      } catch (_) {
+        widget.errorToast("Unable to send request", context);
+      }
     }
     setState(() => isLoading = false);
   }
@@ -35,15 +38,30 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
+        AuthTextField(
           controller: uName,
-          cursorColor: Theme.of(context).primaryColor,
-          decoration: InputDecoration(hintText: "Username"),
+          hintText: "Username",
         ),
-        TextField(
+        AuthTextField(
+          controller: uiName,
+          hintText: "(Optional) Nickname",
+        ),
+        AuthTextField(
+          onChanged: (_) {
+            setState(() {});
+          },
           obscureText: true,
           controller: pWord,
-          decoration: InputDecoration(hintText: "Password"),
+          hintText: "Password",
+        ),
+        AuthTextField(
+          onChanged: (_) {
+            setState(() {});
+          },
+          obscureText: true,
+          controller: pWordCon,
+          hintText: "Confirm Password",
+          error: pWord.text != pWordCon.text ? "Mismatched Password" : null,
         ),
         Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 20),
@@ -54,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 setState(() => isLoading = true);
                 FocusManager.instance.primaryFocus?.unfocus();
-                login();
+                signup();
               },
               child: isLoading
                   ? SizedBox(
@@ -65,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                       ),
                     )
-                  : Text("Login")),
+                  : Text("Signup")),
         )
       ],
     );
