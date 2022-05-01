@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-abstract class ToastPage extends StatefulWidget {
+/**
+ * A wrapper for using constant toast components on some scaffold.
+ */
+abstract class ToastWrapper extends StatefulWidget {
   void successToast(String msg, BuildContext context) {
     final s = ScaffoldMessenger.of(context);
     s.showSnackBar(
@@ -21,7 +24,7 @@ abstract class ToastPage extends StatefulWidget {
       margin: EdgeInsets.all(20.0),
       dismissDirection: DismissDirection.horizontal,
       content: Text(msg, style: Theme.of(context).textTheme.bodyText2),
-      backgroundColor: Theme.of(context).errorColor,
+      backgroundColor: Theme.of(context).errorColor.withAlpha(150),
     ));
   }
 
@@ -33,7 +36,7 @@ abstract class ToastPage extends StatefulWidget {
       dismissDirection: DismissDirection.horizontal,
       content: Text("The developer of this app did an oopsie\nReference: ${id}",
           style: Theme.of(context).textTheme.bodyText2),
-      backgroundColor: Theme.of(context).errorColor,
+      backgroundColor: Theme.of(context).errorColor.withAlpha(150),
     ));
   }
 }

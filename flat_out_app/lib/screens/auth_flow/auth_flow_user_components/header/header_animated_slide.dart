@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 class HeaderAnimatedSlide extends StatefulWidget {
   final AnimationController controller;
 
-
   HeaderAnimatedSlide({required this.controller});
 
   @override
@@ -11,12 +10,11 @@ class HeaderAnimatedSlide extends StatefulWidget {
 }
 
 class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
-  late final Tween<double> _pointTween =
-  Tween<double>(begin: 90, end: MediaQuery.of(context).size.width - 90);
-  late final Animation<double> _pointAnimation = _pointTween.animate(widget.controller)
-    ..addListener(() {
-      setState(() {});
-    });
+  late final Animation<double> _pointAnimation =
+      Tween<double>(begin: 90, end: MediaQuery.of(context).size.width - 90).animate(widget.controller)
+        ..addListener(() {
+          setState(() {});
+        });
 
   @override
   Widget build(BuildContext context) {
@@ -53,4 +51,3 @@ class ShapePainter extends CustomPainter {
     return true;
   }
 }
-

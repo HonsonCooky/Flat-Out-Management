@@ -4,7 +4,7 @@ import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:flutter/material.dart';
 
-class SignupPage extends ToastPage {
+class SignupPage extends ToastWrapper {
   final void Function(bool) swapPage;
   
   SignupPage(this.swapPage);

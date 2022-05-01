@@ -8,13 +8,15 @@ class UserAuthPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 10,
-            vertical: MediaQuery.of(context).size.height / 30,
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width / 10,
+              vertical: MediaQuery.of(context).size.height / 30,
+            ),
+            child: curPage,
           ),
-          child: curPage,
         ),
       ),
     );

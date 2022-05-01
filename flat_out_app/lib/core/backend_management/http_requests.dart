@@ -11,7 +11,7 @@ class FomReq {
   static FomRes _err = FomRes("Error: Something went wrong. Check your network connection", 500, null);
 
   /**
-   * Alter the error messages from the HTTP request. 
+   * Alter the error messages from the HTTP request, to be user friendly.
    */
   static String _sanitizeErrorMsg(String msg) {
     String newMsg = msg;
@@ -32,13 +32,15 @@ class FomReq {
       List<String> com = msg.split("{");
       String san = com[1].replaceAll("}", "").trim();
       san = san.replaceAll("name", "Username");
-      print(san);
       newMsg = "${san[0].toUpperCase() + san.substring(1).toLowerCase()} is already taken";
     }
 
     return newMsg;
   }
 
+  /**
+   * Translate a json response into the FomRes component (contractually given)
+   */
   static FomRes _toFomRes<T extends FomDbObject>(Response res) {
     FomRes fRes = FomRes.fromJson(jsonDecode(res.body));
     fRes.statusCode = res.statusCode;
@@ -46,6 +48,9 @@ class FomReq {
     return fRes;
   }
 
+  /**
+   * Initiate a post request, given a sub url, body, and optional headers.
+   */
   static Future<FomRes> _post(String subUrl, Map jsonBody, [String authHeader = ""]) async {
     Uri url = Uri.parse("$_base/api/$subUrl");
     try {
@@ -57,11 +62,17 @@ class FomReq {
     }
   }
 
+  /**
+   * Ping the heroku server to wake it up.
+   */
   static Future<FomRes> ping() async {
     Uri url = Uri.parse("$_base");
     return _toFomRes(await get(url));
   }
 
+  /**
+   * Register a user with MongoDB.
+   */
   static Future<FomRes> userRegister(String username, String nickname, String password) async {
     return _post('user/register', {
       'name': username.trim(),
@@ -70,15 +81,24 @@ class FomReq {
     });
   }
 
+  /**
+   * Register a group with MongoDB.
+   */
   static Future<FomRes> groupRegister(String username, String password, String auth) async {
     return _post('group/register', {'name': username, 'password': password}, auth);
   }
 
+  /**
+   * Authenticate a user login, returning the FomUser as res.itm.
+   */
   static Future<FomRes> userLogin(String username, String password) async {
     return _post('user/get', {'name': username, 'password': password});
   }
-  
-  static Future<FomRes> groupGet(FomAssociation association, String? token) async {
-    return _post('group/${association.ref}/get', json.decode(""), token!);
+
+  /**
+   * Access a group. Although the token is optional, it's not actually.
+   */
+  static Future<FomRes> groupGet(FomAssociation association, String token) async {
+    return _post('group/${association.ref}/get', json.decode(""), token);
   }
 }

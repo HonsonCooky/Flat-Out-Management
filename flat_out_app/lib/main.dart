@@ -16,6 +16,6 @@ void main() {
       ChangeNotifierProvider(create: (_) => ThemeNotifier()),
       ChangeNotifierProvider(create: (_) => RuntimeCache()),
     ],
-    child: const FomBase(),
+    child: FomBase(),
   ));
 }

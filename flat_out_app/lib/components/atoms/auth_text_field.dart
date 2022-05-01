@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/**
+ * Used to create consistent text fields in authentication pages.
+ */
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool obscureText;
@@ -17,13 +19,14 @@ class AuthTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       cursorColor: Theme.of(context).primaryColor,
+      style: Theme.of(context).textTheme.labelLarge,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Theme.of(context).primaryColor.withAlpha(150)),
+        hintStyle: TextStyle(
+            color: Theme.of(context).primaryColor.withAlpha(150),
+            fontSize: Theme.of(context).textTheme.labelLarge?.fontSize),
         errorText: error,
-        errorBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)
-        ),
+        errorBorder: UnderlineInputBorder(borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)),
       ),
       onChanged: onChanged,
     );

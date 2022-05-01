@@ -22,7 +22,8 @@ class FomThemes {
         foregroundColor: Color(0xffe8e5e0),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: Color(0xff383e64),
+        backgroundColor: Color(0x96383e64),
+        elevation: 0,
         contentTextStyle: TextStyle(
           color: Color(0xffe8e5e0),
           fontSize: 15,
@@ -54,13 +55,13 @@ class FomThemes {
               headline3: TextStyle(color: Color(0xffe8e5e0), fontSize: 40, fontWeight: FontWeight.bold),
               headline4: TextStyle(color: Color(0xff383e64), fontSize: 35, fontWeight: FontWeight.bold),
               headline5: TextStyle(color: Color(0xff383e64), fontSize: 30),
-              headline6: TextStyle(fontWeight: FontWeight.bold),
+              headline6: TextStyle(color: Color(0xff383e64), fontWeight: FontWeight.bold),
               overline: TextStyle(
                 color: Color(0xff383e64),
               ),
               subtitle1: TextStyle(
                 color: Color(0xff092340),
-                fontSize: 20,
+                fontSize: 15,
               ),
               subtitle2: TextStyle(
                 color: Color(0xff383e64),
@@ -76,11 +77,11 @@ class FomThemes {
                 fontSize: 20,
               ),
               caption: TextStyle(
-                fontSize: 10,
+                fontSize: 12,
                 color: Color(0xff383e64),
               ),
               labelMedium: TextStyle(
-                fontSize: 5,
+                fontSize: 20,
               ))),
     );
   }

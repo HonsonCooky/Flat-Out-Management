@@ -40,7 +40,6 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
   Widget build(BuildContext context) {
     return UnFocusWrapper(
     child: Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           UserAuthHeader(isLoginPage: _isLoginPage, swapPage: swapPage,),
