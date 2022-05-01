@@ -8,8 +8,9 @@ import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flat_out_app/core/jsons/utils/enums.dart';
 import 'package:flutter/cupertino.dart';
 
+const String noGroupKey = 'no_group';
+
 class RuntimeCache extends ChangeNotifier {
-  final noGroupKey = 'no_group';
   FomUser? _user;
   List<FomGroup> _groups = [];
   List<FomTable> _tables = [];
@@ -39,20 +40,22 @@ class RuntimeCache extends ChangeNotifier {
 
   /**
    * This method sets the runtime user. If the value is null then all local storage will be cleared.
-   * If the user has
    */
-  Future<void> setUser(FomUser? value) async {
+  Future<void> setUser(FomUser? user) async {
     _clearAll();
 
-    if (value != null) {
-      LocalStorage.write(partition: ModelType.user, contents: jsonEncode(value)).catchError((e) {});
-      _user = value;
+    if (user != null) {
+      LocalStorage.write(partition: ModelType.user, contents: jsonEncode(user)).catchError((e) {});
+      _user = user;
       await loadUser();
     }
 
     notifyListeners();
   }
 
+  /**
+   * Loads the user's children into their respective lists.
+   */
   Future<void> loadUser() async {
     if (_user == null) {
       throw Exception("A user has not been loaded. Cannot load values");
@@ -63,13 +66,25 @@ class RuntimeCache extends ChangeNotifier {
       print(g);
     }
   }
+  
+  Future<void> addGroup(FomGroup group) async {
+    _groups.add(group);
+    LocalStorage.write(partition: ModelType.group, key: group.id, contents: jsonEncode(group));
+    notifyListeners();
+  }
 
-  Future<void> prematureReady() async {
+  /**
+   * Allow group creation and selection to be skipped.
+   */
+  Future<void> readyCache() async {
     _cacheReady = true;
     await LocalStorage.write(key: noGroupKey, contents: 'true');
     notifyListeners();
   }
 
+  /**
+   * Gets all information from local storage, and sets it to it's respective values.
+   */
   Future<void> init([Function? onErr = null]) async {
     String? u = await LocalStorage.read(partition: ModelType.user);
     _user = u != null ? FomUser.fromJson(json.decode(u)) : null;

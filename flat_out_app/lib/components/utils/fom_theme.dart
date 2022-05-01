@@ -52,7 +52,7 @@ class FomThemes {
           TextTheme(
               headline1: TextStyle(color: Color(0xffe8e5e0), fontSize: 40, fontWeight: FontWeight.bold),
               headline2: TextStyle(color: Color(0xff383e64), fontSize: 40, fontWeight: FontWeight.bold),
-              headline3: TextStyle(color: Color(0xffe8e5e0), fontSize: 40, fontWeight: FontWeight.bold),
+              headline3: TextStyle(color: Color(0xffe8e5e0), fontSize: 30, fontWeight: FontWeight.bold),
               headline4: TextStyle(color: Color(0xff383e64), fontSize: 35, fontWeight: FontWeight.bold),
               headline5: TextStyle(color: Color(0xff383e64), fontSize: 30),
               headline6: TextStyle(color: Color(0xff383e64), fontWeight: FontWeight.bold),

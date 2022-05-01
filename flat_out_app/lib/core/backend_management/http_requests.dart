@@ -84,8 +84,8 @@ class FomReq {
   /**
    * Register a group with MongoDB.
    */
-  static Future<FomRes> groupRegister(String username, String password, String auth) async {
-    return _post('group/register', {'name': username, 'password': password}, auth);
+  static Future<FomRes> groupRegister(String username, String password, String? auth) async {
+    return _post('group/register', {'name': username, 'password': password}, auth ?? "");
   }
 
   /**

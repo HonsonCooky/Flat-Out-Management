@@ -1,8 +1,8 @@
 import 'package:flat_out_app/components/atoms/unfocus_wrapper.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/header/user_auth_header.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/user_auth_page_body.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/login_page.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/body/signup_page.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_auth_header.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_auth_page_body.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_login_page.dart';
+import 'package:flat_out_app/screens/auth_flow/auth_flow_user_components/user_signup_page.dart';
 import 'package:flutter/material.dart';
 
 class UserAuthFlow extends StatefulWidget {
@@ -11,7 +11,7 @@ class UserAuthFlow extends StatefulWidget {
 }
 
 class _UserAuthFlowState extends State<UserAuthFlow> {
-  bool _isLoginPage = true;
+  String _pageStr = "Login";
   late Widget _loginPage;
   late Widget _signupPage;
   late Widget _curPage;
@@ -20,18 +20,19 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
   @override
   void initState() {
     super.initState();
-    _loginPage = LoginPage();
-    _signupPage = SignupPage(swapPage);
+    _loginPage = UserLoginPage();
+    _signupPage = UserSignupPage(swapPageUser);
     _curPage = _loginPage;
   }
 
-  void swapPage(bool isLoginPage){
-    if (_isLoginPage == isLoginPage) return;
+  void swapPageUser(String p){
+    if (_pageStr == p) return;
     
     Widget page = _loginPage;
-    if (_isLoginPage) page = _signupPage;
+    if (p == "Signup") page = _signupPage;
+    
     setState(() {
-      _isLoginPage = !_isLoginPage;
+      _pageStr = p;
       _curPage = page;
     });      
   }
@@ -42,7 +43,7 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
     child: Scaffold(
       body: Column(
         children: [
-          UserAuthHeader(isLoginPage: _isLoginPage, swapPage: swapPage,),
+          UserAuthHeader(curPage: _pageStr,swapPage: swapPageUser),
           Divider(
               thickness: 5,
               indent: MediaQuery.of(context).size.width / 10,
