@@ -32,7 +32,8 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
   await user.save()
 
   return {
-    msg: `Successfully registered user ${uiName ?? name}`
+    msg: `Successfully registered user ${uiName ?? name}`,
+    item: user
   }
 }
 
