@@ -51,12 +51,12 @@ export async function getController<T extends IFomController>(r: Request | Respo
 
 
   // Response mean JWT
-  if (r instanceof Response) {
+  if ("locals" in r) {
     let {locals} = (r as Response)
     if ((controller = await UserModel.findOne({dynUuid: locals.jwt?.dynUuid}))) return controller
   }
   // Request means username and password
-  else {
+  else if ("body" in r) {
     let {name, password} = (r as Request).body
     controller = await UserModel.findOne({name})
     if (controller && compareHashes(password, controller.password)) return controller
@@ -74,6 +74,17 @@ async function getComponentUrl<T extends IFomComponent>(req: Request): Promise<T
   let com: T | null = await models[component]?.findOne({_id: id})
   if (!com) throw new Error(`400: Unable to find ${component} ${id}`)
   return com
+}
+
+/**
+ * GET COMPONENT URL: Get a component listed in the Url, with some error checking
+ * @param req
+ */
+async function getComponentUname<T extends IFomComponent>(req: Request): Promise<T> {
+  let {name, password} = req.body
+  let component = await models[req.params.component].findOne({name})
+  if (component && compareHashes(password, component.password)) return component
+  throw new Error(`400: Invalid component authorization `)
 }
 
 /**
@@ -133,8 +144,9 @@ export async function getUserAndChild<T extends IFomComponent>(req: Request, res
   Promise<{ user: IFomUser, child: T }> {
 
   let user: IFomUser = await getController<IFomUser>(res)
-  let child: T = await getComponentBod(req) as T
-  assert.throws(async () => await getAssociation(user._id, child))
+  let child: T = await getComponentUname(req) as T
+  await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with` +
+    `${child.uiName}. Get owner to update your status.`)
 
   return {
     user,
