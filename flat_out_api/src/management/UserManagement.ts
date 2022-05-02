@@ -28,12 +28,14 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
     colorAssociation: randColor,
     dynUuid: new Types.ObjectId()
   })
+  let token: string = signJWT(user, req.body.expiresIn)
 
   await user.save()
 
   return {
     msg: `Successfully registered user ${uiName ?? name}`,
-    item: user
+    item: user,
+    token
   }
 }
 
