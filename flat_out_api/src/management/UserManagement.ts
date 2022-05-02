@@ -19,7 +19,7 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
   let {name, password, uiName} = req.body
-  let randColor = '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
+  let randColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
 
   let user: IFomUser = new UserModel({
     name,

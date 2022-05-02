@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
 import {GroupModel} from "../schemas/documents/GroupSchema";
-import {saltAndHash} from "./util/AuthenticationPartials";
+import {compareHashes, saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
-import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
+import {getRegisteringParent, getUserAndChild, getUserChildAndRole} from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomGroup} from "../interfaces/IFomGroup";
 import {IFomRes} from "../interfaces/IFomRes";
@@ -28,7 +28,6 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
     uiName: name,
     password: saltAndHash(password)
   })
-  console.log("here", group);
 
   await group.save()
 
@@ -40,6 +39,28 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
   return {
     msg: `Successfully registered group ${name} with owner ${parent.uiName}`,
     item: group
+  }
+}
+
+/**
+ * GROUP JOIN: Join a pre-existing group document
+ * @param req
+ * @param res
+ */
+export async function groupJoin(req: Request, res: Response): Promise<IFomRes> {
+  let {user, child} = await getUserAndChild<IFomGroup>(req, res)
+  let {name, password, role} = req.body
+
+  if (!compareHashes(password, child.password)) throw new Error('400: Invalid group authorization')
+
+  await connectDocuments(
+    {item: user, model: getTypeFromDoc(user)},
+    {item: child, model: ModelType.GROUP},
+    role)
+
+  return {
+    msg: `Successfully registered user ${user.uiName} with group ${name}, under a ${role} role`,
+    item: child
   }
 }
 

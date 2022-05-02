@@ -8,6 +8,7 @@ import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomController} from "../../interfaces/IFomController";
 import {RoleType} from "../../interfaces/IFomEnums";
 import {IFomUser} from "../../interfaces/IFomUser";
+import assert from "node:assert";
 
 
 /**
@@ -48,16 +49,17 @@ async function getAssociation(
 export async function getController<T extends IFomController>(r: Request | Response): Promise<T> {
   let controller: T | null
 
+
+  // Response mean JWT
+  if (r instanceof Response) {
+    let {locals} = (r as Response)
+    if ((controller = await UserModel.findOne({dynUuid: locals.jwt?.dynUuid}))) return controller
+  }
   // Request means username and password
-  if ("body" in r) {
+  else {
     let {name, password} = (r as Request).body
     controller = await UserModel.findOne({name})
     if (controller && compareHashes(password, controller.password)) return controller
-  }
-  // Response mean JWT
-  else if (r.locals?.jwt) {
-    let {locals} = (r as Response)
-    if ((controller = await UserModel.findOne({dynUuid: locals.jwt?.dynUuid}))) return controller
   }
 
   throw new Error(`400: Invalid authentication`)
@@ -118,5 +120,24 @@ export async function getUserChildAndRole<T extends IFomComponent>(req: Request,
     user,
     child,
     role: association.role
+  }
+}
+
+/**
+ * GET USER AND CHILD: Simply extract the user and component referenced in the request. These two documents should
+ * not have a prior association.
+ * @param req
+ * @param res
+ */
+export async function getUserAndChild<T extends IFomComponent>(req: Request, res: Response):
+  Promise<{ user: IFomUser, child: T }> {
+
+  let user: IFomUser = await getController<IFomUser>(res)
+  let child: T = await getComponentBod(req) as T
+  assert.throws(async () => await getAssociation(user._id, child))
+
+  return {
+    user,
+    child,
   }
 }
