@@ -67,7 +67,7 @@ const FOM_ASSOCIATION_MODEL: SchemaDefinitionProperty<ModelType> = {
 
 // ROLE
 const FOM_ASSOCIATION_ROLE: SchemaDefinitionProperty<RoleType> = {
-  type: Number,
+  type: String,
   enum: RoleType,
   default: RoleType.MENTIONED
 }
@@ -111,7 +111,7 @@ export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
  */
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   date: {type: Date, required: true},
-  eType: {type: Number, enum: EventType, default: EventType.USER},
+  eType: {type: String, enum: EventType, default: EventType.USER},
   header: FOM_NAME,
   message: String,
   colorAssociation: FOM_COLOR_ASSOCIATION
@@ -180,8 +180,5 @@ export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotati
   startDate: {type: Date, default: new Date()},
   nextUpdate: Date,
   intervalValue: {type: Number, default: 1},
-  intervalUnit: {
-    type: Number,
-    enum: TimeIntervals
-  },
+  intervalUnit: {type: String, enum: TimeIntervals},
 }

@@ -12,7 +12,7 @@ export interface ILog {
 }
 
 const LogSchema = new Schema<ILog>({
-  level: {type: Number, enum: LogLevel, default: LogLevel.INFO},
+  level: {type: String, enum: LogLevel, default: LogLevel.INFO},
   message: {type: String, required: true},
   object: {typeRegExp: String}
 }, {timestamps: true, capped: {size: 100}})

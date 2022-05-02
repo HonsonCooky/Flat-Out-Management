@@ -12,37 +12,37 @@ export enum ModelType {
  * ROLE TYPE: Identifies levels of user authorization.
  */
 export enum RoleType {
-  OWNER,    // Authority to read/write/delete/alter associations
-  WRITE,    // Authority to read/write
-  READ,     // Authority to read
-  REQUEST,  // Asking for some level of authority
-  MENTIONED   // No role require
+  OWNER = 'owner',    // Authority to read/write/delete/alter associations
+  WRITE = 'write',    // Authority to read/write
+  READ = 'read',     // Authority to read
+  REQUEST = 'request',  // Asking for some level of authority
+  MENTIONED = 'mentioned'   // No role require
 }
 
 /**
  * EVENT TYPE: Identifies how events are related to the user
  */
 export enum EventType {
-  USER,
-  GROUP,
-  MENTIONED,
+  USER = 'user',
+  GROUP = 'group',
+  MENTIONED = 'mentioned',
 }
 
 /**
  * TIME INTERVALS: Identifies how often some update must occur.
  */
 export enum TimeIntervals {
-  DAILY,
-  WEEKLY,
-  MONTHLY,
-  ANNUALLY
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  ANNUALLY = 'annually'
 }
 
 /**
  * LOG LEVEL: Logged information will have some level of error.
  */
 export enum LogLevel {
-  INFO,
-  WARN,
-  ERROR
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error'
 }
