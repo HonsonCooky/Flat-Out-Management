@@ -6,16 +6,16 @@ class NoGroupAlert {
   static showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
-      child: Text("Not now"),
+      child: Text("Oops, go back!"),
       onPressed: () {
         Navigator.of(context).pop();
-        context.read<RuntimeCache>().readyCache();
       },
     );
     Widget createGroupButton = ElevatedButton(
-      child: Text("Join/Setup"),
+      child: Text("I'm sure"),
       onPressed: () {
         Navigator.of(context).pop();
+        context.read<RuntimeCache>().readyCache();
       },
     );
 
@@ -23,28 +23,32 @@ class NoGroupAlert {
     AlertDialog alert = AlertDialog(
       title: Text("No Flat Group *gasp*"),
       content: Container(
-        height: MediaQuery.of(context).size.height / 7,
+        height: MediaQuery.of(context).size.height / 5,
         child: Scrollbar(
           isAlwaysShown: true,
-          child: SingleChildScrollView(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "It seems you are not yet associated with a flat group. "
-                    "Would you like to join/setup one now?",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(10),
-                  ),
-                  Text(
-                    "*psst* You can do this later if you want",
-                    style: Theme.of(context).textTheme.caption,
-                    textAlign: TextAlign.start,
-                  ),
-                ]),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      "The main purpose of this application, is to help flatting groups organize themselves. If you "
+                          "don't want to join a group, no worries, just bare this in mind xx."
+                          "\n\n - Are you sure you don't want to join/create a group?",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(10),
+                    ),
+                    Text(
+                      "*psst* You can do this later if you want",
+                      style: Theme.of(context).textTheme.caption,
+                      textAlign: TextAlign.start,
+                    ),
+                  ]),
+            ),
           ),
         ),
       ),

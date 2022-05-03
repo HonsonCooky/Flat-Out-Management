@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/local_storage.dart';
+import 'package:flat_out_app/core/jsons/fom_association.dart';
 import 'package:flat_out_app/core/jsons/fom_group.dart';
+import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:flat_out_app/core/jsons/fom_table.dart';
 import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flat_out_app/core/jsons/utils/enums.dart';
@@ -45,9 +47,9 @@ class RuntimeCache extends ChangeNotifier {
     _clearAll();
 
     if (user != null) {
-      LocalStorage.write(partition: ModelType.user, contents: jsonEncode(user)).catchError((e) {});
       _user = user;
       await loadUser();
+      LocalStorage.write(partition: ModelType.user, contents: jsonEncode(user)).catchError((e) {});
     }
 
     notifyListeners();
@@ -59,11 +61,11 @@ class RuntimeCache extends ChangeNotifier {
   Future<void> loadUser() async {
     if (_user == null) {
       throw Exception("A user has not been loaded. Cannot load values");
-    } else {
-      var g = await Future.wait(_user!.children
+    } else {      
+      List<FomRes> gs = await Future.wait(_user!.children
           .where((element) => element.model == ModelType.group)
           .map((e) async => await FomReq.groupGet(e, _user!.token)));
-      print(g);
+      print(gs);
     }
   }
   
@@ -87,7 +89,7 @@ class RuntimeCache extends ChangeNotifier {
    */
   Future<void> init([Function? onErr = null]) async {
     String? u = await LocalStorage.read(partition: ModelType.user);
-    _user = u != null ? FomUser.fromJson(json.decode(u)) : null;
+    _user = u != null ? FomUser.fromJson(jsonDecode(u)) : null;
     _groups = (await LocalStorage.readAll(partition: ModelType.group)).map((e) => FomGroup.fromJson(jsonDecode(e))).toList();
     _tables = (await LocalStorage.readAll(partition: ModelType.table)).map((e) => FomTable.fromJson(jsonDecode(e))).toList();
     _cacheInit = true;

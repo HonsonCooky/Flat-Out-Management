@@ -26,13 +26,25 @@ class FomBaseState extends State {
     bool cacheInit = Provider.of<RuntimeCache>(context, listen: true).cacheInit;
     bool cacheReady = Provider.of<RuntimeCache>(context, listen: true).cacheReady;
     ThemeMode themeMode = Provider.of<ThemeNotifier>(context, listen: true).currentTheme();
-    Widget flow = cacheInit ? cacheReady ? AppFlow() : AuthFlow() : LoadingPage();
+    Widget flow = cacheInit
+        ? cacheReady
+            ? AppFlow()
+            : AuthFlow()
+        : LoadingPage();
 
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: FomThemes.light(),
-        darkTheme: FomThemes.dark(),
-        themeMode: themeMode,
-        home: flow);
+      debugShowCheckedModeBanner: false,
+      theme: FomThemes.light(),
+      darkTheme: FomThemes.dark(),
+      themeMode: themeMode,
+      home: AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),
+        transitionBuilder: (Widget child, Animation<double> animation) => FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        child: flow,
+      ),
+    );
   }
 }

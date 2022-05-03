@@ -11,9 +11,7 @@ import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 
 export async function groupRenew(group: IFomGroup) {
-  let copy: IFomGroup = JSON.parse(JSON.stringify(group));
-  await groupCalendar(copy)
-  group.groupCalendar = copy.groupCalendar;
+  await groupCalendar(group)
   await group.save()
 }
 

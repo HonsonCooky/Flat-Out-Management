@@ -1,14 +1,13 @@
 import 'package:flat_out_app/components/atoms/auth_text_field.dart';
 import 'package:flat_out_app/components/molecules/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
+import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
+import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserSignupPage extends ToastWrapper {
-  final void Function(String) swapPage;
-
-  UserSignupPage(this.swapPage);
-
   @override
   State<StatefulWidget> createState() => _UserSignupPageState();
 }
@@ -27,12 +26,12 @@ class _UserSignupPageState extends State<UserSignupPage> {
       try {
         FomRes res = await FomReq.userRegister(uName.text, uiName.text, pWord.text);
         if (res.statusCode == 200) {
+          await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
           widget.successToast(res.msg, context);
-          widget.swapPage("Login");
         } else
           widget.errorToast(res.msg, context);
-      } catch (_) {
-        widget.errorToast("Unable to send request", context);
+      } catch (e) {
+        widget.fuckMeToast("${e}", context);
       }
     }
     setState(() => isLoading = false);

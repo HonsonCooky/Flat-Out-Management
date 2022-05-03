@@ -36,7 +36,7 @@ abstract class ToastWrapper extends StatefulWidget {
       dismissDirection: DismissDirection.horizontal,
       content: Text("The developer of this app did an oopsie\nReference: ${id}",
           style: Theme.of(context).textTheme.bodyText2),
-      backgroundColor: Theme.of(context).errorColor.withAlpha(150),
+      backgroundColor: Theme.of(context).errorColor,
     ));
   }
 }

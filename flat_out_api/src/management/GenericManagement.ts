@@ -27,6 +27,7 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
       break;
     case ModelType.GROUP:
       await groupRenew(child as IFomGroup);
+      console.log(child)
       break;
   }
 

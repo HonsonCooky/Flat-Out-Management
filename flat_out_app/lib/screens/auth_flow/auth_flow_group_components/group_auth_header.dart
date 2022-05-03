@@ -30,7 +30,7 @@ class _GroupAuthHeaderState extends State<GroupAuthHeader> with TickerProviderSt
           HeaderAnimatedSlide(
             controller: _controller,
             curPage: widget.curPage,
-            buttonNames: ["Login", "Signup"],
+            buttonNames: ["Join", "Create"],
             swapPage: widget.swapPage,
           ),
         ],

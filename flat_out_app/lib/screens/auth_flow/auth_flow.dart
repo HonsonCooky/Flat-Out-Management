@@ -18,6 +18,10 @@ class _AuthFlowState extends State<AuthFlow> {
 
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) => FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
       child: curFlow,
     );
   }

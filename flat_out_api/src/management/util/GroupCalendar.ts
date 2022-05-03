@@ -3,9 +3,12 @@ import {EventType, ModelType} from "../../interfaces/IFomEnums";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomUser} from "../../interfaces/IFomUser";
 import {IFomEvent} from "../../interfaces/IFomEvent";
+import {GroupModel} from "../../schemas/documents/GroupSchema";
 
 export async function groupCalendar(group: IFomGroup) {
-  group.groupCalendar = (await group.populate({path: 'parents.ref'}))
+  let g: IFomGroup | null = await GroupModel.findOne({_id: group._id})
+  if (!g) return;
+  group.groupCalendar = (await g.populate({path: 'parents.ref'}))
     .parents
     // Get all users
     .filter((a: IFomAssociation) => a.model === ModelType.USER)

@@ -21,7 +21,7 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
   void initState() {
     super.initState();
     _loginPage = UserLoginPage();
-    _signupPage = UserSignupPage(swapPageUser);
+    _signupPage = UserSignupPage();
     _curPage = _loginPage;
   }
 

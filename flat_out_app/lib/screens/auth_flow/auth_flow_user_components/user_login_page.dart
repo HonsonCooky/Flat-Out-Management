@@ -4,6 +4,7 @@ import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
 import 'package:flat_out_app/core/jsons/fom_user.dart';
+import 'package:flat_out_app/core/jsons/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,8 +26,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
         widget.successToast(res.msg, context);
       } else
         widget.errorToast(res.msg, context);
-    } catch (_) {
-      widget.fuckMeToast("Log001", context);
+    } catch (e) {
+      print("ERROR: ${e}");
+      widget.fuckMeToast("${e}", context);
     }
     setState(() => isLoading = false);
   }

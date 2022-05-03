@@ -1,40 +1,35 @@
 import 'package:flat_out_app/components/atoms/auth_text_field.dart';
 import 'package:flat_out_app/components/molecules/toast_page.dart';
-import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
+import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/jsons/fom_group.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
+import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class GroupSignupPage extends ToastWrapper {
-
+class GroupJoinPage extends ToastWrapper {
   @override
-  State<StatefulWidget> createState() => _GroupSignupPageState();
+  State<StatefulWidget> createState() => _GroupJoinPageState();
 }
 
-class _GroupSignupPageState extends State<GroupSignupPage> {
+class _GroupJoinPageState extends State<GroupJoinPage> {
   final TextEditingController uName = TextEditingController();
-  final TextEditingController uiName = TextEditingController();
   final TextEditingController pWord = TextEditingController();
-  final TextEditingController pWordCon = TextEditingController();
   bool isLoading = false;
 
-  void signup() async {
-    if (pWord.text != pWordCon.text) {
-      widget.errorToast("Passwords do not match", context);
-    } else {
-      try {
-        FomRes res = await FomReq.groupRegister(uName.text, pWord.text, context.read<RuntimeCache>().user?.token ?? "");
-        if (res.statusCode == 200) {
-          widget.successToast(res.msg, context);
-          context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
-          context.read<RuntimeCache>().readyCache();
-        } else
-          widget.errorToast(res.msg, context);
-      } catch (_) {
-        widget.errorToast("Unable to send request", context);
-      }
+  void join() async {
+    try {
+      FomRes res = await FomReq.groupJoin(uName.text, pWord.text, context.read<RuntimeCache>().user!.token);
+      if (res.statusCode == 200) {
+        await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
+        widget.successToast(res.msg, context);
+        context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
+        context.read<RuntimeCache>().readyCache();
+      } else
+        widget.errorToast(res.msg, context);
+    } catch (e) {
+      widget.fuckMeToast("${e}", context);
     }
     setState(() => isLoading = false);
   }
@@ -49,21 +44,9 @@ class _GroupSignupPageState extends State<GroupSignupPage> {
           hintText: "Flat Name",
         ),
         AuthTextField(
-          onChanged: (_) {
-            setState(() {});
-          },
           obscureText: true,
           controller: pWord,
           hintText: "Flat Password",
-        ),
-        AuthTextField(
-          onChanged: (_) {
-            setState(() {});
-          },
-          obscureText: true,
-          controller: pWordCon,
-          hintText: "Confirm Flat Password",
-          error: pWord.text != pWordCon.text ? "Mismatched Password" : null,
         ),
         Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 20),
@@ -74,7 +57,7 @@ class _GroupSignupPageState extends State<GroupSignupPage> {
               onPressed: () {
                 setState(() => isLoading = true);
                 FocusManager.instance.primaryFocus?.unfocus();
-                signup();
+                join();
               },
               child: isLoading
                   ? SizedBox(
@@ -85,7 +68,7 @@ class _GroupSignupPageState extends State<GroupSignupPage> {
                   color: Theme.of(context).scaffoldBackgroundColor,
                 ),
               )
-                  : Text("Signup")),
+                  : Text("Join")),
         )
       ],
     );
