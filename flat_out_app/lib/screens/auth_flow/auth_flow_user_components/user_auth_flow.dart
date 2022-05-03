@@ -16,7 +16,6 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
   late Widget _signupPage;
   late Widget _curPage;
 
-
   @override
   void initState() {
     super.initState();
@@ -25,34 +24,33 @@ class _UserAuthFlowState extends State<UserAuthFlow> {
     _curPage = _loginPage;
   }
 
-  void swapPageUser(String p){
+  void swapPageUser(String p) {
     if (_pageStr == p) return;
-    
+
     Widget page = _loginPage;
     if (p == "Signup") page = _signupPage;
-    
+
     setState(() {
       _pageStr = p;
       _curPage = page;
-    });      
+    });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return UnFocusWrapper(
-    child: Scaffold(
-      body: Column(
-        children: [
-          UserAuthHeader(curPage: _pageStr,swapPage: swapPageUser),
-          Divider(
-              thickness: 5,
-              indent: MediaQuery.of(context).size.width / 10,
-              endIndent: MediaQuery.of(context).size.width / 10),
-          UserAuthPageBody(curPage: _curPage),
-        ],
+      child: Scaffold(
+        body: Column(
+          children: [
+            UserAuthHeader(curPage: _pageStr, swapPage: swapPageUser),
+            Divider(
+                thickness: 5,
+                indent: MediaQuery.of(context).size.width / 10,
+                endIndent: MediaQuery.of(context).size.width / 10),
+            UserAuthPageBody(curPage: _curPage),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
-  
 }

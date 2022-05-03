@@ -10,7 +10,7 @@ class FomThemes {
       secondaryHeaderColor: Color(0xffdead5c),
       scaffoldBackgroundColor: Color(0xffe8e5e0),
       cardColor: Color(0xffe8e5e0),
-      dividerColor: Color(0xff383e64),      
+      dividerColor: Color(0xff383e64),
       errorColor: Color(0xffe94f41),
       appBarTheme: AppBarTheme(
         systemOverlayStyle: SystemUiOverlayStyle(
@@ -32,58 +32,63 @@ class FomThemes {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-            return Color(0xffe94174);
+          elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states) {
+            if (states.any((element) => element == MaterialState.pressed))
+              return 1;
+            else
+              return 5;
           }),
-          foregroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-            return Color(0xffe8e5e0);
-          }),
+          shape: MaterialStateProperty.resolveWith<OutlinedBorder?>((Set<MaterialState> states) => StadiumBorder()),
+          overlayColor: MaterialStateProperty.resolveWith<Color?>((states) => Color(0x22e8e5e0)),
+          backgroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) => Color(0xffe94174)),
+          foregroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) => Color(0xffe8e5e0)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-            return Color(0xffe94174);
-          }),
+          overlayColor: MaterialStateProperty.resolveWith<Color?>((states) => Color(0x22e94174)),
+          shape: MaterialStateProperty.resolveWith<OutlinedBorder?>((Set<MaterialState> states) => StadiumBorder()),
+          foregroundColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) => Color(0xffe94174)),
         ),
       ),
       textTheme: GoogleFonts.getTextTheme(
           "Roboto Slab",
           TextTheme(
-              headline1: TextStyle(color: Color(0xffe8e5e0), fontSize: 40, fontWeight: FontWeight.bold),
-              headline2: TextStyle(color: Color(0xff383e64), fontSize: 40, fontWeight: FontWeight.bold),
-              headline3: TextStyle(color: Color(0xffe8e5e0), fontSize: 30, fontWeight: FontWeight.bold),
-              headline4: TextStyle(color: Color(0xff383e64), fontSize: 35, fontWeight: FontWeight.bold),
-              headline5: TextStyle(color: Color(0xff383e64), fontSize: 30),
-              headline6: TextStyle(color: Color(0xff383e64), fontWeight: FontWeight.bold),
-              overline: TextStyle(
-                color: Color(0xff383e64),
-              ),
-              subtitle1: TextStyle(
-                color: Color(0xff092340),
-                fontSize: 15,
-              ),
-              subtitle2: TextStyle(
-                color: Color(0xff383e64),
-                fontSize: 15,
-              ),
-              bodyText1: TextStyle(
-                color: Color(0xff383e64),
-              ),
-              bodyText2: TextStyle(
-                color: Color(0xffe8e5e0),
-              ),
-              button: TextStyle(
-                fontSize: 20,
-              ),
-              caption: TextStyle(
-                fontSize: 12,
-                color: Color(0xff383e64),
-              ),
-              labelMedium: TextStyle(
-                fontSize: 20,
-                color: Color(0xff383e64),
-              ))),
+            headline1: TextStyle(color: Color(0xffe8e5e0), fontSize: 40, fontWeight: FontWeight.bold),
+            headline2: TextStyle(color: Color(0xff383e64), fontSize: 40, fontWeight: FontWeight.bold),
+            headline3: TextStyle(color: Color(0xffe8e5e0), fontSize: 30, fontWeight: FontWeight.bold),
+            headline4: TextStyle(color: Color(0xff383e64), fontSize: 35, fontWeight: FontWeight.bold),
+            headline5: TextStyle(color: Color(0xff383e64), fontSize: 30),
+            headline6: TextStyle(color: Color(0xff383e64), fontWeight: FontWeight.bold),
+            overline: TextStyle(
+              color: Color(0xff383e64),
+            ),
+            subtitle1: TextStyle(
+              color: Color(0xff383e64),
+              fontSize: 20,
+            ),
+            subtitle2: TextStyle(
+              color: Color(0xff383e64),
+              fontSize: 15,
+            ),
+            bodyText1: TextStyle(
+              color: Color(0xff383e64),
+            ),
+            bodyText2: TextStyle(
+              color: Color(0xffe8e5e0),
+            ),
+            button: TextStyle(
+              fontSize: 20,
+            ),
+            caption: TextStyle(
+              fontSize: 12,
+              color: Color(0xff383e64),
+            ),
+            labelMedium: TextStyle(
+              fontSize: 18,
+              color: Color(0xff383e64),
+            ),
+          )),
     );
   }
 

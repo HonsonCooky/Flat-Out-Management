@@ -20,5 +20,4 @@ class FomComponent extends FomDbObject {
   String toString() {
     return super.toString() + '\n \t FomComponent{parents: $parents}';
   }
-
 }

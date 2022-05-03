@@ -7,10 +7,7 @@ class HeaderAnimatedSlide extends StatefulWidget {
   final void Function(String) swapPage;
 
   HeaderAnimatedSlide(
-      {required this.controller,
-      required this.curPage,
-      required this.swapPage,
-      required this.buttonNames});
+      {required this.controller, required this.curPage, required this.swapPage, required this.buttonNames});
 
   @override
   State<StatefulWidget> createState() => _HeaderAnimatedSlideState();

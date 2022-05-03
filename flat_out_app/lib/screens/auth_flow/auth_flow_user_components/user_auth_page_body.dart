@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UserAuthPageBody extends StatelessWidget {
   final Widget curPage;
-  
+
   UserAuthPageBody({required this.curPage});
 
   @override

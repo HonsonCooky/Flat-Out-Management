@@ -110,7 +110,7 @@ class FomReq {
    * Authenticate a user join a group, returning the FomGroup as res.item.
    */
   static Future<FomRes> groupJoin(String username, String password, String token, RoleType role) async {
-    return _post(subUrl: 'group/join', jsonBody: {'name': username, 'password': password, "role": role.name}, authHeader: 
-    token);
+    return _post(
+        subUrl: 'group/join', jsonBody: {'name': username, 'password': password, "role": role.name}, authHeader: token);
   }
 }

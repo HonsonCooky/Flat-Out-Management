@@ -1,5 +1,5 @@
-import 'package:flat_out_app/components/atoms/auth_text_field.dart';
-import 'package:flat_out_app/components/molecules/toast_page.dart';
+import 'package:flat_out_app/components/molecules/auth_text_field.dart';
+import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
@@ -54,7 +54,7 @@ class _UserSignupPageState extends State<UserSignupPage> {
           onChanged: (_) {
             setState(() {});
           },
-          obscureText: true,
+          canObscure: true,
           controller: pWord,
           hintText: "Password",
         ),
@@ -62,7 +62,7 @@ class _UserSignupPageState extends State<UserSignupPage> {
           onChanged: (_) {
             setState(() {});
           },
-          obscureText: true,
+          canObscure: true,
           controller: pWordCon,
           hintText: "Confirm Password",
           error: pWord.text != pWordCon.text ? "Mismatched Password" : null,

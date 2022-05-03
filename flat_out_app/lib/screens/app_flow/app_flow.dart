@@ -15,7 +15,6 @@ class _AppFlowState extends State<AppFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: Center(
         child: ElevatedButton(
           onPressed: () {

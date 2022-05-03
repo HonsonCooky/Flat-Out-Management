@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flat_out_app/core/jsons/utils/enums.dart';
 import 'package:path_provider/path_provider.dart';
 
-
 class LocalStorage {
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();

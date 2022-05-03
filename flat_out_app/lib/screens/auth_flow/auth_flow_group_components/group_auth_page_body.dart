@@ -1,6 +1,5 @@
+import 'package:flat_out_app/components/templates/alert.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
-import 'package:flat_out_app/screens/auth_flow/auth_flow_group_components/no_group_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,8 +10,6 @@ class GroupAuthPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FomUser? u = context.read<RuntimeCache>().user;
-
     return Expanded(
       child: Scrollbar(
         child: SingleChildScrollView(
@@ -25,22 +22,41 @@ class GroupAuthPageBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  "Welcome ${u?.uiName ?? "unknown?"}!",
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.labelMedium,
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
                 ),
-                Text(
-                  "You don't seem to be associated with a flatting group yet. Join a pre-existing group, or create a "
-                      "new one for you and your flatmates.",
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                Container(margin: EdgeInsets.only(bottom: 10),),
                 curPage,
                 TextButton(
                     onPressed: () {
-                      Future.delayed(Duration.zero, NoGroupAlert.showAlertDialog(context));
+                      Future.delayed(
+                        Duration.zero,
+                        Alert.showAlertDialog(
+                          context: context,
+                          title: "No Flat Group *gasp*",
+                          body: Text(
+                            "The main purpose of this application, is to help flatting groups organize themselves"
+                            ". If you don't want to join a group, no worries, just bare this in mind."
+                            "\n\nAre you sure you don't want to join/create a group?",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          ps: "*psst* You can do this later if you want",
+                          actions: [
+                            TextButton(
+                              child: Text("Oops, go back!"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text("I'm sure"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                context.read<RuntimeCache>().readyCache();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                     child: Text("I'm not interested in a group...")),
                 TextButton(
