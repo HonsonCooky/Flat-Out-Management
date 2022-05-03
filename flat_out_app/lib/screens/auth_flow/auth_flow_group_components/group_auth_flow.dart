@@ -41,7 +41,6 @@ class _GroupAuthFlow extends State<GroupAuthFlow> {
 
   @override
   Widget build(BuildContext context) {
-    FomUser? u = context.read<RuntimeCache>().user;
     
     return UnFocusWrapper(
       child: Scaffold(
@@ -52,12 +51,6 @@ class _GroupAuthFlow extends State<GroupAuthFlow> {
                 thickness: 5,
                 indent: MediaQuery.of(context).size.width / 10,
                 endIndent: MediaQuery.of(context).size.width / 10),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 10),
-              child: Text("User: ${u?.uiName ?? "unknown?"}", textAlign: TextAlign.start, style: Theme.of(context)
-                  .textTheme.bodyText1,),
-            ),
             GroupAuthPageBody(curPage: _curPage),
           ],
         ),

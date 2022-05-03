@@ -66,7 +66,7 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
   }
 
   double pointFrom() {
-    double min = 90;
+    double min = MediaQuery.of(context).size.width / 5;
     double max = MediaQuery.of(context).size.width - (min * 2);
     int listSize = (widget.buttonNames.length - 1);
     int indexOf = widget.buttonNames.indexOf(prevPage);
@@ -76,7 +76,7 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
   }
 
   double pointTo() {
-    double min = 90;
+    double min = MediaQuery.of(context).size.width / 5;
     double max = MediaQuery.of(context).size.width - (min * 2);
     int listSize = (widget.buttonNames.length - 1);
     int indexOf = widget.buttonNames.indexOf(widget.curPage);

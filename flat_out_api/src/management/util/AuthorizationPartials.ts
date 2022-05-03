@@ -65,6 +65,19 @@ export async function getController<T extends IFomController>(r: Request | Respo
   throw new Error(`400: Invalid authentication`)
 }
 
+
+/**
+ * GET COMPONENT: Get a component from a name and type
+ * @param req
+ */
+async function getComponent<T extends IFomComponent>(req: Request): Promise<T> {
+  let {component} = req.params
+  let {name} = req.body
+  let com: T | null = await models[component]?.findOne({name})
+  if (!com) throw new Error(`400: Unable to find ${component} ${name}`)
+  return com
+}
+
 /**
  * GET COMPONENT URL: Get a component listed in the Url, with some error checking
  * @param req
@@ -77,7 +90,7 @@ async function getComponentUrl<T extends IFomComponent>(req: Request): Promise<T
 }
 
 /**
- * GET COMPONENT URL: Get a component listed in the Url, with some error checking
+ * GET COMPONENT UNAME: Get a component from a username and password
  * @param req
  */
 async function getComponentUname<T extends IFomComponent>(req: Request): Promise<T> {
@@ -109,7 +122,7 @@ export async function getRegisteringParent(req: Request, res: Response): Promise
   if (!component) return controller
 
   let association: IFomAssociation = await getAssociation(controller._id, component)
-  if (authLevel(association.role) > authLevel(RoleType.WRITE)) throw new Error(`400: Unauthorized use of component`)
+  if (authLevel(association.role) > authLevel(RoleType.FLATMATE)) throw new Error(`400: Unauthorized use of component`)
   return component
 }
 
@@ -145,6 +158,26 @@ export async function getUserAndChild<T extends IFomComponent>(req: Request, res
 
   let user: IFomUser = await getController<IFomUser>(res)
   let child: T = await getComponentUname(req) as T
+  await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with` +
+    `${child.uiName}. Get owner to update your status.`)
+
+  return {
+    user,
+    child,
+  }
+}
+
+/**
+ * GET USER AND CHILD: Simply extract the user and component referenced in the request. These two documents should
+ * not have a prior association.
+ * @param req
+ * @param res
+ */
+export async function getUserAndChildUnprotected<T extends IFomComponent>(req: Request, res: Response):
+  Promise<{ user: IFomUser, child: T }> {
+
+  let user: IFomUser = await getController<IFomUser>(res)
+  let child: T = await getComponent(req) as T
   await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with` +
     `${child.uiName}. Get owner to update your status.`)
 

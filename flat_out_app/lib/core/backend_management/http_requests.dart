@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flat_out_app/core/jsons/fom_association.dart';
 import 'package:flat_out_app/core/jsons/fom_db_object.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
+import 'package:flat_out_app/core/jsons/utils/enums.dart';
 import 'package:http/http.dart';
 
 const String _base = "https://flat-out-management-api.herokuapp.com";
@@ -108,7 +109,8 @@ class FomReq {
   /**
    * Authenticate a user join a group, returning the FomGroup as res.item.
    */
-  static Future<FomRes> groupJoin(String username, String password, String token) async {
-    return _post(subUrl: 'group/join', jsonBody: {'name': username, 'password': password}, authHeader: token);
+  static Future<FomRes> groupJoin(String username, String password, String token, RoleType role) async {
+    return _post(subUrl: 'group/join', jsonBody: {'name': username, 'password': password, "role": role.name}, authHeader: 
+    token);
   }
 }

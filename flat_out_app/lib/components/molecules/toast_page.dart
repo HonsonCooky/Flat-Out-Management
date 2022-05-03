@@ -24,7 +24,7 @@ abstract class ToastWrapper extends StatefulWidget {
       margin: EdgeInsets.all(20.0),
       dismissDirection: DismissDirection.horizontal,
       content: Text(msg, style: Theme.of(context).textTheme.bodyText2),
-      backgroundColor: Theme.of(context).errorColor.withAlpha(150),
+      backgroundColor: Theme.of(context).errorColor.withAlpha(190),
     ));
   }
 

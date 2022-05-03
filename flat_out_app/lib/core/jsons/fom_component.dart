@@ -18,6 +18,7 @@ class FomComponent extends FomDbObject {
 
   @override
   String toString() {
-    return 'FomComponent{parents: $parents}';
+    return super.toString() + '\n \t FomComponent{parents: $parents}';
   }
+
 }

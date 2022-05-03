@@ -35,8 +35,8 @@ class NoGroupAlert {
                   children: [
                     Text(
                       "The main purpose of this application, is to help flatting groups organize themselves. If you "
-                          "don't want to join a group, no worries, just bare this in mind xx."
-                          "\n\n - Are you sure you don't want to join/create a group?",
+                          "don't want to join a group, no worries, just bare this in mind."
+                          "\n\nAre you sure you don't want to join/create a group?",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     Container(

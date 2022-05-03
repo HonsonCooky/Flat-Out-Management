@@ -56,7 +56,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   let {newName, newPassword, fieldIndexes, records, addRecords, rotations, rotation} = req.body
   let {user, child, role} = await getUserChildAndRole<IFomTable>(req, res)
 
-  if (authLevel(role) > authLevel(RoleType.WRITE))
+  if (authLevel(role) > authLevel(RoleType.ASSOCIATION))
     throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)
 
   if (newPassword && role === RoleType.OWNER) child.password = saltAndHash(newPassword) ?? child.password

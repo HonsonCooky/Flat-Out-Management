@@ -2,7 +2,12 @@ import {Request, Response} from "express";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {compareHashes, saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
-import {getRegisteringParent, getUserAndChild, getUserChildAndRole} from "./util/AuthorizationPartials";
+import {
+  getRegisteringParent,
+  getUserAndChild,
+  getUserAndChildUnprotected,
+  getUserChildAndRole
+} from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomGroup} from "../interfaces/IFomGroup";
 import {IFomRes} from "../interfaces/IFomRes";
@@ -34,7 +39,8 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
   await connectDocuments(
     {item: parent, model: getTypeFromDoc(parent)},
     {item: group, model: ModelType.GROUP},
-    RoleType.OWNER)
+    RoleType.OWNER
+  )
 
   return {
     msg: `Successfully registered group ${name} with owner ${parent.uiName}`,
@@ -48,9 +54,11 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function groupJoin(req: Request, res: Response): Promise<IFomRes> {
-  let {user, child} = await getUserAndChild<IFomGroup>(req, res)
   let {name, password, role} = req.body
 
+  if (role == RoleType.REQUEST) return groupRequestJoin(req, res);
+
+  let {user, child} = await getUserAndChild<IFomGroup>(req, res)
   if (!compareHashes(password, child.password)) throw new Error('400: Invalid group authorization')
 
   await connectDocuments(
@@ -64,6 +72,25 @@ export async function groupJoin(req: Request, res: Response): Promise<IFomRes> {
   }
 }
 
+/**
+ * GROUP REQUEST JOIN: Join a pre-existing group document
+ * @param req
+ * @param res
+ */
+export async function groupRequestJoin(req: Request, res: Response): Promise<IFomRes> {
+  let {user, child} = await getUserAndChildUnprotected<IFomGroup>(req, res)
+  let {name} = req.body
+
+  await connectDocuments(
+    {item: user, model: getTypeFromDoc(user)},
+    {item: child, model: ModelType.GROUP},
+    RoleType.REQUEST)
+
+  return {
+    msg: `Successfully registered user ${user.uiName} with group ${name}, under a ${RoleType.REQUEST} role`,
+    item: child
+  }
+}
 
 /**
  * GROUP UPDATE: Update a group document
@@ -74,8 +101,8 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
   let {newName, newPassword} = req.body
   let {user, child, role} = await getUserChildAndRole<IFomGroup>(req, res)
 
-  if (authLevel(role) > authLevel(RoleType.WRITE))
-    throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)
+  if (authLevel(role) > authLevel(RoleType.FLATMATE))
+    throw new Error(`400: ${user.uiName} does not have appropriate authorization over group ${child.uiName}`)
 
   if (newPassword && role === RoleType.OWNER) child.password = saltAndHash(newPassword) ?? child.password
   else if (newPassword)

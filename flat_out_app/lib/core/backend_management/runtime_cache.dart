@@ -59,18 +59,27 @@ class RuntimeCache extends ChangeNotifier {
    * Loads the user's children into their respective lists.
    */
   Future<void> loadUser() async {
-    if (_user == null) {
-      throw Exception("A user has not been loaded. Cannot load values");
-    } else {      
+    if (_user != null) {      
       List<FomRes> gs = await Future.wait(_user!.children
           .where((element) => element.model == ModelType.group)
-          .map((e) async => await FomReq.groupGet(e, _user!.token)));
-      print(gs);
+          .map((e) async => await FomReq.groupGet(e, _user!.token))
+          .toList()
+      );
+      
+      for (int i = 0; i < gs.length; i++){
+        print(gs[i].item);
+        await addGroup(FomGroup.fromJson(gs[i].item));
+      }
+      print(_groups);
     }
   }
-  
+
+  /**
+   * Adds a group to the runtime cache, and to local storage
+   */
   Future<void> addGroup(FomGroup group) async {
     _groups.add(group);
+    _cacheReady = _user != null;
     LocalStorage.write(partition: ModelType.group, key: group.id, contents: jsonEncode(group));
     notifyListeners();
   }

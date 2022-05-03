@@ -82,6 +82,7 @@ class FomThemes {
               ),
               labelMedium: TextStyle(
                 fontSize: 20,
+                color: Color(0xff383e64),
               ))),
     );
   }

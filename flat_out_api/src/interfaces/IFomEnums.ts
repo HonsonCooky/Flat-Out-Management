@@ -12,11 +12,11 @@ export enum ModelType {
  * ROLE TYPE: Identifies levels of user authorization.
  */
 export enum RoleType {
-  OWNER = 'owner',    // Authority to read/write/delete/alter associations
-  WRITE = 'write',    // Authority to read/write
-  READ = 'read',     // Authority to read
-  REQUEST = 'request',  // Asking for some level of authority
-  MENTIONED = 'mentioned'   // No role require
+  OWNER = 'owner',
+  FLATMATE = 'flatmate',
+  ASSOCIATION = 'associate',
+  REQUEST = 'request',
+  MENTIONED = 'mentioned'
 }
 
 /**

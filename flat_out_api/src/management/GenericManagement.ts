@@ -18,7 +18,7 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
 
 
   let type: ModelType = <ModelType>req.params.component
-  if (authLevel(role) > authLevel(RoleType.READ))
+  if (authLevel(role) > authLevel(RoleType.ASSOCIATION))
     throw new Error(`400: Invalid authorization to get ${type}`)
 
   switch (type) {
@@ -27,7 +27,6 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
       break;
     case ModelType.GROUP:
       await groupRenew(child as IFomGroup);
-      console.log(child)
       break;
   }
 

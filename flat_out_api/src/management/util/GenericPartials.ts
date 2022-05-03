@@ -12,9 +12,9 @@ export function authLevel(role: RoleType): number {
   switch (role) {
     case RoleType.OWNER:
       return 0
-    case RoleType.WRITE:
+    case RoleType.FLATMATE:
       return 1
-    case RoleType.READ:
+    case RoleType.ASSOCIATION:
       return 2
     case RoleType.REQUEST:
       return 3
