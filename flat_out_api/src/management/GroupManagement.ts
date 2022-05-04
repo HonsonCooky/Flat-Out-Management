@@ -3,8 +3,8 @@ import {GroupModel} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {
-  getRegisteringParent,
   getControllerAndComponentUName,
+  getRegisteringParent,
   getUserChildAndRoleUrl
 } from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
@@ -13,6 +13,7 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {componentPushNewChildren, componentPushNewParents} from "./GenericManagement";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)
@@ -97,7 +98,7 @@ export async function groupRequestJoin(req: Request, res: Response): Promise<IFo
  * @param res
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, parents, children} = req.body
+  let {newName, newPassword, parents, children, newParents, newChildren} = req.body
   let {controller, component, role} = await getUserChildAndRoleUrl<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -106,11 +107,13 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
     component.parents = parents.length > 0 ? parents : component.parents
+    if (newParents) componentPushNewParents(component, role, ...newParents)
   } else if (newPassword)
     throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
 
   component.uiName = newName ?? component.uiName
   component.children = children.length > 0 ? children : component.children
+  if (newChildren) componentPushNewChildren(component, role, ...newChildren)
 
   await groupRenew(component as IFomGroup)
 

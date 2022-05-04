@@ -9,6 +9,7 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {componentPushNewParents} from "./GenericManagement";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -59,18 +60,22 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   if (authLevel(role) > authLevel(RoleType.WRITER))
     throw new Error(`400: ${controller.uiName} does not have appropriate authorization over table ${component.uiName}`)
 
-  if (newPassword && role === RoleType.OWNER) component.password = saltAndHash(newPassword) ?? component.password
-  else if (newPassword)
+  if (role === RoleType.OWNER) {
+    component.password = saltAndHash(newPassword) ?? component.password
+
+    component.rotations = rotations ?? component.rotations
+    if (rotation) component.rotations.push(rotation)
+
+    component.parents = parents ?? component.parents
+    if (newParents) componentPushNewParents(component, role, ...newParents)
+  } else if (newPassword)
     throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
+
 
   component.uiName = newName ?? component.uiName
   component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
   component.records = records ?? component.records
-  component.rotations = rotations ?? component.rotations
-  component.parents = parents ?? component.parents
   if (addRecords) component.records.push(addRecords)
-  if (rotation) component.rotations.push(rotation)
-  if (newParents) component.rotations.push(newParents)
 
   await tableRenew(component as IFomTable)
 

@@ -7,6 +7,9 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomTable} from "../interfaces/IFomTable";
 import {IFomGroup} from "../interfaces/IFomGroup";
+import {IFomController} from "../interfaces/IFomController";
+import {IFomComponent} from "../interfaces/IFomComponent";
+import {IFomAssociation} from "../interfaces/IFomAssociation";
 
 /**
  * Retrieve a component from the database from a URL id.
@@ -53,4 +56,40 @@ export async function componentDelete(req: Request, res: Response): Promise<IFom
   return {
     msg: `${controller._id} successfully deleted ${type} ${component.uiName}`
   }
+}
+
+/**
+ * Overwrite current child associations with new ones
+ * @param c
+ * @param role
+ * @param children
+ */
+export function componentPushNewChildren(c: IFomController | IFomComponent, role: RoleType,
+  ...children: IFomAssociation[]) {
+  // Remove any parents with a higher auth than this role
+  children = children.filter((pa: IFomAssociation) => authLevel(pa.role) >= authLevel(role))
+
+  // With a list of legal updated association, alter the remaining
+  c.children =
+    c.children.filter((ca: IFomAssociation) => children.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref)) ||
+      children.length === 0)
+
+  c.children.push(...children)
+}
+
+/**
+ * Overwrite current parent associations with new ones
+ * @param c
+ * @param parents
+ * @param role
+ */
+export function componentPushNewParents(c: IFomComponent, role: RoleType, ...parents: IFomAssociation[]) {
+  // Remove any parents with a higher auth than this role
+  parents = parents.filter((pa: IFomAssociation) => authLevel(pa.role) >= authLevel(role))
+
+  // With a list of legal updated association, alter the remaining
+  c.parents = c.parents.filter((ca: IFomAssociation) => parents.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref)) ||
+    parents.length === 0)
+
+  c.parents.push(...parents)
 }
