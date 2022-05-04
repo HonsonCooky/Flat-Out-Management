@@ -9,6 +9,7 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {IFomAssociation} from "../interfaces/IFomAssociation";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -74,6 +75,46 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
 
   return {
     msg: `${controller._id} successfully updated table ${component.uiName}`,
+    item: component
+  }
+}
+
+
+/**
+ * Sharing a table enables users across the app to share tables. Thus, removing the need for a group. However, groups
+ * retainer their need in order to maintain and organize larger groups (removing the need to share every document with
+ * every flatmate)
+ * @param req
+ * @param res
+ */
+export async function tableShare(req: Request, res: Response): Promise<IFomRes> {
+  let {associations, newAssociations} = req.body
+  let {controller, component, role} = await getUserChildAndRoleUrl<IFomTable>(req, res)
+
+  if (authLevel(role) > authLevel(RoleType.WRITER)) throw new Error(
+    `400: ${controller.uiName}, with authority ${role}, is not sufficient for sharing this table`)
+
+  component = component as IFomTable
+
+  if (associations) component.parents = associations.map((a: IFomAssociation) => {
+    return {
+      ref: a.ref,
+      model: a.model,
+      role: authLevel(a.role) >= authLevel(role) ? a.role : role
+    }
+  })
+  if (newAssociations) component.parents.push(newAssociations.map((a: IFomAssociation) => {
+    return {
+      ref: a.ref,
+      model: a.model,
+      role: authLevel(a.role) >= authLevel(role) ? a.role : role
+    }
+  }))
+
+  await component.save()
+
+  return {
+    msg: `Successfully update table ${associations} and added ${newAssociations}`,
     item: component
   }
 }

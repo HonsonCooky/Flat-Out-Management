@@ -5,8 +5,8 @@ import {extractJwt} from "../middleware/ExtractJwt";
 
 export const userRoutes = express.Router({mergeParams: true})
 
-userRoutes.post(`/get`, routeHandler(userGet))
 userRoutes.post(`/register`, routeHandler(userRegister))
-userRoutes.post(`/delete`, routeHandler(userDelete))
+userRoutes.post(`/get`, routeHandler(userGet))
+userRoutes.delete(`/delete`, routeHandler(userDelete))
 userRoutes.get(`/search`, extractJwt(), routeHandler(userSearch))
 userRoutes.post(`/update`, extractJwt(), routeHandler(userUpdate))
