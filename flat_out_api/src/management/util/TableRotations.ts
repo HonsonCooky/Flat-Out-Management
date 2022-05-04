@@ -65,6 +65,8 @@ function getNextAndJumps(config: IFomTableRotationConfig, date: Date,
     case TimeIntervals.ANNUALLY:
       newNext.setFullYear(newNextUTC.getFullYear() + intervalValue)
       return getNextAndJumps(config, newNext, jumps + 1)
+    default:
+      throw new Error(`400: Unknown time interval unit in table rotations configuration. "${intervalUnit}"`)
   }
 }
 
