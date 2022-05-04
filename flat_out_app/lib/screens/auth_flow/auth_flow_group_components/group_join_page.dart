@@ -18,23 +18,27 @@ class GroupJoinPage extends ToastWrapper {
 }
 
 class _GroupJoinPageState extends State<GroupJoinPage> {
-  final TextEditingController _uName = TextEditingController();
+  final TextEditingController _gName = TextEditingController();
   final TextEditingController _pWord = TextEditingController();
-  RoleType _type = RoleType.flatmate;
+  RoleType _type = RoleType.writer;
   bool _noPass = false;
   bool _isLoading = false;
 
   void join() async {
     try {
-      FomRes res = await FomReq.groupJoin(_uName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
+      FomRes res = await FomReq.groupJoin(_gName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
       if (res.statusCode == 200) {
-        widget.successToast(res.msg, context);
-        context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
+        if (_type != RoleType.request) {
+          widget.successToast(res.msg, context);
+          context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
+        } else {
+          widget.successToast("You've successfully requested to join group ${_gName.text}. This won't take effect "
+              "until an owner of the group has authorized your request", context);
+        }
         context.read<RuntimeCache>().readyCache();
       } else
         widget.errorToast(res.msg, context);
     } catch (e) {
-      print(e);
       widget.fuckMeToast("${e}", context);
     }
     setState(() => _isLoading = false);
@@ -46,7 +50,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AuthTextField(
-          controller: _uName,
+          controller: _gName,
           hintText: "Flat Name",
         ),
         AuthTextConfirmPasswords(

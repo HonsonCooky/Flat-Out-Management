@@ -164,7 +164,7 @@ export async function getControllerAndComponentUName<T extends IFomComponent>(re
 
   let user: IFomController = await getController<IFomController>(res)
   let child: T = await getComponentUname(req, noAuth) as T
-  await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with` +
+  await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with ` +
     `${child.uiName}. Get owner to update your status.`)
 
   return {

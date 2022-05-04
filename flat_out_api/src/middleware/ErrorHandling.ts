@@ -5,11 +5,14 @@ import {IFomRes} from "../interfaces/IFomRes";
 const known400ErrorMessages = [
   '400',
   'duplicate',
-  'validation failed'
+  'validation failed',
+  'missing expected rejection:'
 ]
 
 function jsonError(msg: string): IFomRes {
-  return {msg: msg.replace(/400: /g, '').replace(/500: /g, '')}
+  return {msg: msg.replace(/400: /g, '')
+      .replace(/500: /g, '')
+      .replace('missing expected rejection:', '')}
 }
 
 /**

@@ -60,15 +60,15 @@ class RuntimeCache extends ChangeNotifier {
   Future<void> loadUser() async {
     if (_user != null) {
       List<FomRes> gs = await Future.wait(_user!.children
-          .where((element) => element.model == ModelType.group)
+          .where((element) =>
+              element.model == ModelType.group &&
+              !(element.role == RoleType.request || element.role == RoleType.mentioned))
           .map((e) async => await FomReq.groupGet(e, _user!.token))
           .toList());
 
       for (int i = 0; i < gs.length; i++) {
-        print(gs[i].item);
         await addGroup(FomGroup.fromJson(gs[i].item));
       }
-      print(_groups);
     }
   }
 
@@ -76,7 +76,6 @@ class RuntimeCache extends ChangeNotifier {
    * Adds a group to the runtime cache, and to local storage
    */
   Future<void> addGroup(FomGroup group) async {
-    print(group);
     _groups.add(group);
     _cacheReady = _user != null;
     LocalStorage.write(partition: ModelType.group, key: group.id, contents: jsonEncode(group));

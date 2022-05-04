@@ -58,7 +58,7 @@ class GroupAuthPageBody extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text("I'm not interested in a group...")),
+                    child: Text("Skip")),
                 TextButton(
                     onPressed: () {
                       context.read<RuntimeCache>().setUser(null);
