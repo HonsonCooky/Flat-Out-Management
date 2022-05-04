@@ -2,7 +2,7 @@ import {IFomComponent} from "./IFomComponent";
 import {IFomEvent} from "./IFomEvent";
 
 /**
- * GROUP: A group document
+ * A group document
  */
 export interface IFomGroup extends IFomComponent {
   groupCalendar: IFomEvent[],

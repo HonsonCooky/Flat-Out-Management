@@ -6,59 +6,47 @@ import 'package:flutter/material.dart';
  */
 class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
-  final bool canObscure;
-  final bool? visiblePassword;
   final String hintText;
   final void Function(String)? onChanged;
-  final String? error;
+  
+  final String? errorText;
   final bool readOnly;
-  final IconButton? suffixIcon;
+  
+  final bool visiblePassword;
+  final VoidCallback? obscureText;
 
   AuthTextField(
       {required this.hintText,
       required this.controller,
-      this.canObscure = false,
       this.onChanged,
-      this.error,
+      this.errorText,
       this.readOnly = false,
-      this.suffixIcon,
-      this.visiblePassword});
+      this.visiblePassword = true,
+      this.obscureText});
 
   @override
   State<StatefulWidget> createState() => _AuthTextFieldState();
 }
 
 class _AuthTextFieldState extends State<AuthTextField> {
-  late bool _visiblePassword;
-
-  @override
-  void initState() {
-    super.initState();
-    _visiblePassword = widget.canObscure;
-  }
-
   @override
   Widget build(BuildContext context) {
     return TextField(
       readOnly: widget.readOnly,
       controller: widget.controller,
-      obscureText: widget.canObscure,
+      obscureText: !widget.visiblePassword,
       cursorColor: Theme.of(context).primaryColor,
       style: Theme.of(context).textTheme.labelLarge,
       decoration: InputDecoration(
         hintText: widget.readOnly ? "Not Required" : widget.hintText,
         hintStyle: TextStyles.inputTextStyle(context: context, readOnly: widget.readOnly),
-        errorText: widget.error,
+        errorText: widget.errorText,
         errorBorder: UnderlineInputBorder(borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)),
-        suffixIcon: widget.canObscure && widget.visiblePassword == null
+        suffixIcon: widget.obscureText != null
             ? IconButton(
-                icon: Icon(_visiblePassword ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(widget.visiblePassword ? Icons.visibility : Icons.visibility_off),
                 splashRadius: Theme.of(context).textTheme.labelLarge?.fontSize,
-                onPressed: () {
-                  setState(() {
-                    _visiblePassword = !_visiblePassword;
-                  });
-                },
+                onPressed: widget.obscureText,
               )
             : null,
       ),

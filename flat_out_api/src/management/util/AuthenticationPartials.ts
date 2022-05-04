@@ -5,7 +5,7 @@ import {IFomController} from "../../interfaces/IFomController";
 import {IFomJwtContract} from "../../interfaces/IFomJwtContract";
 
 /**
- * SALT AND HASH: Salt and hash a given input
+ * Salt and hash a given input
  * @param input
  */
 export function saltAndHash(input: string): string | null {
@@ -14,7 +14,7 @@ export function saltAndHash(input: string): string | null {
 }
 
 /**
- * COMPARE HASHES: Validate that a given string 'a' hashes into 'b'.
+ * Validate that a given string 'a' hashes into 'b'.
  * @param a
  * @param b
  */
@@ -25,7 +25,7 @@ export function compareHashes(a?: string, b?: string): boolean {
 
 
 /**
- * SIGN JWT: Given some value 'val', convert to a JWT (string).
+ * Given some value 'val', convert to a JWT (string).
  * @param controller
  * @param expiresIn
  */

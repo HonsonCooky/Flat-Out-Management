@@ -1,3 +1,5 @@
+import 'package:flat_out_app/components/atoms/text_styles.dart';
+import 'package:flat_out_app/components/molecules/auth_text_confirm_passwords.dart';
 import 'package:flat_out_app/components/molecules/auth_text_field.dart';
 import 'package:flat_out_app/components/templates/alert.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
@@ -5,7 +7,6 @@ import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
 import 'package:flat_out_app/core/jsons/fom_group.dart';
 import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
 import 'package:flat_out_app/core/jsons/utils/enums.dart';
 import 'package:flat_out_app/main.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,6 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
     try {
       FomRes res = await FomReq.groupJoin(_uName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
       if (res.statusCode == 200) {
-        await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
         widget.successToast(res.msg, context);
         context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
         context.read<RuntimeCache>().readyCache();
@@ -49,9 +49,8 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
           controller: _uName,
           hintText: "Flat Name",
         ),
-        AuthTextField(
+        AuthTextConfirmPasswords(
           readOnly: _noPass,
-          canObscure: true,
           controller: _pWord,
           hintText: "Flat Password",
         ),
@@ -73,7 +72,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                       .where((element) => element != RoleType.mentioned)
                       .map((e) => DropdownMenuItem<RoleType>(
                             value: e,
-                            child: Text(e.name.capitalize(), style: Theme.of(context).textTheme.button),
+                            child: Text(e.name.capitalize(), style: TextStyles.inputTextStyle(context: context)),
                           ))
                       .toList(),
                   onChanged: (RoleType? value) {
@@ -100,13 +99,22 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                         style: Theme.of(context).textTheme.bodyText1,
                         children: [
                           TextSpan(
-                            text: "Owner: ",
+                            text: "Password Required:",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff383e64),
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          TextSpan(
+                            text: "\n\nOwner: ",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xff383e64),
                             ),
                           ),
-                          TextSpan(text: "You are a flatmate, but you also want privileges to alter this group."),
+                          TextSpan(text: "To become an owner, signup as a flatmate. Owners of the group can then "
+                              "assign you to being an owner"),
                           TextSpan(
                             text: "\n\nFlatmate: ",
                             style: TextStyle(
@@ -128,6 +136,14 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                             text: "You know someone in this group (you could be a partner, friend, landlord, etc).",
                           ),
                           TextSpan(
+                            text: "\n\n\nNo Password:",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff383e64),
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          TextSpan(
                             text: "\n\nRequest: ",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -135,16 +151,15 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                             ),
                           ),
                           TextSpan(
-                            text: "You forgot the password... (). Request's will notify owners of the group,"
-                                " who can accept you into the group and will select your association from the above "
-                                "list.",
+                            text: "Request's will notify owners of the group that you want to join. Said owners can "
+                                "accept you into the group and will select your authority at that time.",
                           ),
                         ],
                       ),
                     ),
                   );
                 },
-                color: Colors.grey.withAlpha(150),
+                color: Colors.grey,
                 icon: Icon(Icons.help),
                 iconSize: Theme.of(context).textTheme.subtitle1?.fontSize,
               ),

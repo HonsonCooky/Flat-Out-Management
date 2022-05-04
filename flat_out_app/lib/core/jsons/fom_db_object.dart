@@ -6,7 +6,7 @@ part 'fom_db_object.g.dart';
 
 @JsonSerializable()
 class FomDbObject {
-  String id;
+  @JsonKey(name: "_id") String id;
   String uiName;
   String fomVersion;
   List<FomAssociation> children;

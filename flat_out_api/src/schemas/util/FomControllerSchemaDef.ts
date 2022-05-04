@@ -3,6 +3,9 @@ import {FOM_DYNAMIC_UUID, FOM_NAME, FOM_PASSWORD} from "./FomSchemaDefinitionPro
 import {FomComponentSchemaDef} from "./FomComponentSchemaDef";
 import {IFomController} from "../../interfaces/IFomController";
 
+/**
+ * Translates the IFomController into a MongoDB Schema Definition
+ */
 const {parents, ...FomDocumentSchemaDef} = FomComponentSchemaDef
 export const FomControllerSchemaDef: SchemaDefinition<IFomController> = {
   ...FomDocumentSchemaDef,

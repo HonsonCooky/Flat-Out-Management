@@ -3,7 +3,7 @@ import {FOM_ASSOCIATION, FOM_UI_NAME, FOM_VERSION} from "./FomSchemaDefinitionPr
 import {IFomComponent} from "../../interfaces/IFomComponent";
 
 /**
- * COMPONENT SCHEMA DEF: Translates the IFomComponent interface into a schema definition.
+ * Translates the IFomComponent interface into a schema definition.
  */
 export const FomComponentSchemaDef: SchemaDefinition<IFomComponent> = {
   uiName: FOM_UI_NAME,

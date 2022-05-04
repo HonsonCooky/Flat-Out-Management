@@ -17,6 +17,20 @@ abstract class ToastWrapper extends StatefulWidget {
     );
   }
 
+  void infoToast(String msg, BuildContext context) {
+    final s = ScaffoldMessenger.of(context);
+    s.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(20.0),
+        content: Text(
+          msg,
+        ),
+        backgroundColor: Theme.of(context).secondaryHeaderColor.withAlpha(190),
+      ),
+    );
+  }
+
   void errorToast(String msg, BuildContext context) {
     final s = ScaffoldMessenger.of(context);
     s.showSnackBar(SnackBar(

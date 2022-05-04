@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import {env} from "../config/Config";
 
 /**
- * EXTRACT INFORMATION: An Express middleware component which will
+ * An Express middleware component which will
  * @param required
  */
 export function extractJwt(required: boolean = true) {

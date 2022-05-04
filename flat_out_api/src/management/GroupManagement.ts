@@ -1,12 +1,11 @@
 import {Request, Response} from "express";
 import {GroupModel} from "../schemas/documents/GroupSchema";
-import {compareHashes, saltAndHash} from "./util/AuthenticationPartials";
+import {saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {
   getRegisteringParent,
-  getUserAndChild,
-  getUserAndChildUnprotected,
-  getUserChildAndRole
+  getControllerAndComponentUName,
+  getUserChildAndRoleUrl
 } from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomGroup} from "../interfaces/IFomGroup";
@@ -21,7 +20,7 @@ export async function groupRenew(group: IFomGroup) {
 }
 
 /**
- * GROUP REGISTER: Create a new group document
+ * Create a new group document
  * @param req
  * @param res
  */
@@ -49,71 +48,74 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
 }
 
 /**
- * GROUP JOIN: Join a pre-existing group document
+ * Join a pre-existing group document
  * @param req
  * @param res
  */
 export async function groupJoin(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, role} = req.body
+  let {name, role} = req.body
 
   if (role == RoleType.REQUEST) return groupRequestJoin(req, res);
+  if (role == RoleType.OWNER) throw new Error('400: Owner status can only be given by pre-existing owners')
 
-  let {user, child} = await getUserAndChild<IFomGroup>(req, res)
-  if (!compareHashes(password, child.password)) throw new Error('400: Invalid group authorization')
+  let {controller, component} = await getControllerAndComponentUName<IFomGroup>(req, res)
 
   await connectDocuments(
-    {item: user, model: getTypeFromDoc(user)},
-    {item: child, model: ModelType.GROUP},
+    {item: controller, model: getTypeFromDoc(controller)},
+    {item: component, model: ModelType.GROUP},
     role)
 
   return {
-    msg: `Successfully registered user ${user.uiName} with group ${name}, under a ${role} role`,
-    item: child
+    msg: `Successfully registered user ${controller.uiName} with group ${name}, under a ${role} role`,
+    item: component
   }
 }
 
 /**
- * GROUP REQUEST JOIN: Join a pre-existing group document
+ * Request to join a pre-existing group document without a password
  * @param req
  * @param res
  */
 export async function groupRequestJoin(req: Request, res: Response): Promise<IFomRes> {
-  let {user, child} = await getUserAndChildUnprotected<IFomGroup>(req, res)
+  let {controller, component} = await getControllerAndComponentUName<IFomGroup>(req, res, true);
   let {name} = req.body
 
   await connectDocuments(
-    {item: user, model: getTypeFromDoc(user)},
-    {item: child, model: ModelType.GROUP},
+    {item: controller, model: getTypeFromDoc(controller)},
+    {item: component, model: ModelType.GROUP},
     RoleType.REQUEST)
 
   return {
-    msg: `Successfully registered user ${user.uiName} with group ${name}, under a ${RoleType.REQUEST} role`,
-    item: child
+    msg: `Successfully registered user ${controller.uiName} with group ${name}, under a ${RoleType.REQUEST} role`,
+    item: component
   }
 }
 
 /**
- * GROUP UPDATE: Update a group document
+ * Update a group document ONLY if you're a writer, and sometimes only if you're an owner.
  * @param req
  * @param res
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword} = req.body
-  let {user, child, role} = await getUserChildAndRole<IFomGroup>(req, res)
+  let {newName, newPassword, parents, children} = req.body
+  let {controller, component, role} = await getUserChildAndRoleUrl<IFomGroup>(req, res)
 
-  if (authLevel(role) > authLevel(RoleType.FLATMATE))
-    throw new Error(`400: ${user.uiName} does not have appropriate authorization over group ${child.uiName}`)
+  if (authLevel(role) > authLevel(RoleType.WRITER))
+    throw new Error(`400: ${controller.uiName} does not have appropriate authorization over group ${component.uiName}`)
 
-  if (newPassword && role === RoleType.OWNER) child.password = saltAndHash(newPassword) ?? child.password
-  else if (newPassword)
+  if (role === RoleType.OWNER) {
+    component.password = saltAndHash(newPassword) ?? component.password
+    component.parents = parents.length > 0 ? parents : component.parents
+  } else if (newPassword)
     throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
 
-  child.uiName = newName ?? child.uiName
+  component.uiName = newName ?? component.uiName
+  component.children = children.length > 0 ? children : component.children
 
-  await groupRenew(child as IFomGroup)
+  await groupRenew(component as IFomGroup)
 
   return {
-    msg: `${user._id} successfully updated ${child.uiName}`,
-    item: child
+    msg: `${controller._id} successfully updated ${component.uiName}`,
+    item: component
   }
 }

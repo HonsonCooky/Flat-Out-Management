@@ -16,7 +16,7 @@ function getParent<T>(t: any): T {
  ------------------------------------------------------------------------------------------------------------------ */
 
 /**
- * NAME: A string value which will be used to validate the username + password login
+ * A string value which will be used to validate the username + password login
  */
 export const FOM_NAME: SchemaDefinitionProperty<string> = {
   type: String,
@@ -29,7 +29,7 @@ export const FOM_NAME: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * UI NAME: A string value which will be displayed client side
+ * A string value which will be displayed client side
  */
 export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
   type: String,
@@ -39,7 +39,7 @@ export const FOM_UI_NAME: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * PASSWORD: A string value, which is required, but can also be null
+ * A string value, which is required, but can also be null
  */
 export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
   type: String,
@@ -47,7 +47,7 @@ export const FOM_PASSWORD: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * ASSOCIATION: A tuple of different SchemaDefinitionProperty, outlining a connection from this to another document.
+ * A tuple of different SchemaDefinitionProperty, outlining a connection from this to another document.
  */
 // REF
 const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
@@ -80,7 +80,7 @@ export const FOM_ASSOCIATION: SchemaDefinitionProperty<IFomAssociation> = {
 }
 
 /**
- * VERSION: Maintains semantic versioning for document.
+ * Maintains semantic versioning for document.
  */
 const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
 
@@ -95,7 +95,7 @@ export const FOM_VERSION: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * COLOR ASSOCIATION: Outlines a color associated with some user. For UI intentions, must be unique (allows easy
+ * Outlines a color associated with some user. For UI intentions, must be unique (allows easy
  * association of users).
  */
 export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
@@ -107,7 +107,7 @@ export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
 }
 
 /**
- * EVENT: Some tuple of date, title and message.
+ * Some tuple of date, title and message.
  */
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   date: {type: Date, required: true},
@@ -123,7 +123,7 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
  ------------------------------------------------------------------------------------------------------------------ */
 
 /**
- * DYNAMIC UUID: A changing ID which will uniquely identify a user, but one which will alter (for JWT authentication)
+ * A changing ID which will uniquely identify a user, but one which will alter (for JWT authentication)
  */
 export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
@@ -133,14 +133,10 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 }
 
 /** ------------------------------------------------------------------------------------------------------------------
- * GROUP
- ------------------------------------------------------------------------------------------------------------------ */
-
-/** ------------------------------------------------------------------------------------------------------------------
  * TABLE
  ------------------------------------------------------------------------------------------------------------------ */
 /**
- * TABLE COLUMNS: Outlines the total number of columns.
+ * Outlines the total number of columns.
  */
 export const FOM_TABLE_COLUMNS: SchemaDefinitionProperty<number> = {
   type: Number,
@@ -148,7 +144,7 @@ export const FOM_TABLE_COLUMNS: SchemaDefinitionProperty<number> = {
 }
 
 /**
- * TABLE FIELD INDEXES: Outlines which rows inside a table, are headers. Mostly used for UI, but also rotations.
+ * Outlines which rows inside a table, are headers. Mostly used for UI, but also rotations.
  */
 export const FOM_TABLE_FIELD_INDEXES: SchemaDefinitionProperty<number> = {
   type: Number,
@@ -159,19 +155,18 @@ export const FOM_TABLE_FIELD_INDEXES: SchemaDefinitionProperty<number> = {
 }
 
 /**
- * TABLE RECORD: Outlines a row in the table, outlining a list of valid object types inside a cell.
+ * Outlines a row in the table, outlining a list of valid object types inside a cell.
  */
 export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
   type: [String || FOM_ASSOCIATION || Date]
 }
 
 /**
- * TABLE CONFIG ROTATION: Outlines the configurations for a table rotation
+ * Outlines the configurations for a table rotation
  */
 export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotationConfig> = {
   column: {
     type: Number,
-    unique: true,
     validate: function (val: number) {
       let table: IFomTable = getParent<IFomTable>(this)
       return 0 <= val && val < table.columns

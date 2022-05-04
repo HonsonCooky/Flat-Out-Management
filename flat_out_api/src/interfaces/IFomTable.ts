@@ -3,12 +3,12 @@ import {TimeIntervals} from "./IFomEnums";
 import {IFomAssociation} from "./IFomAssociation";
 
 /**
- * TABLE RECORD: Outlines the different data values allowed in a table cell.
+ * Outlines the different data values allowed in a table cell.
  */
 export type IFomTableRecord = (string | IFomAssociation | Date)[]
 
 /**
- * TABLE ROTATION CONFIG: Outlines the necessary settings for a table rotation configuration
+ * Outlines the necessary settings for a table rotation configuration
  */
 export interface IFomTableRotationConfig {
   column: number
@@ -19,7 +19,7 @@ export interface IFomTableRotationConfig {
 }
 
 /**
- * TABLE: A table document
+ * A table document
  */
 export interface IFomTable extends IFomComponent {
   columns: number,

@@ -1,6 +1,7 @@
 /**
- * MODEL TYPE: Identifies all potential collections that clients can interact with. The specific outline of these
- * enums allows for dynamically finding MongoDB models, without creating extra unnecessary models (with spelling errors).
+ * Identifies all potential collections that clients can interact with. The specific outline of these
+ * enums allows for dynamically finding MongoDB models, without creating extra unnecessary models (with spelling
+ * errors).
  */
 export enum ModelType {
   USER = 'user',
@@ -9,18 +10,18 @@ export enum ModelType {
 }
 
 /**
- * ROLE TYPE: Identifies levels of user authorization.
+ * Identifies levels of user authorization.
  */
 export enum RoleType {
   OWNER = 'owner',
-  FLATMATE = 'flatmate',
-  ASSOCIATION = 'associate',
+  WRITER = 'writer',
+  READER = 'reader',
   REQUEST = 'request',
   MENTIONED = 'mentioned'
 }
 
 /**
- * EVENT TYPE: Identifies how events are related to the user
+ * Identifies how events are related to the user
  */
 export enum EventType {
   USER = 'user',
@@ -29,7 +30,7 @@ export enum EventType {
 }
 
 /**
- * TIME INTERVALS: Identifies how often some update must occur.
+ * Identifies how often some update must occur.
  */
 export enum TimeIntervals {
   DAILY = 'daily',
@@ -39,7 +40,7 @@ export enum TimeIntervals {
 }
 
 /**
- * LOG LEVEL: Logged information will have some level of error.
+ * Logged information will have some level of error.
  */
 export enum LogLevel {
   INFO = 'info',

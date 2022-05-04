@@ -13,7 +13,7 @@ function jsonError(msg: string): IFomRes {
 }
 
 /**
- * ERROR HANDLER: Express middleware component, allowing the function of the express app to simply throw an error
+ * Express middleware component, allowing the function of the express app to simply throw an error
  * when necessary, which will be caught here. This will log the error, whilst also gently parsing the error back to
  * the client.
  * @param err

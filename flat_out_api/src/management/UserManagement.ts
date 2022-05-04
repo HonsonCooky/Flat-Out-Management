@@ -2,18 +2,18 @@ import {Request, Response} from "express";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
-import {preDocRemoval} from "./util/GenericPartials";
+import {authLevel, preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomRes} from "../interfaces/IFomRes";
 import {IFomUser} from "../interfaces/IFomUser";
 import {IFomAssociation} from "../interfaces/IFomAssociation";
-import {ModelType} from "../interfaces/IFomEnums";
+import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomGroup} from "../interfaces/IFomGroup";
 
 
 /**
- * USER REGISTER: Create a new user document
+ * Create a new user document
  * @param req
  * @param res
  */
@@ -40,7 +40,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
 }
 
 /**
- * USER GET: Get a user, with Username and Password
+ * Get a user, with Username and Password
  * @param req
  * @param res
  */
@@ -58,7 +58,7 @@ export async function userGet(req: Request, res: Response): Promise<IFomRes> {
 }
 
 /**
- * USER DELETE: Delete a user from the document db
+ * Delete a user from the document db
  * @param req
  * @param res
  */
@@ -74,7 +74,7 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
 }
 
 /**
- * USER UPDATE: Update a user document
+ * Update a user document
  * @param req
  * @param res
  */
@@ -108,13 +108,13 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
 }
 
 /**
- *
+ * When the user updates an outOfFlatDates, then the group their associated with need to know that as well.
  * @param user
  */
 async function dateUpdate(user: IFomUser) {
   (await user.populate({path: 'children.ref'}))
     .children
-    .filter((a: IFomAssociation) => a.model === ModelType.GROUP)
+    .filter((a: IFomAssociation) => a.model === ModelType.GROUP && authLevel(a.role) < authLevel(RoleType.READER))
     .map((a: any) => a.ref as IFomGroup)
     .forEach((g: IFomGroup) => groupCalendar(g))
 }

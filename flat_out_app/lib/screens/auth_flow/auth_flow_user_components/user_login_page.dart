@@ -1,3 +1,4 @@
+import 'package:flat_out_app/components/molecules/auth_text_confirm_passwords.dart';
 import 'package:flat_out_app/components/molecules/auth_text_field.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
@@ -41,8 +42,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
           controller: uName,
           hintText: "Username",
         ),
-        AuthTextField(
-          canObscure: true,
+        AuthTextConfirmPasswords(
           controller: pWord,
           hintText: "Password",
         ),

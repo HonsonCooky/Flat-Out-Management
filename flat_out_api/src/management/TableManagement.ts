@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {getRegisteringParent, getUserChildAndRole} from "./util/AuthorizationPartials";
+import {getRegisteringParent, getUserChildAndRoleUrl} from "./util/AuthorizationPartials";
 import {tableRotations} from "./util/TableRotations";
 import {IFomTable} from "../interfaces/IFomTable";
 import {IFomRes} from "../interfaces/IFomRes";
@@ -16,7 +16,7 @@ export async function tableRenew(table: IFomTable) {
 }
 
 /**
- * TABLE REGISTER: Register a TABLE document
+ * Register a TABLE document
  * @param req
  * @param res
  */
@@ -48,32 +48,32 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
 }
 
 /**
- * TABLE UPDATE: Update a group document
+ * Update a table document
  * @param req
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, fieldIndexes, records, addRecords, rotations, rotation} = req.body
-  let {user, child, role} = await getUserChildAndRole<IFomTable>(req, res)
+  let {controller, component, role} = await getUserChildAndRoleUrl<IFomTable>(req, res)
 
-  if (authLevel(role) > authLevel(RoleType.ASSOCIATION))
-    throw new Error(`400: ${user.uiName} does not have appropriate authorization over table ${child.uiName}`)
+  if (authLevel(role) > authLevel(RoleType.WRITER))
+    throw new Error(`400: ${controller.uiName} does not have appropriate authorization over table ${component.uiName}`)
 
-  if (newPassword && role === RoleType.OWNER) child.password = saltAndHash(newPassword) ?? child.password
+  if (newPassword && role === RoleType.OWNER) component.password = saltAndHash(newPassword) ?? component.password
   else if (newPassword)
     throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
 
-  child.uiName = newName ?? child.uiName
-  child.fieldIndexes = fieldIndexes ?? child.fieldIndexes
-  child.records = records ?? child.records
-  child.rotations = rotations ?? child.rotations
-  if (addRecords) child.records.push(addRecords)
-  if (rotation) child.rotations.push(rotation)
+  component.uiName = newName ?? component.uiName
+  component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
+  component.records = records ?? component.records
+  component.rotations = rotations ?? component.rotations
+  if (addRecords) component.records.push(addRecords)
+  if (rotation) component.rotations.push(rotation)
 
-  await tableRenew(child as IFomTable)
+  await tableRenew(component as IFomTable)
 
   return {
-    msg: `${user._id} successfully updated table ${child.uiName}`,
-    item: child
+    msg: `${controller._id} successfully updated table ${component.uiName}`,
+    item: component
   }
 }

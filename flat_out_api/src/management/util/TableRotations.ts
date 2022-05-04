@@ -1,5 +1,5 @@
 /**
- * TABLE ROTATIONS: For this table, evaluate every configuration and apply necessary table rotations
+ * For a given table, evaluate every configuration and apply necessary table rotations to the table.
  * @param table
  */
 import {IFomTable, IFomTableRotationConfig} from "../../interfaces/IFomTable";
@@ -18,12 +18,13 @@ export function tableRotations(table: IFomTable) {
 }
 
 /**
- * GET NEXT: Calculate the next update time based on the configuration of the table rotation.
+ * Calculate the next update time based on the configuration of the table rotation.
  * @param config
  * @param date
  * @param jumps
  */
-function getNextAndJumps(config: IFomTableRotationConfig, date: Date, jumps: number = 0): { newNext: Date, jumps: number } {
+function getNextAndJumps(config: IFomTableRotationConfig, date: Date,
+  jumps: number = 0): { newNext: Date, jumps: number } {
   // Re-config to UTC
   let today = new Date()
   let newNext = new Date(date)
@@ -69,7 +70,7 @@ function getNextAndJumps(config: IFomTableRotationConfig, date: Date, jumps: num
 
 
 /**
- * ROTATE COLUMN: With the new update time, rotate this column such that it represents the most up-to-date state.
+ * With the new update time, rotate this column such that it represents the most up-to-date state.
  * @param config
  * @param table
  * @param jumps
@@ -93,6 +94,13 @@ function rotateColumn(config: IFomTableRotationConfig, table: IFomTable, jumps: 
   table.records = newTable
 }
 
+/**
+ * A table can be configured with many headers. In order to avoid rotating on a header, find the next NON FIELD
+ * (header).
+ * @param index
+ * @param numOfEntries
+ * @param indexes
+ */
 function findNonField(index: number, numOfEntries: number, indexes: number[]): number {
   if (!indexes.includes(index)) return index
   return findNonField(index - 1 < 0 ? numOfEntries - 1 : index - 1, numOfEntries, indexes)

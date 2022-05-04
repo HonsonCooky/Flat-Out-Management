@@ -1,3 +1,4 @@
+import 'package:flat_out_app/components/molecules/auth_text_confirm_passwords.dart';
 import 'package:flat_out_app/components/molecules/auth_text_field.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
@@ -47,22 +48,13 @@ class _GroupSignupPageState extends State<GroupCreatePage> {
           controller: uName,
           hintText: "Flat Name",
         ),
-        AuthTextField(
+        AuthTextConfirmPasswords(
           onChanged: (_) {
             setState(() {});
           },
-          canObscure: true,
           controller: pWord,
+          controller2: pWordCon,
           hintText: "Flat Password",
-        ),
-        AuthTextField(
-          onChanged: (_) {
-            setState(() {});
-          },
-          canObscure: true,
-          controller: pWordCon,
-          hintText: "Confirm Flat Password",
-          error: pWord.text != pWordCon.text ? "Mismatched Password" : null,
         ),
         Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 20),
