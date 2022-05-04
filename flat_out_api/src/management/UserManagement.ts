@@ -84,7 +84,7 @@ export async function userSearch(req: Request, res: Response): Promise<IFomRes> 
       {name: {$regex: reg}},
       {uiName: {$regex: reg}},
     ]
-  }).select([ "_id", "name", "uiName", "colorAssociation"])
+  }).select(["_id", "name", "uiName", "colorAssociation"])
 
   // Broaden search (basic)
   if (userList.length === 0 && !searchStr.includes('.*')) {
