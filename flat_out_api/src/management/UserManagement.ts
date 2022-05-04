@@ -73,6 +73,31 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
   }
 }
 
+export async function userSearch(req: Request, res: Response): Promise<IFomRes> {
+  let searchStr: string | null = req.query?.u as string
+  if (!searchStr) throw new Error('400: Missing search string')
+
+  let reg: RegExp = RegExp(`.*${searchStr}.*`, "i")
+
+  let userList: IFomUser[] = await UserModel.find({
+    $or: [
+      {name: {$regex: reg}},
+      {uiName: {$regex: reg}},
+    ]
+  }).select([ "_id", "name", "uiName", "colorAssociation"])
+
+  // Broaden search (basic)
+  if (userList.length === 0 && !searchStr.includes('.*')) {
+    req.query.u = `.*${searchStr.split('').join('.*')}.*`
+    return userSearch(req, res)
+  }
+
+  return {
+    msg: `Successfully found ${userList.length} result(s)`,
+    item: userList
+  }
+}
+
 /**
  * Update a user document
  * @param req

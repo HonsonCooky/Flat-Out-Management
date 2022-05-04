@@ -1,6 +1,6 @@
 import express from "express";
 import {routeHandler} from "../middleware/RouteHandler";
-import {userDelete, userGet, userRegister, userUpdate} from "../management/UserManagement";
+import {userDelete, userGet, userRegister, userSearch, userUpdate} from "../management/UserManagement";
 import {extractJwt} from "../middleware/ExtractJwt";
 
 export const userRoutes = express.Router({mergeParams: true})
@@ -8,4 +8,5 @@ export const userRoutes = express.Router({mergeParams: true})
 userRoutes.post(`/get`, routeHandler(userGet))
 userRoutes.post(`/register`, routeHandler(userRegister))
 userRoutes.post(`/delete`, routeHandler(userDelete))
-userRoutes.post(`/update`, extractJwt(false), routeHandler(userUpdate))
+userRoutes.get(`/search`, extractJwt(), routeHandler(userSearch))
+userRoutes.post(`/update`, extractJwt(), routeHandler(userUpdate))
