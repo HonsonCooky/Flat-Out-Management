@@ -6,13 +6,15 @@ const known400ErrorMessages = [
   '400',
   'duplicate',
   'validation failed',
-  'missing expected rejection:'
+  'expected rejection'
 ]
 
 function jsonError(msg: string): IFomRes {
-  return {msg: msg.replace(/400: /g, '')
+  return {
+    msg: msg.replace(/400: /g, '')
       .replace(/500: /g, '')
-      .replace('missing expected rejection:', '')}
+      .replace('missing expected rejection: ', '')
+  }
 }
 
 /**
@@ -25,9 +27,9 @@ function jsonError(msg: string): IFomRes {
  * @param _
  */
 export const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response, _: NextFunction) => {
-  let msg: string = err.message
+  let msg: string = err.message.toLowerCase()
 
-  if (known400ErrorMessages.some((eMsg: string) => eMsg.toLowerCase().includes(msg.toLowerCase()))) {
+  if (known400ErrorMessages.some((eMsg: string) => msg.includes(eMsg.toLowerCase()))) {
     fomLogger.warn(msg, err)
     res.status(400).send(jsonError(msg))
     return
