@@ -35,13 +35,13 @@ const DATABASE_ACCESS: string =
 
 
 /**
- * VERSION: Get the VCS value from the package.json
+ * Get the VCS value from the package.json
  */
 const packageJson: any = require('../../package.json')
 const fomVersion: string = packageJson.version
 
 /**
- * EXPORT: Export all the above, tied with a bow, in an object
+ * Export all the above, tied with a bow, in an object
  */
 export const env = {
   devMode: DATABASE_ENVIRONMENT === '-t01',

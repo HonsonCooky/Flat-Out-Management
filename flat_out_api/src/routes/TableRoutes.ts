@@ -8,6 +8,6 @@ import {componentDelete, componentGet} from "../management/GenericManagement";
 export const tableRoutes = express.Router({mergeParams: true})
 
 tableRoutes.post(`/register`, extractJwt(), routeHandler(tableRegister))
-tableRoutes.get(`${idRegExp}/get`, extractJwt(), routeHandler(componentGet))
+tableRoutes.post(`${idRegExp}/get`, extractJwt(), routeHandler(componentGet))
 tableRoutes.post(`${idRegExp}/update`, extractJwt(), routeHandler(tableUpdate))
 tableRoutes.delete(`${idRegExp}/delete`, extractJwt(), routeHandler(componentDelete))

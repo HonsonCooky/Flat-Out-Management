@@ -11,7 +11,7 @@ import {ModelType} from "../../interfaces/IFomEnums";
 
 
 /**
- * TABLE SCHEMA: Translates the IFomTable interface into a mongoose.Schema.
+ * Translates the IFomTable interface into a mongoose.Schema.
  * Tables are used to store a variety of different information, in different formats.
  *
  * - fieldIndexes: outlines which columns in a row should be considered "fields". Front end is responsible for how

@@ -2,40 +2,45 @@ import {Request, Response} from "express";
 import {UserModel} from "../schemas/documents/UserSchema";
 import {saltAndHash, signJWT} from "./util/AuthenticationPartials";
 import {Types} from "mongoose";
-import {preDocRemoval} from "./util/GenericPartials";
+import {authLevel, preDocRemoval} from "./util/GenericPartials";
 import {getController} from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomRes} from "../interfaces/IFomRes";
 import {IFomUser} from "../interfaces/IFomUser";
 import {IFomAssociation} from "../interfaces/IFomAssociation";
-import {ModelType} from "../interfaces/IFomEnums";
+import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomGroup} from "../interfaces/IFomGroup";
 
 
 /**
- * USER REGISTER: Create a new user document
+ * Create a new user document
  * @param req
  * @param res
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, uiName, uiColor} = req.body
+  let {name, password, uiName} = req.body
+  let randColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
+
   let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
-    colorAssociation: uiColor ?? `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
+    colorAssociation: randColor,
     dynUuid: new Types.ObjectId()
   })
+  let token: string = signJWT(user, req.body.expiresIn)
 
   await user.save()
 
   return {
-    msg: `Successfully registered user ${uiName ?? name}`
+    msg: `Successfully registered user ${uiName ?? name}`,
+    item: user,
+    token
   }
 }
 
 /**
- * USER GET: Get a user, with Username and Password
+ * Get a user, with Username and Password
  * @param req
  * @param res
  */
@@ -53,7 +58,7 @@ export async function userGet(req: Request, res: Response): Promise<IFomRes> {
 }
 
 /**
- * USER DELETE: Delete a user from the document db
+ * Delete a user from the document db
  * @param req
  * @param res
  */
@@ -68,13 +73,38 @@ export async function userDelete(req: Request, res: Response): Promise<IFomRes> 
   }
 }
 
+export async function userSearch(req: Request, res: Response): Promise<IFomRes> {
+  let searchStr: string | null = req.query?.u as string
+  if (!searchStr) throw new Error('400: Missing search string')
+
+  let reg: RegExp = RegExp(`.*${searchStr}.*`, "i")
+
+  let userList: IFomUser[] = await UserModel.find({
+    $or: [
+      {name: {$regex: reg}},
+      {uiName: {$regex: reg}},
+    ]
+  }).select([ "_id", "name", "uiName", "colorAssociation"])
+
+  // Broaden search (basic)
+  if (userList.length === 0 && !searchStr.includes('.*')) {
+    req.query.u = `.*${searchStr.split('').join('.*')}.*`
+    return userSearch(req, res)
+  }
+
+  return {
+    msg: `Successfully found ${userList.length} result(s)`,
+    item: userList
+  }
+}
+
 /**
- * USER UPDATE: Update a user document
+ * Update a user document
  * @param req
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, uiName, outOfFlatDates, outOfFlatDate} = req.body
+  let {newName, newPassword, uiName, uiColor, outOfFlatDates, outOfFlatDate} = req.body
   let user: IFomUser
 
   if (newName || newPassword) {
@@ -86,6 +116,7 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   }
 
   user.uiName = uiName ?? user.uiName
+  user.colorAssociation = uiColor ?? user.colorAssociation
 
   if (outOfFlatDates || outOfFlatDate) {
     if (outOfFlatDates) user.outOfFlatDates = outOfFlatDates
@@ -102,13 +133,13 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
 }
 
 /**
- *
+ * When the user updates an outOfFlatDates, then the group their associated with need to know that as well.
  * @param user
  */
 async function dateUpdate(user: IFomUser) {
   (await user.populate({path: 'children.ref'}))
     .children
-    .filter((a: IFomAssociation) => a.model === ModelType.GROUP)
+    .filter((a: IFomAssociation) => a.model === ModelType.GROUP && authLevel(a.role) < authLevel(RoleType.READER))
     .map((a: any) => a.ref as IFomGroup)
     .forEach((g: IFomGroup) => groupCalendar(g))
 }

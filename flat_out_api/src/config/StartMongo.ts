@@ -25,7 +25,7 @@ export function startMongo() {
 }
 
 /**
- * CLEAN DOCUMENTS: Delete any documents that have no associations AND were last updated one week ago
+ * Delete any documents that have no associations AND were last updated 26 weeks ago
  */
 async function cleanDocuments(type: ModelType) {
   fomLogger.info(`Cleaning ${type} documents`)
@@ -36,7 +36,7 @@ async function cleanDocuments(type: ModelType) {
 
   for (let doc of docs)
     if (doc.children.length === 0)
-      if ((today.getTime() - new Date(doc.updatedAt).getTime()) > (1000 * 60 * 60 * 24 * 7))
+      if ((today.getTime() - new Date(doc.updatedAt).getTime()) > (1000 * 60 * 60 * 24 * 7 * 26))
         await doc.deleteOne()
 
   fomLogger.info(`${type} documents cleaned`)

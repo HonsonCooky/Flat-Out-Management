@@ -1,6 +1,7 @@
 /**
- * MODEL TYPE: Identifies all potential collections that clients can interact with. The specific outline of these
- * enums allows for dynamically finding MongoDB models, without creating extra unnecessary models (with spelling errors).
+ * Identifies all potential collections that clients can interact with. The specific outline of these
+ * enums allows for dynamically finding MongoDB models, without creating extra unnecessary models (with spelling
+ * errors).
  */
 export enum ModelType {
   USER = 'user',
@@ -9,40 +10,40 @@ export enum ModelType {
 }
 
 /**
- * ROLE TYPE: Identifies levels of user authorization.
+ * Identifies levels of user authorization.
  */
 export enum RoleType {
-  OWNER,    // Authority to read/write/delete/alter associations
-  WRITE,    // Authority to read/write
-  READ,     // Authority to read
-  REQUEST,  // Asking for some level of authority
-  MENTIONED   // No role require
+  OWNER = 'owner',
+  WRITER = 'writer',
+  READER = 'reader',
+  REQUEST = 'request',
+  MENTIONED = 'mentioned'
 }
 
 /**
- * EVENT TYPE: Identifies how events are related to the user
+ * Identifies how events are related to the user
  */
 export enum EventType {
-  USER,
-  GROUP,
-  MENTIONED,
+  USER = 'user',
+  GROUP = 'group',
+  MENTIONED = 'mentioned',
 }
 
 /**
- * TIME INTERVALS: Identifies how often some update must occur.
+ * Identifies how often some update must occur.
  */
 export enum TimeIntervals {
-  DAILY,
-  WEEKLY,
-  MONTHLY,
-  ANNUALLY
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  ANNUALLY = 'annually'
 }
 
 /**
- * LOG LEVEL: Logged information will have some level of error.
+ * Logged information will have some level of error.
  */
 export enum LogLevel {
-  INFO,
-  WARN,
-  ERROR
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error'
 }

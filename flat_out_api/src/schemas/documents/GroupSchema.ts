@@ -6,7 +6,7 @@ import {ModelType} from "../../interfaces/IFomEnums";
 
 
 /**
- * GROUP SCHEMA: Translates the IFomGroup interface into a mongoose.Schema
+ * Translates the IFomGroup interface into a mongoose.Schema
  * Group objects are used to maintain information about a group.
  *
  * - UiName: Overwrites uiName such that it has to be unique.

@@ -5,16 +5,17 @@ import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 
 /**
- * ROLE SCORE: Returns the authority level of the role. 0 being most important.
+ * Enums are string values, enables easier front end development (flutter).
+ * As such, this helper method provides authorization enums with a integer value. Higher = less authorization.
  * @param role
  */
 export function authLevel(role: RoleType): number {
   switch (role) {
     case RoleType.OWNER:
       return 0
-    case RoleType.WRITE:
+    case RoleType.WRITER:
       return 1
-    case RoleType.READ:
+    case RoleType.READER:
       return 2
     case RoleType.REQUEST:
       return 3
@@ -24,7 +25,7 @@ export function authLevel(role: RoleType): number {
 }
 
 /**
- * GET TYPE FROM DOC: Getters above will find some document, but this method will help identify what that document is.
+ * Get the ModelType based on the contents of the document. Usually used for when a component is unknown.
  * @param doc
  */
 export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelType {
@@ -35,7 +36,7 @@ export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelType {
 }
 
 /**
- * CONNECT DOCUMENTS: Connect a parent and child together
+ * Connect a parent and child together. Seems straight forward, but some necessary checks are put in place just incase.
  * @param parent
  * @param child
  * @param role
@@ -45,42 +46,72 @@ export async function connectDocuments(
   child: { item: IFomComponent, model: ModelType },
   role: RoleType): Promise<void> {
 
-  if (
-    parent.item.children.some((a: IFomAssociation) => a.ref.equals(child.item._id)) ||
+  if (child.model === ModelType.USER) throw new Error('400: Users connect together via groups, not via each other')
+
+  if (parent.item.children.some((a: IFomAssociation) => a.ref.equals(child.item._id)) ||
     child.item.parents.some((a: IFomAssociation) => a.ref.equals(parent.item._id))
-  ) return
+  ) throw new Error("400: Documents are already connected")
 
-  await parent.item.updateOne({
-    children: [...parent.item.children, {ref: child.item._id, model: child.model, role}]
-  })
+  parent.item.children = [...parent.item.children, {ref: child.item._id, model: child.model, role}]
+  await parent.item.save();
 
-  await child.item.updateOne({
-    parents: [...child.item.parents, {ref: parent.item._id, model: parent.model, role}]
-  })
-
+  child.item.parents = [...child.item.parents, {ref: parent.item._id, model: parent.model, role}]
+  await child.item.save()
 }
 
 
 /**
- * REMOVE DOCUMENT FROM ASSOCIATIONS: Before deleting some document, remove its reference from all associations.
+ * Due to the connected nature of this backend, document removal is slightly more complicated. Removing a document
+ * means removing it from all associations. In cases where this is the last parent of some association, then the
+ * association must also be deleted (else we risk losing a reference to the document)
  * @param doc
  * @param parents
  * @param children
  */
 export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
-                                    children: IFomAssociation[], parents?: IFomAssociation[]) {
+  children: IFomAssociation[], parents?: IFomAssociation[]) {
 
+  // Remove child from parents
   if (parents) for await (let parent of parents
     .map(async (a: IFomAssociation) => (await models[a.model]
       .findOne({_id: a.ref}) as IFomController | IFomComponent))) {
     await parent.updateOne({children: parent.children.filter((b: IFomAssociation) => !doc._id.equals(b.ref))})
   }
 
-  for await (let child of children
-    .map(async (a: IFomAssociation) => (await models[a.model]
-      .findOne({_id: a.ref}) as IFomComponent))) {
-    let otherParents = child.parents.filter((b: IFomAssociation) => !doc._id.equals(b.ref))
-    if (otherParents.length === 0) await child.deleteOne()
-    else await child.updateOne({parents: otherParents})
+  // Remove parent from children
+  for (let child of children) {
+    let component: IFomComponent | null = await models[child.model].findOne({_id: child.ref});
+    if (!component) continue
+
+    // We are the last user of this component, remove it, before we remove all means of connecting to it.
+    if (component.parents.length === 1) {
+      await component.deleteOne();
+      continue;
+    }
+
+    // Filter out this child
+    let otherParents: IFomAssociation[] = component.parents.filter((b: IFomAssociation) => !doc._id.equals(b.ref))
+
+    // Re-associate ownership if needed
+    if (child.role === RoleType.OWNER
+      && otherParents.filter((b: IFomAssociation) => b.role === RoleType.OWNER).length === 0) {
+      let potentialOwners: IFomAssociation[] = otherParents.filter((b: IFomAssociation) => b.role === RoleType.WRITER);
+
+      // If no other owners can associate to this one, then simply delete
+      if (potentialOwners.length === 0) {
+        await component.deleteOne();
+        continue;
+      }
+
+      for (let po of potentialOwners) {
+        let parent: IFomAssociation | undefined = otherParents.find(
+          (a: IFomAssociation) => a.ref.equals(potentialOwners[0].ref))
+        if (!parent) continue;
+        parent.role = RoleType.OWNER
+        break;
+      }
+    }
+
+    await component.updateOne({parents: otherParents})
   }
 }

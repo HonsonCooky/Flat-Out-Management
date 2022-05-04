@@ -13,11 +13,14 @@ const log = (message: string, object?: any, logLevel?: LogLevel) => {
 
   if (!env.devMode && env.mongo.isDbConnected()) {
     localLogs.forEach(log => {
-      (new LogModel(log)).save().then().catch()
+      (new LogModel(log)).save().then().catch(_ => localLogs.push(log))
     })
     localLogs = []
+    LogModel.find().sort({createdAt: 1}).limit(100);
   }
 }
+
+log("hello");
 
 const info = (message: string, object?: any) =>
   log(message, object)

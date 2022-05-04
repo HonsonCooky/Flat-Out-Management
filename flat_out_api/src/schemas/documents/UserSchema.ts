@@ -6,10 +6,11 @@ import {ModelType} from "../../interfaces/IFomEnums";
 
 
 /**
- * USER SCHEMA: Translates the IFomUser interface into a mongoose.Schema.
+ * Translates the IFomUser interface into a mongoose.Schema.
  * User objects are used to maintain information about the user.
  *
  * - outOfFlatDates: IFomEvents which detail information to maintain the users itinerary
+ * - colorAssociation: Each user needs some color associated with them for the front end ui
  */
 const UserSchema = new Schema<IFomUser>({
   ...FomControllerSchemaDef,
