@@ -27,7 +27,7 @@ function jsonError(msg: string): IFomRes {
 export const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response, _: NextFunction) => {
   let msg: string = err.message
 
-  if (known400ErrorMessages.some((eMsg: string) => eMsg.includes(msg))) {
+  if (known400ErrorMessages.some((eMsg: string) => eMsg.toLowerCase().includes(msg.toLowerCase()))) {
     fomLogger.warn(msg, err)
     res.status(400).send(jsonError(msg))
     return
