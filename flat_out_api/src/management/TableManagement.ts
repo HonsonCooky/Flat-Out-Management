@@ -9,7 +9,7 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
-import {componentPushNewParents} from "./GenericManagement";
+import {componentPushParents} from "./GenericManagement";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -66,8 +66,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
     component.rotations = rotations ?? component.rotations
     if (rotation) component.rotations.push(rotation)
 
-    component.parents = parents ?? component.parents
-    if (newParents) componentPushNewParents(component, role, ...newParents)
+    if (parents || newParents) await componentPushParents(component, controller._id, (parents ?? []).concat(newParents))
   } else if (newPassword)
     throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
 

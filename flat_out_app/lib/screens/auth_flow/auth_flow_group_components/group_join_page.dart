@@ -76,7 +76,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                       .where((element) => element != RoleType.mentioned)
                       .map((e) => DropdownMenuItem<RoleType>(
                             value: e,
-                            child: Text(e.name.capitalize(), style: TextStyles.inputTextStyle(context: context)),
+                            child: Text(e.name.capitalize(), style: InputTextStyle(context: context)),
                           ))
                       .toList(),
                   onChanged: (RoleType? value) {

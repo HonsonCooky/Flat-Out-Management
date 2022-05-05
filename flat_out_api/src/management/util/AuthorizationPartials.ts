@@ -123,10 +123,12 @@ async function getBodyAssociation<T extends IFomComponent | IFomController>(req:
 export async function getRegisteringParent(req: Request, res: Response): Promise<IFomController | IFomComponent> {
   let controller: IFomController = await getController(res)
   let component: IFomComponent | null = await getBodyAssociation<IFomComponent>(req).catch((_) => null)
+
+  if (req.body.association && !component) throw new Error('400: Unauthorized use of association')
   if (!component) return controller
 
   let association: IFomAssociation = await getAssociation(controller._id, component)
-  if (authLevel(association.role) > authLevel(RoleType.WRITER)) throw new Error(`400: Unauthorized use of component`)
+  if (authLevel(association.role) > authLevel(RoleType.WRITER)) throw new Error(`400: Unauthorized use of association`)
   return component
 }
 

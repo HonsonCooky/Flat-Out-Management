@@ -10,6 +10,7 @@ import {IFomGroup} from "../interfaces/IFomGroup";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {IFomAssociation} from "../interfaces/IFomAssociation";
+import {models, Types} from "mongoose";
 
 /**
  * Retrieve a component from the database from a URL id.
@@ -61,35 +62,48 @@ export async function componentDelete(req: Request, res: Response): Promise<IFom
 /**
  * Overwrite current child associations with new ones
  * @param c
- * @param role
+ * @param id
  * @param children
  */
-export function componentPushNewChildren(c: IFomController | IFomComponent, role: RoleType,
+export async function componentPushChildren(c: IFomController | IFomComponent, id: Types.ObjectId,
   ...children: IFomAssociation[]) {
-  // Remove any parents with a higher auth than this role
-  children = children.filter((pa: IFomAssociation) => authLevel(pa.role) >= authLevel(role))
+  // Update new children list with ones not mentioned from old
+  children.push(
+    ...c.children.filter((ca: IFomAssociation) => children.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref))))
 
-  // With a list of legal updated association, alter the remaining
-  c.children =
-    c.children.filter((ca: IFomAssociation) => children.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref)) ||
-      children.length === 0)
+  // Remove all children who do not have a valid association
+  children = await Promise.all(
+    children.filter(async (ca: IFomAssociation) => !models[ca.model].findOne({_id: ca.ref})))
 
-  c.children.push(...children)
+  // Set children of controller || component
+  c.children = children
 }
 
 /**
  * Overwrite current parent associations with new ones
  * @param c
+ * @param id
  * @param parents
- * @param role
  */
-export function componentPushNewParents(c: IFomComponent, role: RoleType, ...parents: IFomAssociation[]) {
-  // Remove any parents with a higher auth than this role
-  parents = parents.filter((pa: IFomAssociation) => authLevel(pa.role) >= authLevel(role))
+export async function componentPushParents(c: IFomComponent, id: Types.ObjectId, ...parents: IFomAssociation[]) {
+  // Update new parents list with ones not mentioned from old
+  parents.push(
+    ...c.children.filter((ca: IFomAssociation) => parents.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref))))
 
-  // With a list of legal updated association, alter the remaining
-  c.parents = c.parents.filter((ca: IFomAssociation) => parents.some((pa: IFomAssociation) => !ca.ref.equals(pa.ref)) ||
-    parents.length === 0)
+  // Remove all parents who do not have a valid association
+  parents = await Promise.all(
+    parents.filter(async (ca: IFomAssociation) => !models[ca.model].findOne({_id: ca.ref})))
 
-  c.parents.push(...parents)
+  if (parents.length === 0) throw new Error('400: No more parents after update. Delete table instead.')
+
+  // Ensure at least one OWNER remains
+  if (!parents.some((a: IFomAssociation) => a.role === RoleType.OWNER)) {
+    // If no OWNER, try set one of the WRITERS to owner
+    let writer = parents.find((ca: IFomAssociation) => ca.role === RoleType.WRITER)
+    if (writer) writer.role = RoleType.OWNER
+    else parents[0].role = RoleType.OWNER // Last ditch effort
+  }
+
+  // Set parents of controller || component
+  c.parents = parents
 }

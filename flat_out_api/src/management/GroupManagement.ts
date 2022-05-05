@@ -13,7 +13,7 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
-import {componentPushNewChildren, componentPushNewParents} from "./GenericManagement";
+import {componentPushChildren, componentPushParents} from "./GenericManagement";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)
@@ -106,14 +106,12 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
 
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
-    component.parents = parents.length > 0 ? parents : component.parents
-    if (newParents) componentPushNewParents(component, role, ...newParents)
+    if (newParents) await componentPushParents(component, controller._id, (parents ?? []).concat(newParents))
   } else if (newPassword)
     throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
 
   component.uiName = newName ?? component.uiName
-  component.children = children.length > 0 ? children : component.children
-  if (newChildren) componentPushNewChildren(component, role, ...newChildren)
+  if (newChildren) await componentPushChildren(component, controller._id, (children ?? []).concat(newChildren))
 
   await groupRenew(component as IFomGroup)
 

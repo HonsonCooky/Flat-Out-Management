@@ -1,3 +1,4 @@
+import 'package:flat_out_app/components/atoms/button_styles.dart';
 import 'package:flutter/material.dart';
 
 class HeaderAnimatedSlide extends StatefulWidget {
@@ -22,8 +23,13 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
    * Returns a list of TextButton widgets from the buttonNames list.
    */
   List<Widget> _widgetList() {
+    int indexMax = widget.buttonNames.length - 1;
     return widget.buttonNames
-        .map<Widget>((String element) => TextButton(
+        .asMap()
+        .map<int, Widget>(
+          (int index, String element) => MapEntry(
+            index,
+            TextButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
                 if (element == widget.curPage) return;
@@ -32,15 +38,13 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
                 widget.controller.reset();
                 widget.controller.forward();
               },
-              style: ButtonStyle(
-                  foregroundColor: widget.curPage == element
-                      ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4?.color)
-                      : MaterialStateProperty.all(Theme.of(context).textTheme.headline5?.color),
-                  textStyle: widget.curPage == element
-                      ? MaterialStateProperty.all(Theme.of(context).textTheme.headline4)
-                      : MaterialStateProperty.all(Theme.of(context).textTheme.headline5)),
+              style: HeaderButtonStyle(
+                  context: context, curPage: widget.curPage, element: element, index: index, indexMax: indexMax),
               child: Text(element),
-            ))
+            ),
+          ),
+        )
+        .values
         .toList();
   }
 

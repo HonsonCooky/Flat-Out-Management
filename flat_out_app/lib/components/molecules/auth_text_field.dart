@@ -39,7 +39,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
       style: Theme.of(context).textTheme.labelLarge,
       decoration: InputDecoration(
         hintText: widget.readOnly ? "Not Required" : widget.hintText,
-        hintStyle: TextStyles.inputTextStyle(context: context, readOnly: widget.readOnly),
+        hintStyle: InputTextStyle(context: context, readOnly: widget.readOnly),
         errorText: widget.errorText,
         errorBorder: UnderlineInputBorder(borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)),
         suffixIcon: widget.obscureText != null
