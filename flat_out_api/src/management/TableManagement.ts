@@ -62,7 +62,8 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
     component.rotations = rotations ?? component.rotations
-    if (parents) await componentUpdateConnections(component.parents, parents);
+    component.parents = await componentUpdateConnections(component.parents, parents);
+    console.log(component.parents)
   }
 
   component.uiName = newName ?? component.uiName

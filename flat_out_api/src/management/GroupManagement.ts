@@ -105,11 +105,11 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
 
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
-    if (parents) await componentUpdateConnections(component.parents, parents);
+    component.parents = await componentUpdateConnections(component.parents, parents);
   }
 
   component.uiName = newName ?? component.uiName
-  if (children) await componentUpdateConnections(component.children, children, false);
+  component.children = await componentUpdateConnections(component.children, children, false);
 
   await groupRenew(component as IFomGroup)
 

@@ -124,16 +124,24 @@ export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: a
  * @param requiresOwner
  */
 export async function componentUpdateConnections(refArr: IFomAssociation[], update: IFomAssociation[],
-  requiresOwner: boolean = true) {
-  refArr = update
+  requiresOwner: boolean = true): Promise<IFomAssociation[]> {
+  if (!update) return refArr
+
+  // Remove duplicates
+  update = update.filter((value, index, self) =>
+    index === self.findIndex((t) => t.ref === value.ref)
+  )
 
   // Remove references that have no DB counterpart
-  refArr =
-    await Promise.all(refArr.filter(async (ca: IFomAssociation) => !!(await models[ca.model].findOne({_id: ca.ref}))))
+  update =
+    await Promise.all(update.filter(async (ca: IFomAssociation) => !!(await models[ca.model].findOne({_id: ca.ref}))))
 
-  if (refArr.length === 0) throw new Error('400: No more parents after update. Try delete instead?')
+  // Ensure that some reference to this component remains
+  if (update.length === 0) throw new Error('400: No more parents after update. Try delete instead?')
 
   // Ensure at least one OWNER remains
-  if (requiresOwner && !refArr.some((a: IFomAssociation) => a.role === RoleType.OWNER))
+  if (requiresOwner && !update.some((a: IFomAssociation) => a.role === RoleType.OWNER))
     throw new Error('400: Updates leave remove an owner. Components require an owner')
+
+  return update
 }
