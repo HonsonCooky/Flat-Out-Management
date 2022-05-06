@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
+import {authLevel, componentUpdateConnections, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
 import {getRegisteringParent, getUserChildAndRoleUrl} from "./util/AuthorizationPartials";
@@ -9,7 +9,6 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
-import {componentPushParents} from "./GenericManagement";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -54,7 +53,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, fieldIndexes, records, addRecords, rotations, rotation, parents, newParents} = req.body
+  let {newName, newPassword, fieldIndexes, records, rotations, parents} = req.body
   let {controller, component, role} = await getUserChildAndRoleUrl<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -62,19 +61,13 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
 
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
-
     component.rotations = rotations ?? component.rotations
-    if (rotation) component.rotations.push(rotation)
-
-    if (parents || newParents) await componentPushParents(component, controller._id, (parents ?? []).concat(newParents))
-  } else if (newPassword)
-    throw new Error(`400: Invalid authorization to update table password. Only the owner can do this`)
-
+    if (parents) await componentUpdateConnections(component.parents, parents);
+  }
 
   component.uiName = newName ?? component.uiName
   component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
   component.records = records ?? component.records
-  if (addRecords) component.records.push(addRecords)
 
   await tableRenew(component as IFomTable)
 

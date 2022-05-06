@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {GroupModel} from "../schemas/documents/GroupSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {authLevel, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
+import {authLevel, componentUpdateConnections, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {
   getControllerAndComponentUName,
   getRegisteringParent,
@@ -13,7 +13,6 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {IFomController} from "../interfaces/IFomController";
 import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
-import {componentPushChildren, componentPushParents} from "./GenericManagement";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)
@@ -98,7 +97,7 @@ export async function groupRequestJoin(req: Request, res: Response): Promise<IFo
  * @param res
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, parents, children, newParents, newChildren} = req.body
+  let {newName, newPassword, parents, children} = req.body
   let {controller, component, role} = await getUserChildAndRoleUrl<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -106,12 +105,11 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
 
   if (role === RoleType.OWNER) {
     component.password = saltAndHash(newPassword) ?? component.password
-    if (newParents) await componentPushParents(component, controller._id, (parents ?? []).concat(newParents))
-  } else if (newPassword)
-    throw new Error(`400: Invalid authorization to update group name or password. Only the owner can do this`)
+    if (parents) await componentUpdateConnections(component.parents, parents);
+  }
 
   component.uiName = newName ?? component.uiName
-  if (newChildren) await componentPushChildren(component, controller._id, (children ?? []).concat(newChildren))
+  if (children) await componentUpdateConnections(component.children, children, false);
 
   await groupRenew(component as IFomGroup)
 

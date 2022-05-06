@@ -30,6 +30,7 @@ async function getAssociation(
 
     // Else get the item, push it onto the seen pile
     let parentFound = await models[parentAssociation.model].findOne({_id: parentAssociation.ref}, ['_id', 'parents'])
+    if (!parentFound) continue
     seen.push(parentFound._id)
 
     // Attempt to get the ref from the item (parent's parent, etc)
