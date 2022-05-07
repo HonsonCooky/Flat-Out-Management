@@ -34,18 +34,23 @@ class _AuthTextConfirmPasswordsState extends State<AuthTextConfirmPasswords> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.controller2 != null
-        ? Row(
-          children: [
-            Expanded(
-              child: Column(
+    if (widget.controller2 != null) {
+      return Row(children: [
+        Expanded(
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AuthTextField(
-                    onChanged: widget.onChanged,
-                    hintText: widget.hintText,
-                    controller: widget.controller,
-                    readOnly: widget.readOnly,
-                    visiblePassword: _visiblePasswords,
+                  Container(
+                    width: MediaQuery.of(context).size.width / 1.6,
+                    child: AuthTextField(
+                      onChanged: widget.onChanged,
+                      hintText: widget.hintText,
+                      controller: widget.controller,
+                      readOnly: widget.readOnly,
+                      visiblePassword: _visiblePasswords,
+                    ),
                   ),
                   AuthTextField(
                     onChanged: widget.onChanged,
@@ -57,21 +62,29 @@ class _AuthTextConfirmPasswordsState extends State<AuthTextConfirmPasswords> {
                   ),
                 ],
               ),
-            ),
-            IconButton(
-              icon: Icon(_visiblePasswords ? Icons.visibility : Icons.visibility_off),
-              splashRadius: Theme.of(context).textTheme.labelLarge?.fontSize,
-              onPressed: obscureText,
-            )
-          ]
-        )
-        : AuthTextField(
-            onChanged: widget.onChanged,
-            hintText: widget.hintText,
-            controller: widget.controller,
-            readOnly: widget.readOnly,
-            visiblePassword: _visiblePasswords,
-            obscureText: obscureText,
-          );
+              Positioned(
+                left: MediaQuery.of(context).size.width / 1.5,
+                top: Theme.of(context).textTheme.labelLarge?.fontSize,
+                child: IconButton(
+                  alignment: Alignment.bottomCenter,
+                  icon: Icon(_visiblePasswords ? Icons.visibility_off : Icons.visibility),
+                  splashRadius: 1.5 * (Theme.of(context).textTheme.labelLarge?.fontSize ?? 10),
+                  onPressed: widget.readOnly ? null : obscureText,
+                ),
+              )
+            ],
+          ),
+        ),
+      ]);
+    } else {
+      return AuthTextField(
+        onChanged: widget.onChanged,
+        hintText: widget.hintText,
+        controller: widget.controller,
+        readOnly: widget.readOnly,
+        visiblePassword: _visiblePasswords,
+        obscureText: obscureText,
+      );
+    }
   }
 }

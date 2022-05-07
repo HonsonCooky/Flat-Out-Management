@@ -32,8 +32,10 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
           widget.successToast(res.msg, context);
           context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
         } else {
-          widget.successToast("You've successfully requested to join group ${_gName.text}. This won't take effect "
-              "until an owner of the group has authorized your request", context);
+          widget.successToast(
+              "You've successfully requested to join group ${_gName.text}. This won't take effect "
+              "until an owner of the group has authorized your request",
+              context);
         }
         context.read<RuntimeCache>().readyCache();
       } else
@@ -42,6 +44,77 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
       widget.fuckMeToast("${e}", context);
     }
     setState(() => _isLoading = false);
+  }
+
+  void showAuthorityAlert() {
+    Alert.showAlertDialog(
+      context: context,
+      title: "Flat Group Authority",
+      body: RichText(
+        text: TextSpan(
+          style: Theme.of(context).textTheme.bodyText1,
+          children: [
+            TextSpan(
+              text: "Password Required:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            TextSpan(
+              text: "\n\nOwner: ",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+              ),
+            ),
+            TextSpan(
+                text: "To become an owner, signup as a flatmate. Owners of the group can then "
+                    "assign you to being an owner"),
+            TextSpan(
+              text: "\n\nFlatmate: ",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+              ),
+            ),
+            TextSpan(
+              text: "You share a flat with the members of this group.",
+            ),
+            TextSpan(
+              text: "\n\nAssociate: ",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+              ),
+            ),
+            TextSpan(
+              text: "You know someone in this group (you could be a partner, friend, landlord, etc).",
+            ),
+            TextSpan(
+              text: "\n\n\nNo Password:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            TextSpan(
+              text: "\n\nRequest: ",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff383e64),
+              ),
+            ),
+            TextSpan(
+              text: "Request's will notify owners of the group that you want to join. Said owners can "
+                  "accept you into the group and will select your authority at that time.",
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -73,7 +146,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   value: _type,
                   items: RoleType.values
-                      .where((element) => element != RoleType.mentioned)
+                      .where((element) => element != RoleType.mentioned && element != RoleType.owner)
                       .map((e) => DropdownMenuItem<RoleType>(
                             value: e,
                             child: Text(e.name.capitalize(), style: InputTextStyle(context: context)),
@@ -94,75 +167,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
               ),
               IconButton(
                 splashRadius: Theme.of(context).textTheme.subtitle1?.fontSize,
-                onPressed: () {
-                  Alert.showAlertDialog(
-                    context: context,
-                    title: "Flat Group Authority",
-                    body: RichText(
-                      text: TextSpan(
-                        style: Theme.of(context).textTheme.bodyText1,
-                        children: [
-                          TextSpan(
-                            text: "Password Required:",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          TextSpan(
-                            text: "\n\nOwner: ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                            ),
-                          ),
-                          TextSpan(text: "To become an owner, signup as a flatmate. Owners of the group can then "
-                              "assign you to being an owner"),
-                          TextSpan(
-                            text: "\n\nFlatmate: ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                            ),
-                          ),
-                          TextSpan(
-                            text: "You share a flat with the members of this group.",
-                          ),
-                          TextSpan(
-                            text: "\n\nAssociate: ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                            ),
-                          ),
-                          TextSpan(
-                            text: "You know someone in this group (you could be a partner, friend, landlord, etc).",
-                          ),
-                          TextSpan(
-                            text: "\n\n\nNo Password:",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          TextSpan(
-                            text: "\n\nRequest: ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff383e64),
-                            ),
-                          ),
-                          TextSpan(
-                            text: "Request's will notify owners of the group that you want to join. Said owners can "
-                                "accept you into the group and will select your authority at that time.",
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                onPressed: showAuthorityAlert,
                 color: Colors.grey,
                 icon: Icon(Icons.help),
                 iconSize: Theme.of(context).textTheme.subtitle1?.fontSize,

@@ -4,9 +4,10 @@ part 'fom_search_parents.g.dart';
 
 @JsonSerializable()
 class FomSearchParents {
-  @JsonKey(name: "_id") String id;
+  @JsonKey(name: "_id")
+  String id;
   String uiName;
-  
+
   FomSearchParents(this.id, this.uiName);
 
   factory FomSearchParents.fromJson(Map<String, dynamic> json) => _$FomSearchParentsFromJson(json);

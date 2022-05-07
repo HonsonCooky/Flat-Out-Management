@@ -12,6 +12,10 @@ class FomThemes {
       cardColor: Color(0xffe8e5e0),
       dividerColor: Color(0xff383e64),
       errorColor: Color(0xffe94f41),
+      iconTheme: IconThemeData(
+        color: Colors.grey,
+      ),
+      disabledColor: Color(0x55e94f41),
       appBarTheme: AppBarTheme(
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Color(0xff383e64),

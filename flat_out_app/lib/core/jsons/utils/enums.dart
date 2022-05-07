@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 
 enum ModelType { user, group, table }
 enum RoleType { owner, writer, reader, request, mentioned }
@@ -7,13 +7,13 @@ enum TimeIntervals { daily, weekly, monthly, annually }
 
 extension ModelTypeExtension on RoleType {
   String get name {
-    switch(this){
+    switch (this) {
       case RoleType.owner:
         return 'owner';
       case RoleType.writer:
         return 'flatmate';
       case RoleType.reader:
-        return 'association';
+        return 'associate';
       case RoleType.request:
         return 'request';
       case RoleType.mentioned:

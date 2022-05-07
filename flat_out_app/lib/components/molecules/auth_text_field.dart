@@ -8,10 +8,10 @@ class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final void Function(String)? onChanged;
-  
+
   final String? errorText;
   final bool readOnly;
-  
+
   final bool visiblePassword;
   final VoidCallback? obscureText;
 
@@ -44,9 +44,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
         errorBorder: UnderlineInputBorder(borderSide: BorderSide(width: 2.0, color: Theme.of(context).errorColor)),
         suffixIcon: widget.obscureText != null
             ? IconButton(
-                icon: Icon(widget.visiblePassword ? Icons.visibility : Icons.visibility_off),
+                color: Theme.of(context).iconTheme.color,
+                icon: Icon(widget.visiblePassword ? Icons.visibility_off : Icons.visibility),
                 splashRadius: Theme.of(context).textTheme.labelLarge?.fontSize,
-                onPressed: widget.obscureText,
+                onPressed: widget.readOnly ? null : widget.obscureText,
               )
             : null,
       ),

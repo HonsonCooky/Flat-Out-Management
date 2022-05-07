@@ -27,7 +27,7 @@ class _GroupAuthHeaderState extends State<GroupAuthHeader> with TickerProviderSt
       child: Column(
         children: [
           HeaderLogo(
-            title: "Setup with Flat Group",
+            title: "Setup Group Association",
           ),
           HeaderAnimatedSlide(
             controller: _controller,

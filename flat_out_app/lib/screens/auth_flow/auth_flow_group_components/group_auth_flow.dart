@@ -27,7 +27,7 @@ class _GroupAuthFlow extends State<GroupAuthFlow> {
     _createPage = GroupCreatePage();
     _curPage = _joinPage;
     Future.delayed(
-      Duration(seconds: 1),
+      Duration.zero,
       () {
         bool cacheReady = context.read<RuntimeCache>().cacheReady;
         if (cacheReady) return;
