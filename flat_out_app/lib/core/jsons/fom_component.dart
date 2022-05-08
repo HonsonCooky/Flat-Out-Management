@@ -9,8 +9,8 @@ part 'fom_component.g.dart';
 class FomComponent extends FomDbObject {
   List<FomAssociation> parents;
 
-  FomComponent(id, uiName, fomVersion, children, this.parents, createdAt, updatedAt)
-      : super(id, uiName, fomVersion, children, createdAt, updatedAt);
+  FomComponent(id, uiName, fomVersion, avatar, children, this.parents, createdAt, updatedAt)
+      : super(id, uiName, fomVersion, avatar, children, createdAt, updatedAt);
 
   factory FomComponent.fromJson(Map<String, dynamic> json) => _$FomComponentFromJson(json);
 

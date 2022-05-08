@@ -9,8 +9,8 @@ class FomController extends FomDbObject {
   String name;
   String token;
 
-  FomController(id, this.name, uiName, fomVersion, children, createdAt, updatedAt, this.token)
-      : super(id, uiName, fomVersion, children, createdAt, updatedAt);
+  FomController(id, this.name, uiName, fomVersion, avatar, children, createdAt, updatedAt, this.token)
+      : super(id, uiName, fomVersion, avatar, children, createdAt, updatedAt);
 
   factory FomController.fromJson(Map<String, dynamic> json) => _$FomControllerFromJson(json);
 
