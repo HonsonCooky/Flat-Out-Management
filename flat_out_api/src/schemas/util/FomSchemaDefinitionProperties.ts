@@ -4,7 +4,7 @@ import {EventType, ModelType, RoleType, TimeIntervals} from "../../interfaces/IF
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomEvent} from "../../interfaces/IFomEvent";
 import {IFomTable, IFomTableRecord, IFomTableRotationConfig} from "../../interfaces/IFomTable";
-
+import {IFomImage} from "../../interfaces/IFomImage";
 
 function getParent<T>(t: any): T {
   if (!t) throw new Error('500: Unable to get parent with null')
@@ -130,6 +130,20 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   required: true,
   sparse: true,
   unique: true,
+}
+
+/**
+ * A profile picture for some user
+ */
+export const FOM_AVATAR: SchemaDefinitionProperty<IFomImage> = {
+  data: {
+    type: Schema.Types.Buffer,
+    required: true
+  },
+  contentType: {
+    type: String,
+    required: true
+  }
 }
 
 /** ------------------------------------------------------------------------------------------------------------------

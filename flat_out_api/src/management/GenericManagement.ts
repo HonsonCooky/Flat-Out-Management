@@ -7,6 +7,25 @@ import {IFomRes} from "../interfaces/IFomRes";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomTable} from "../interfaces/IFomTable";
 import {IFomGroup} from "../interfaces/IFomGroup";
+import fs from "fs";
+import {IFomImage} from "../interfaces/IFomImage";
+import sharp from "sharp";
+
+
+export async function extractImageBuffer(req: Request): Promise<IFomImage | null> {
+  try {
+    if (!req.file) return null
+
+    return {
+      data: await sharp(fs.readFileSync('uploads/' + req.file.filename))
+        .resize(200, 200)
+        .toBuffer(),
+      contentType: req.file.mimetype
+    }
+  } catch (e) {
+    return null
+  }
+}
 
 /**
  * Retrieve a component from the database from a URL id.

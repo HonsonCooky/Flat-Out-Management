@@ -5,13 +5,17 @@ import {errorHandler} from "../middleware/ErrorHandling";
 import {fomLogger} from "./Logger";
 import {env} from "./Config";
 import {apiRoutes} from "../routes/ApiRoutes";
+import multer from "multer";
 
 export function startApi() {
   let webAPI = express()
+  let upload = multer({dest: 'uploads/'})
 
   // middleware BEFORE requests
   webAPI.use(helmet())
   webAPI.use(express.json())
+  webAPI.use(upload.single("avatar"));
+  webAPI.use(express.static('avatars'));
 
   // Initialize Routes
   webAPI.use(baseRoute)

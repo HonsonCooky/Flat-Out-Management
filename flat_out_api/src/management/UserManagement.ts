@@ -11,7 +11,6 @@ import {IFomAssociation} from "../interfaces/IFomAssociation";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomGroup} from "../interfaces/IFomGroup";
 
-
 /**
  * Create a new user document
  * @param req
@@ -19,14 +18,14 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
   let {name, password, uiName} = req.body
-  let randColor = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
+  let colorAssociation = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
 
   let user: IFomUser = new UserModel({
     name,
     password: saltAndHash(password),
     uiName: uiName ?? name,
-    colorAssociation: randColor,
-    dynUuid: new Types.ObjectId()
+    colorAssociation,
+    dynUuid: new Types.ObjectId(),
   })
   let token: string = signJWT(user, req.body.expiresIn)
 
@@ -104,7 +103,7 @@ export async function userSearch(req: Request, res: Response): Promise<IFomRes> 
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, uiName, uiColor, outOfFlatDates, outOfFlatDate} = req.body
+  let {newName, newPassword, uiName, uiColor, outOfFlatDates} = req.body
   let user: IFomUser
 
   if (newName || newPassword) {
@@ -118,9 +117,9 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   user.uiName = uiName ?? user.uiName
   user.colorAssociation = uiColor ?? user.colorAssociation
 
-  if (outOfFlatDates || outOfFlatDate) {
-    if (outOfFlatDates) user.outOfFlatDates = outOfFlatDates
-    else user.outOfFlatDates.push(outOfFlatDate)
+
+  if (outOfFlatDates) {
+    user.outOfFlatDates = outOfFlatDates
     await dateUpdate(user)
   }
 
@@ -137,10 +136,12 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
  * @param user
  */
 async function dateUpdate(user: IFomUser) {
-  (await user.populate({path: 'children.ref'}))
-    .children
-    .filter((a: IFomAssociation) => a.model === ModelType.GROUP && authLevel(a.role) < authLevel(RoleType.READER))
-    .map((a: any) => a.ref as IFomGroup)
-    .forEach((g: IFomGroup) => groupCalendar(g))
+  if (user.children && user.children.length > 0) {
+    let populated = await user.populate({path: 'children.ref'})
+    populated.children
+      .filter((a: IFomAssociation) => a.model === ModelType.GROUP && authLevel(a.role) < authLevel(RoleType.READER))
+      .map((a: any) => a.ref as IFomGroup)
+      .forEach((g: IFomGroup) => groupCalendar(g))
+  }
 }
 

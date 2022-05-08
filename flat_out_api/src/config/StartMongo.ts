@@ -1,10 +1,6 @@
 import {connect, models} from "mongoose";
 import {env} from "./Config";
 import {fomLogger} from "./Logger";
-import {UserModel} from "../schemas/documents/UserSchema";
-import {GroupModel} from "../schemas/documents/GroupSchema";
-import {TableModel} from "../schemas/documents/TableSchema";
-import {LogModel} from "../schemas/util/LogSchema";
 import {ModelType} from "../interfaces/IFomEnums";
 import {IFomComponent} from "../interfaces/IFomComponent";
 
@@ -16,12 +12,6 @@ export function startMongo() {
       }))
     })
     .catch(e => fomLogger.error(`MongoDB connection failed: ${e.message}`))
-
-  fomLogger.info(`MODELS: ` +
-    `${UserModel.collection.name}, ` +
-    `${GroupModel.collection.name}, ` +
-    `${TableModel.collection.name}, ` +
-    `${LogModel.collection.name}`)
 }
 
 /**
