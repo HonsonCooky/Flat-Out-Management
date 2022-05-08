@@ -6,8 +6,9 @@ import {authLevel} from "./GenericPartials";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomController} from "../../interfaces/IFomController";
-import {RoleType} from "../../interfaces/IFomEnums";
+import {ModelType, RoleType} from "../../interfaces/IFomEnums";
 import assert from "node:assert";
+import {IFomDbObject} from "../../interfaces/IFomDbObject";
 
 
 /**
@@ -106,7 +107,7 @@ async function getComponentUname<T extends IFomComponent>(req: Request, noAuth: 
  * }
  * @param req
  */
-async function getBodyAssociation<T extends IFomComponent | IFomController>(req: Request): Promise<T> {
+async function getBodyAssociation<T extends IFomDbObject>(req: Request): Promise<T> {
   let association: IFomAssociation = req.body.association
   let com: T | null = await models[association.model].findOne({_id: association.ref})
   if (!com) throw new Error(`400: Unable to find ${association.model} ${association.ref}`)
@@ -121,7 +122,7 @@ async function getBodyAssociation<T extends IFomComponent | IFomController>(req:
  * @param req
  * @param res
  */
-export async function getRegisteringParent(req: Request, res: Response): Promise<IFomController | IFomComponent> {
+export async function getRegisteringParent(req: Request, res: Response): Promise<IFomDbObject> {
   let controller: IFomController = await getController(res)
   let component: IFomComponent | null = await getBodyAssociation<IFomComponent>(req).catch((_) => null)
 
@@ -139,16 +140,43 @@ export async function getRegisteringParent(req: Request, res: Response): Promise
  * @param req
  * @param res
  */
-export async function getUserChildAndRoleUrl<T extends IFomComponent>(req: Request, res: Response):
+export async function getControllerComponentAndRoleUrl<T extends IFomComponent>(req: Request, res: Response):
   Promise<{ controller: IFomController, component: T, role: RoleType }> {
 
   let controller: IFomController = await getController<IFomController>(res)
-  let component: T = await getComponentUrl(req) as T
+  let component: T = await getComponentUrl<T>(req)
   let association: IFomAssociation = await getAssociation(controller._id, component)
 
   return {
     controller,
     component,
+    role: association.role
+  }
+}
+
+
+/**
+ * Get the reference database object. A user will ALWAYS be needed from an authorization header. However, a component
+ * MIGHT be referenced in the URL. In the case of a component referenced in the url, return that component, else return
+ * the user.
+ * @param req
+ * @param res
+ */
+export async function getReferenceObject<T extends IFomDbObject>(req: Request, res: Response):
+  Promise<{ dbObject: T, role: RoleType }> {
+
+  let controller: IFomController = await getController<IFomController>(res)
+
+  if (!req.params.component || req.params.component === ModelType.USER)
+    return {
+      dbObject: controller as unknown as T,
+      role: RoleType.OWNER
+    }
+
+  let component: IFomComponent = await getComponentUrl<IFomComponent>(req)
+  let association: IFomAssociation = await getAssociation(controller._id, component)
+  return {
+    dbObject: component as unknown as T,
     role: association.role
   }
 }
@@ -166,7 +194,7 @@ export async function getControllerAndComponentUName<T extends IFomComponent>(re
   Promise<{ controller: IFomController, component: T }> {
 
   let user: IFomController = await getController<IFomController>(res)
-  let child: T = await getComponentUname(req, noAuth) as T
+  let child: T = await getComponentUname<T>(req, noAuth)
   await assert.rejects(getAssociation(user._id, child), `User ${user.uiName} is already associated with ` +
     `${child.uiName}. Get owner to update your status.`)
 

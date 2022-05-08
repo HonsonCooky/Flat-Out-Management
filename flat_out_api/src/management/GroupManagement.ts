@@ -4,15 +4,14 @@ import {saltAndHash} from "./util/AuthenticationPartials";
 import {authLevel, componentUpdateConnections, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {
   getControllerAndComponentUName,
-  getRegisteringParent,
-  getUserChildAndRoleUrl
+  getControllerComponentAndRoleUrl,
+  getRegisteringParent
 } from "./util/AuthorizationPartials";
 import {groupCalendar} from "./util/GroupCalendar";
 import {IFomGroup} from "../interfaces/IFomGroup";
 import {IFomRes} from "../interfaces/IFomRes";
-import {IFomController} from "../interfaces/IFomController";
-import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {IFomDbObject} from "../interfaces/IFomDbObject";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)
@@ -25,7 +24,7 @@ export async function groupRenew(group: IFomGroup) {
  * @param res
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
-  let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
+  let parent: IFomDbObject = await getRegisteringParent(req, res)
   let {name, password} = req.body
 
   let group: IFomGroup = new GroupModel({
@@ -98,7 +97,7 @@ export async function groupRequestJoin(req: Request, res: Response): Promise<IFo
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, parents, children} = req.body
-  let {controller, component, role} = await getUserChildAndRoleUrl<IFomGroup>(req, res)
+  let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
     throw new Error(`400: ${controller.uiName} does not have appropriate authorization over group ${component.uiName}`)

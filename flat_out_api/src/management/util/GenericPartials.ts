@@ -1,8 +1,12 @@
 import {models, Types} from "mongoose";
 import {ModelType, RoleType} from "../../interfaces/IFomEnums";
-import {IFomController} from "../../interfaces/IFomController";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
+import {Request} from "express";
+import {IFomImage} from "../../interfaces/IFomImage";
+import sharp from "sharp";
+import fs from "fs";
+import {IFomDbObject} from "../../interfaces/IFomDbObject";
 
 /**
  * Enums are string values, enables easier front end development (flutter).
@@ -28,7 +32,7 @@ export function authLevel(role: RoleType): number {
  * Get the ModelType based on the contents of the document. Usually used for when a component is unknown.
  * @param doc
  */
-export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelType {
+export function getTypeFromDoc(doc: IFomDbObject): ModelType {
   if ("outOfFlatDates" in doc) return ModelType.USER
   if ("groupCalendar" in doc) return ModelType.GROUP
   if ("records" in doc) return ModelType.TABLE
@@ -42,7 +46,7 @@ export function getTypeFromDoc(doc: IFomController | IFomComponent): ModelType {
  * @param role
  */
 export async function connectDocuments(
-  parent: { item: IFomController | IFomComponent, model: ModelType },
+  parent: { item: IFomDbObject, model: ModelType },
   child: { item: IFomComponent, model: ModelType },
   role: RoleType): Promise<void> {
 
@@ -74,7 +78,7 @@ export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: a
   // Remove child from parents
   if (parents) for await (let parent of parents
     .map(async (a: IFomAssociation) => (await models[a.model]
-      .findOne({_id: a.ref}) as IFomController | IFomComponent))) {
+      .findOne({_id: a.ref}) as IFomDbObject))) {
     await parent.updateOne({children: parent.children.filter((b: IFomAssociation) => !doc._id.equals(b.ref))})
   }
 
@@ -144,4 +148,24 @@ export async function componentUpdateConnections(refArr: IFomAssociation[], upda
     throw new Error('400: Updates leave remove an owner. Components require an owner')
 
   return update
+}
+
+
+/**
+ * Extract and image from form data in request, to an IFomImage.
+ * @param req
+ */
+export async function extractImageBuffer(req: Request): Promise<IFomImage | undefined> {
+  try {
+    if (!req.file) return undefined
+
+    return {
+      data: await sharp(fs.readFileSync('uploads/' + req.file.filename))
+        .resize(200, 200)
+        .toBuffer(),
+      contentType: req.file.mimetype
+    }
+  } catch (e) {
+    return undefined
+  }
 }

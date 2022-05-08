@@ -1,31 +1,13 @@
 import {Request, Response} from "express";
-import {authLevel, preDocRemoval} from "./util/GenericPartials";
-import {getUserChildAndRoleUrl} from "./util/AuthorizationPartials";
+import {authLevel, extractImageBuffer, preDocRemoval} from "./util/GenericPartials";
+import {getControllerComponentAndRoleUrl, getReferenceObject} from "./util/AuthorizationPartials";
 import {tableRenew} from "./TableManagement";
 import {groupRenew} from "./GroupManagement";
 import {IFomRes} from "../interfaces/IFomRes";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomTable} from "../interfaces/IFomTable";
 import {IFomGroup} from "../interfaces/IFomGroup";
-import fs from "fs";
-import {IFomImage} from "../interfaces/IFomImage";
-import sharp from "sharp";
 
-
-export async function extractImageBuffer(req: Request): Promise<IFomImage | null> {
-  try {
-    if (!req.file) return null
-
-    return {
-      data: await sharp(fs.readFileSync('uploads/' + req.file.filename))
-        .resize(200, 200)
-        .toBuffer(),
-      contentType: req.file.mimetype
-    }
-  } catch (e) {
-    return null
-  }
-}
 
 /**
  * Retrieve a component from the database from a URL id.
@@ -33,7 +15,7 @@ export async function extractImageBuffer(req: Request): Promise<IFomImage | null
  * @param res
  */
 export async function componentGet(req: Request, res: Response): Promise<IFomRes> {
-  let {controller, component, role} = await getUserChildAndRoleUrl(req, res)
+  let {controller, component, role} = await getControllerComponentAndRoleUrl(req, res)
 
 
   let type: ModelType = <ModelType>req.params.component
@@ -55,13 +37,33 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
   }
 }
 
+
+/**
+ * Update some components' avatar. This component is either referenced in
+ * @param req
+ * @param res
+ */
+export async function componentUpdateAvatar(req: Request, res: Response): Promise<IFomRes> {
+  let {dbObject, role} = await getReferenceObject(req, res)
+
+  if (authLevel(role) > authLevel(RoleType.WRITER)) throw new Error(
+    `400: Invalid authorization over ${dbObject.uiName} to update avatar`)
+
+  dbObject.avatar = await extractImageBuffer(req)
+  await dbObject.save()
+
+  return {
+    msg: "Successfully updated avatar"
+  }
+}
+
 /**
  * Remove a component document from the MongoDB gracefully
  * @param req
  * @param res
  */
 export async function componentDelete(req: Request, res: Response): Promise<IFomRes> {
-  let {controller, component, role} = await getUserChildAndRoleUrl(req, res)
+  let {controller, component, role} = await getControllerComponentAndRoleUrl(req, res)
 
   let type: ModelType = <ModelType>req.params.component
   if (role != RoleType.OWNER) throw new Error(`400: Invalid authorization to complete ${type} deletion`)

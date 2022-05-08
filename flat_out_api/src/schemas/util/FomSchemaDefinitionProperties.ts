@@ -117,6 +117,23 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   colorAssociation: FOM_COLOR_ASSOCIATION
 }
 
+export const FOM_IMAGE: SchemaDefinitionProperty<IFomImage> = {
+  data: {
+    type: Schema.Types.Buffer,
+    required: true
+  },
+  contentType: {
+    type: String,
+    required: true
+  }
+}
+
+/**
+ * A profile picture for some user
+ */
+export const FOM_AVATAR: SchemaDefinitionProperty = {
+  type: FOM_IMAGE
+}
 
 /** ------------------------------------------------------------------------------------------------------------------
  * USER
@@ -130,20 +147,6 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
   required: true,
   sparse: true,
   unique: true,
-}
-
-/**
- * A profile picture for some user
- */
-export const FOM_AVATAR: SchemaDefinitionProperty<IFomImage> = {
-  data: {
-    type: Schema.Types.Buffer,
-    required: true
-  },
-  contentType: {
-    type: String,
-    required: true
-  }
 }
 
 /** ------------------------------------------------------------------------------------------------------------------

@@ -1,14 +1,13 @@
 import {SchemaDefinition} from "mongoose";
 import {FOM_DYNAMIC_UUID, FOM_NAME, FOM_PASSWORD} from "./FomSchemaDefinitionProperties";
-import {FomComponentSchemaDef} from "./FomComponentSchemaDef";
 import {IFomController} from "../../interfaces/IFomController";
+import {FomDbObject} from "./FomDbObject";
 
 /**
  * Translates the IFomController into a MongoDB Schema Definition
  */
-const {parents, ...FomDocumentSchemaDef} = FomComponentSchemaDef
 export const FomControllerSchemaDef: SchemaDefinition<IFomController> = {
-  ...FomDocumentSchemaDef,
+  ...FomDbObject,
   name: FOM_NAME,
   password: FOM_PASSWORD,
   dynUuid: FOM_DYNAMIC_UUID,

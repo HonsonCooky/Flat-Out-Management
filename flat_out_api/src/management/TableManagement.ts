@@ -2,13 +2,12 @@ import {Request, Response} from "express";
 import {authLevel, componentUpdateConnections, connectDocuments, getTypeFromDoc} from "./util/GenericPartials";
 import {TableModel} from "../schemas/documents/TableSchema";
 import {saltAndHash} from "./util/AuthenticationPartials";
-import {getRegisteringParent, getUserChildAndRoleUrl} from "./util/AuthorizationPartials";
+import {getControllerComponentAndRoleUrl, getRegisteringParent} from "./util/AuthorizationPartials";
 import {tableRotations} from "./util/TableRotations";
 import {IFomTable} from "../interfaces/IFomTable";
 import {IFomRes} from "../interfaces/IFomRes";
-import {IFomController} from "../interfaces/IFomController";
-import {IFomComponent} from "../interfaces/IFomComponent";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
+import {IFomDbObject} from "../interfaces/IFomDbObject";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -21,7 +20,7 @@ export async function tableRenew(table: IFomTable) {
  * @param res
  */
 export async function tableRegister(req: Request, res: Response): Promise<IFomRes> {
-  let parent: IFomController | IFomComponent = await getRegisteringParent(req, res)
+  let parent: IFomDbObject = await getRegisteringParent(req, res)
   let {name, password, fieldIndexes, records, rotations} = req.body
 
   let table: IFomTable = new TableModel({
@@ -54,7 +53,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
   let {newName, newPassword, fieldIndexes, records, rotations, parents} = req.body
-  let {controller, component, role} = await getUserChildAndRoleUrl<IFomTable>(req, res)
+  let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
     throw new Error(`400: ${controller.uiName} does not have appropriate authorization over table ${component.uiName}`)
