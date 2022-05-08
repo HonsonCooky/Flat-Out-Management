@@ -23,6 +23,7 @@ class FomDbObject {
 
   @override
   String toString() {
-    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion, children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion, avatar: $avatar, '
+        'children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 }
