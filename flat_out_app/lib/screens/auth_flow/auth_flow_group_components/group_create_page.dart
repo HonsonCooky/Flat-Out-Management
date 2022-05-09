@@ -33,7 +33,7 @@ class _GroupSignupPageState extends State<GroupCreatePage> {
         } else
           widget.errorToast(res.msg, context);
       } catch (e) {
-        widget.fuckMeToast("${e}", context);
+        widget.devErrorToast("${e}", context);
       }
     }
     setState(() => isLoading = false);

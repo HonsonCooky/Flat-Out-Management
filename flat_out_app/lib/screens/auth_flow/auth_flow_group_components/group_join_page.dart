@@ -41,7 +41,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
       } else
         widget.errorToast(res.msg, context);
     } catch (e) {
-      widget.fuckMeToast("${e}", context);
+      widget.devErrorToast("${e}", context);
     }
     setState(() => _isLoading = false);
   }

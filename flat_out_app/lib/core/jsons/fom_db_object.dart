@@ -15,6 +15,7 @@ class FomDbObject {
   DateTime createdAt;
   DateTime updatedAt;
 
+
   FomDbObject(this.id, this.uiName, this.fomVersion, this.avatar, this.children, this.createdAt, this.updatedAt);
 
   factory FomDbObject.fromJson(Map<String, dynamic> json) => _$FomDbObjectFromJson(json);
@@ -23,7 +24,7 @@ class FomDbObject {
 
   @override
   String toString() {
-    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion, avatar: $avatar, '
+    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion,'
         'children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 }

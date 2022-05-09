@@ -95,6 +95,7 @@ class RuntimeCache extends ChangeNotifier {
    * Gets all information from local storage, and sets it to it's respective values.
    */
   Future<void> init([Function? onErr = null]) async {
+    _clearAll();
     String? u = await LocalStorage.read(partition: ModelType.user);
     _user = u != null ? FomUser.fromJson(jsonDecode(u)) : null;
     _groups =

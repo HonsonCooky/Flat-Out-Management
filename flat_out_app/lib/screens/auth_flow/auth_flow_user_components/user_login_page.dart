@@ -27,7 +27,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
       } else
         widget.errorToast(res.msg, context);
     } catch (e) {
-      widget.fuckMeToast("${e}", context);
+      widget.devErrorToast("${e}", context);
     }
     setState(() => isLoading = false);
   }

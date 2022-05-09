@@ -27,12 +27,14 @@ class _UserSignupPageState extends State<UserSignupPage> {
       try {
         FomRes res = await FomReq.userRegister(uName.text, uiName.text, pWord.text);
         if (res.statusCode == 200) {
+          print(res.item);
           await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
           widget.successToast(res.msg, context);
         } else
           widget.errorToast(res.msg, context);
       } catch (e) {
-        widget.fuckMeToast("${e}", context);
+        print(e);
+        widget.devErrorToast("${e}", context);
       }
     }
     setState(() => isLoading = false);
