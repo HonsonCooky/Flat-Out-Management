@@ -26,7 +26,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
 
   void join() async {
     try {
-      FomRes res = await FomReq.groupJoin(_gName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
+      FomRes res = await fomReq.groupJoin(_gName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
       if (res.statusCode == 200) {
         if (_type != RoleType.request) {
           widget.successToast(res.msg, context);

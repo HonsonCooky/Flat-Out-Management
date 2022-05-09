@@ -9,7 +9,7 @@ void main() {
   // The backend consists of a "free" tier heroku server. This means the server is shutdown after 30 minutes of
   // inactivity. By pinging the server, the second the app is opened, actions made after the fact should do so will a
   // minimized display
-  FomReq.ping();
+  fomReq.ping();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeNotifier()),

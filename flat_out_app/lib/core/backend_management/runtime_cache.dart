@@ -63,7 +63,7 @@ class RuntimeCache extends ChangeNotifier {
           .where((element) =>
               element.model == ModelType.group &&
               !(element.role == RoleType.request || element.role == RoleType.mentioned))
-          .map((e) async => await FomReq.groupGet(e, _user!.token))
+          .map((e) async => await fomReq.groupGet(e, _user!.token))
           .toList());
 
       for (int i = 0; i < gs.length; i++) {

@@ -25,7 +25,7 @@ class _GroupSignupPageState extends State<GroupCreatePage> {
       widget.errorToast("Passwords do not match", context);
     } else {
       try {
-        FomRes res = await FomReq.groupRegister(uName.text, pWord.text, context.read<RuntimeCache>().user?.token ?? "");
+        FomRes res = await fomReq.groupRegister(uName.text, pWord.text, context.read<RuntimeCache>().user?.token ?? "");
         if (res.statusCode == 200) {
           widget.successToast(res.msg, context);
           context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));

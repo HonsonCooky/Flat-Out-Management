@@ -25,15 +25,13 @@ class _UserSignupPageState extends State<UserSignupPage> {
       widget.errorToast("Passwords do not match", context);
     } else {
       try {
-        FomRes res = await FomReq.userRegister(uName.text, uiName.text, pWord.text);
+        FomRes res = await fomReq.userRegister(uName.text, uiName.text, pWord.text);
         if (res.statusCode == 200) {
-          print(res.item);
           await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
           widget.successToast(res.msg, context);
         } else
           widget.errorToast(res.msg, context);
       } catch (e) {
-        print(e);
         widget.devErrorToast("${e}", context);
       }
     }

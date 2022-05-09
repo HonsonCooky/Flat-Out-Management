@@ -20,7 +20,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   void login() async {
     try {
-      FomRes res = await FomReq.userLogin(uName.text, pWord.text);
+      FomRes res = await fomReq.userLogin(uName.text, pWord.text);
       if (res.statusCode == 200) {
         await context.read<RuntimeCache>().setUser(FomUser.fromJson(res.item));
         widget.successToast(res.msg, context);
