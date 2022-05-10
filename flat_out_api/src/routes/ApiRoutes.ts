@@ -3,12 +3,9 @@ import {userRoutes} from "./UserRoutes";
 import {groupRoutes} from "./GroupRoutes";
 import {tableRoutes} from "./TableRoutes";
 import {ModelType} from "../interfaces/IFomEnums";
-import {genericRoutes} from "./GenericRoutes";
-
 
 export const apiRoutes = express.Router({mergeParams: true})
 
 apiRoutes.use(`/api/:controller(${ModelType.USER})`, userRoutes)
 apiRoutes.use(`/api/:component(${ModelType.GROUP})`, groupRoutes)
 apiRoutes.use(`/api/:component(${ModelType.TABLE})`, tableRoutes)
-apiRoutes.use('/api', genericRoutes)

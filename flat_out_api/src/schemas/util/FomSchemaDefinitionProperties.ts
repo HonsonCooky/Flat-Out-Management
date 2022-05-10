@@ -4,7 +4,6 @@ import {EventType, ModelType, RoleType, TimeIntervals} from "../../interfaces/IF
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomEvent} from "../../interfaces/IFomEvent";
 import {IFomTable, IFomTableRecord, IFomTableRotationConfig} from "../../interfaces/IFomTable";
-import {IFomImage} from "../../interfaces/IFomImage";
 
 function getParent<T>(t: any): T {
   if (!t) throw new Error('500: Unable to get parent with null')
@@ -115,24 +114,6 @@ export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
   header: FOM_NAME,
   message: String,
   colorAssociation: FOM_COLOR_ASSOCIATION
-}
-
-export const FOM_IMAGE: SchemaDefinitionProperty<IFomImage> = {
-  data: {
-    type: Schema.Types.Buffer,
-    required: true
-  },
-  contentType: {
-    type: String,
-    required: true
-  }
-}
-
-/**
- * A profile picture for some user
- */
-export const FOM_AVATAR: SchemaDefinitionProperty = {
-  type: FOM_IMAGE
 }
 
 /** ------------------------------------------------------------------------------------------------------------------

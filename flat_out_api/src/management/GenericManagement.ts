@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
-import {authLevel, extractImageBuffer, preDocRemoval} from "./util/GenericPartials";
-import {getControllerComponentAndRoleUrl, getReferenceObject} from "./util/AuthorizationPartials";
+import {authLevel, preDocRemoval} from "./util/GenericPartials";
+import {getControllerComponentAndRoleUrl} from "./util/AuthorizationPartials";
 import {tableRenew} from "./TableManagement";
 import {groupRenew} from "./GroupManagement";
 import {IFomRes} from "../interfaces/IFomRes";
@@ -34,26 +34,6 @@ export async function componentGet(req: Request, res: Response): Promise<IFomRes
   return {
     msg: `${controller._id} successfully got ${type} ${component.uiName}`,
     item: component
-  }
-}
-
-
-/**
- * Update some components' avatar. This component is either referenced in
- * @param req
- * @param res
- */
-export async function componentUpdateAvatar(req: Request, res: Response): Promise<IFomRes> {
-  let {dbObject, role} = await getReferenceObject(req, res)
-
-  if (authLevel(role) > authLevel(RoleType.WRITER)) throw new Error(
-    `400: Invalid authorization over ${dbObject.uiName} to update avatar`)
-
-  dbObject.avatar = await extractImageBuffer(req)
-  await dbObject.save()
-
-  return {
-    msg: "Successfully updated avatar"
   }
 }
 
