@@ -25,12 +25,12 @@ export async function groupRenew(group: IFomGroup) {
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomDbObject = await getRegisteringParent(req, res)
-  let {name, password, avatar} = req.body
+  let {name, password, } = req.body
 
   let group: IFomGroup = new GroupModel({
     uiName: name,
     password: saltAndHash(password),
-    avatar
+    
   })
 
   await group.save()
@@ -97,7 +97,7 @@ export async function groupRequestJoin(req: Request, res: Response): Promise<IFo
  * @param res
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, avatar, parents, children} = req.body
+  let {newName, newPassword, parents, children} = req.body
   let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -109,7 +109,6 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
   }
 
   component.uiName = newName ?? component.uiName
-  component.avatar = avatar ?? component.avatar
   component.children = await componentUpdateConnections(component.children, children, false);
 
   await groupRenew(component as IFomGroup)

@@ -21,7 +21,7 @@ export async function tableRenew(table: IFomTable) {
  */
 export async function tableRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomDbObject = await getRegisteringParent(req, res)
-  let {name, password, fieldIndexes, records, rotations, avatar} = req.body
+  let {name, password, fieldIndexes, records, rotations,} = req.body
 
   let table: IFomTable = new TableModel({
     uiName: name,
@@ -30,7 +30,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
     fieldIndexes,
     records,
     rotations,
-    avatar
+
   })
 
   await tableRenew(table)
@@ -53,7 +53,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, fieldIndexes, records, rotations, avatar, parents} = req.body
+  let {newName, newPassword, fieldIndexes, records, rotations, parents} = req.body
   let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -68,7 +68,6 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
 
   component.uiName = newName ?? component.uiName
   component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
-  component.avatar = avatar ?? component.avatar
   component.records = records ?? component.records
 
   await tableRenew(component as IFomTable)

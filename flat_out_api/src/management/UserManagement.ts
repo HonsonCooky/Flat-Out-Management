@@ -17,7 +17,7 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  * @param res
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, uiName, avatar} = req.body
+  let {name, password, uiName, } = req.body
   let colorAssociation = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
 
   let user: IFomUser = new UserModel({
@@ -25,8 +25,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
     password: saltAndHash(password),
     dynUuid: new Types.ObjectId(),
     uiName: uiName ?? name,
-    colorAssociation,
-    avatar
+    colorAssociation
   })
   let token: string = signJWT(user, req.body.expiresIn)
 
@@ -104,7 +103,7 @@ export async function userSearch(req: Request, res: Response): Promise<IFomRes> 
  * @param res
  */
 export async function userUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, uiName, uiColor, avatar, outOfFlatDates} = req.body
+  let {newName, newPassword, uiName, uiColor, outOfFlatDates} = req.body
   let user: IFomUser
 
   if (newName || newPassword) {
@@ -117,8 +116,6 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
 
   user.uiName = uiName ?? user.uiName
   user.colorAssociation = uiColor ?? user.colorAssociation
-  user.avatar = avatar ?? user.avatar
-
 
   if (outOfFlatDates) {
     user.outOfFlatDates = outOfFlatDates
