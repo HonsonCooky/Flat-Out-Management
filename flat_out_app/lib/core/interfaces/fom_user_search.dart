@@ -1,4 +1,4 @@
-import 'package:flat_out_app/core/jsons/fom_user_search_res.dart';
+import 'package:flat_out_app/core/interfaces/fom_user_search_res.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'fom_user_search.g.dart';

@@ -1,4 +1,4 @@
-import {SchemaDefinition} from "mongoose";
+import {Schema, SchemaDefinition} from "mongoose";
 import {FOM_ASSOCIATION, FOM_UI_NAME, FOM_VERSION} from "./FomSchemaDefinitionProperties";
 import {IFomDbObject} from "../../interfaces/IFomDbObject";
 
@@ -9,6 +9,6 @@ export const FomDbObject: SchemaDefinition<IFomDbObject> = {
   uiName: FOM_UI_NAME,
   password: String,
   fomVersion: FOM_VERSION,
-  avatar: String,
+  avatar: Schema.Types.ObjectId,
   children: [FOM_ASSOCIATION],
 }

@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/local_storage.dart';
-import 'package:flat_out_app/core/jsons/fom_group.dart';
-import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/jsons/fom_table.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
-import 'package:flat_out_app/core/jsons/utils/enums.dart';
+import 'package:flat_out_app/core/interfaces/fom_group.dart';
+import 'package:flat_out_app/core/interfaces/fom_res.dart';
+import 'package:flat_out_app/core/interfaces/fom_table.dart';
+import 'package:flat_out_app/core/interfaces/fom_user.dart';
+import 'package:flat_out_app/core/interfaces/utils/enums.dart';
 import 'package:flutter/cupertino.dart';
 
 const String noGroupKey = 'no_group';

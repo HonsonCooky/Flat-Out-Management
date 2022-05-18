@@ -6,7 +6,7 @@ export interface IFomDbObject extends Document<Types.ObjectId> {
   uiName: string,
   password?: string,
   fomVersion: string,
-  avatar?: string,
+  avatar?: Types.ObjectId,
   children: IFomAssociation[],
   createdAt: Date,
   updatedAt: Date

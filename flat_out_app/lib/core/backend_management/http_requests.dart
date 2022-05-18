@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:flat_out_app/core/jsons/fom_association.dart';
-import 'package:flat_out_app/core/jsons/fom_db_object.dart';
-import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/jsons/utils/enums.dart';
+import 'package:flat_out_app/core/interfaces/fom_association.dart';
+import 'package:flat_out_app/core/interfaces/fom_db_object.dart';
+import 'package:flat_out_app/core/interfaces/fom_res.dart';
+import 'package:flat_out_app/core/interfaces/utils/enums.dart';
 import 'package:flat_out_app/main.dart';
 import 'package:http/http.dart';
 

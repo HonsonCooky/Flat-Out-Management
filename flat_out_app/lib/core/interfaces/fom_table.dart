@@ -1,4 +1,4 @@
-import 'package:flat_out_app/core/jsons/fom_association.dart';
+import 'package:flat_out_app/core/interfaces/fom_association.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'fom_component.dart';

@@ -17,7 +17,7 @@ import {IFomGroup} from "../interfaces/IFomGroup";
  * @param res
  */
 export async function userRegister(req: Request, res: Response): Promise<IFomRes> {
-  let {name, password, uiName, } = req.body
+  let {name, password, uiName} = req.body
   let colorAssociation = '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
 
   let user: IFomUser = new UserModel({
@@ -25,7 +25,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
     password: saltAndHash(password),
     dynUuid: new Types.ObjectId(),
     uiName: uiName ?? name,
-    colorAssociation
+    colorAssociation,
   })
   let token: string = signJWT(user, req.body.expiresIn)
 

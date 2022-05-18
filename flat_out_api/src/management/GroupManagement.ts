@@ -25,12 +25,12 @@ export async function groupRenew(group: IFomGroup) {
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomDbObject = await getRegisteringParent(req, res)
-  let {name, password, } = req.body
+  let {name, password} = req.body
 
   let group: IFomGroup = new GroupModel({
     uiName: name,
     password: saltAndHash(password),
-    
+
   })
 
   await group.save()

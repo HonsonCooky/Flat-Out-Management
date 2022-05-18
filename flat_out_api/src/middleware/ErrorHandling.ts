@@ -6,7 +6,8 @@ const known400ErrorMessages = [
   '400',
   'duplicate',
   'validation failed',
-  'expected rejection'
+  'expected rejection',
+  'Cannot read properties of undefined'
 ]
 
 function jsonError(msg: string): IFomRes {
@@ -14,6 +15,7 @@ function jsonError(msg: string): IFomRes {
     msg: msg.replace(/400: /g, '')
       .replace(/500: /g, '')
       .replace('missing expected rejection: ', '')
+      .replace(/Cannot read properties of undefined.*/g, 'Malformed API Request')
   }
 }
 

@@ -6,13 +6,14 @@ part 'fom_event.g.dart';
 
 @JsonSerializable()
 class FomEvent {
-  DateTime date;
+  DateTime from;
+  DateTime to;
   EventType eType;
   String header;
   String message;
   String colorAssociation;
 
-  FomEvent(this.date, this.eType, this.header, this.message, this.colorAssociation);
+  FomEvent(this.from, this.to, this.eType, this.header, this.message, this.colorAssociation);
 
   factory FomEvent.fromJson(Map<String, dynamic> json) => _$FomEventFromJson(json);
 
@@ -20,6 +21,6 @@ class FomEvent {
 
   @override
   String toString() {
-    return 'FomEvent{date: $date, eType: $eType, header: $header, message: $message, colorAssociation: $colorAssociation}';
+    return 'FomEvent{from: $from, to: $to, eType: $eType, header: $header, message: $message, colorAssociation: $colorAssociation}';
   }
 }

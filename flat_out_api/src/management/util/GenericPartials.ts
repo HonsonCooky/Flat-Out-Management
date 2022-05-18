@@ -1,4 +1,4 @@
-import {models, Types} from "mongoose";
+import {models} from "mongoose";
 import {ModelType, RoleType} from "../../interfaces/IFomEnums";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
@@ -68,7 +68,7 @@ export async function connectDocuments(
  * @param parents
  * @param children
  */
-export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
+export async function preDocRemoval(doc: IFomDbObject,
   children: IFomAssociation[], parents?: IFomAssociation[]) {
 
   // Remove child from parents
