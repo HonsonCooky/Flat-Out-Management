@@ -59,7 +59,7 @@ export async function getController<T extends IFomController>(r: Request | Respo
   }
   // Request means username and password
   else if ("body" in r) {
-    let {name, password} = (r as Request).body.data
+    let {name, password} = (r as Request).body
     controller = await UserModel.findOne({name})
     if (controller && compareHashes(password, controller.password)) return controller
   }

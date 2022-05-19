@@ -17,11 +17,11 @@ require('./schemas/documents/TableSchema')
  -----------------------------------------------------------------------------------------------------------------*/
 // Create a connection to the MongoDB instance
 connect(env.mongo.connectionStr).then(async () => {
-  fomLogger.info("MongoDB connected")
+  fomLogger.info(`MongoDB Initialized`)
   await initGridFs()
   apiInitNormalMode()
-}).catch(() => {
-  fomLogger.error("MongoDB unavailable")
+}).catch((e) => {
+  fomLogger.error(`MongoDB unavailable: ${e}`)
   apiInitErrorMode()
 })
 
@@ -51,7 +51,6 @@ export function apiInitNormalMode() {
   webAPI.listen(env.express.port, () => {
     fomLogger.info("Heroku connected");
     if (env.devMode) console.log(`http://localhost:${env.express.port}`)
-    else console.log(`https://flat-out-management-api.herokuapp.com`)
   })
 }
 

@@ -5,12 +5,16 @@ import {env} from "../config/Config";
 /**
  * An Express middleware component which will
  */
-export function extractJwt() {
+export function extractJwt(required: boolean = true) {
   return (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization?.split(' ')[1]
 
-    if (!token)
+    if (!token && required)
       throw new Error(`400: Request requires authorization`)
+    else if (!token) {
+      next()
+      return
+    }
 
     jwt.verify(token, env.token.secret, (err, decoded) => {
       if (err) throw new Error(`400: Access denied`)

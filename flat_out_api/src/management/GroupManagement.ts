@@ -12,6 +12,7 @@ import {IFomGroup} from "../interfaces/IFomGroup";
 import {IFomRes} from "../interfaces/IFomRes";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomDbObject} from "../interfaces/IFomDbObject";
+import {linkAvatar} from "./AvatarManagement";
 
 export async function groupRenew(group: IFomGroup) {
   await groupCalendar(group)
@@ -25,7 +26,7 @@ export async function groupRenew(group: IFomGroup) {
  */
 export async function groupRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomDbObject = await getRegisteringParent(req, res)
-  let {name, password} = req.body
+  let {name, password, avatar} = req.body
 
   let group: IFomGroup = new GroupModel({
     uiName: name,
@@ -33,6 +34,7 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
 
   })
 
+  if (avatar) await linkAvatar(group, avatar)
   await group.save()
 
   await connectDocuments(
@@ -97,7 +99,7 @@ export async function groupRequestJoin(req: Request, res: Response): Promise<IFo
  * @param res
  */
 export async function groupUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, parents, children} = req.body
+  let {newName, newPassword, parents, children, avatar} = req.body
   let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomGroup>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -111,6 +113,7 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
   component.uiName = newName ?? component.uiName
   component.children = await componentUpdateConnections(component.children, children, false);
 
+  if (avatar) await linkAvatar(component, avatar)
   await groupRenew(component as IFomGroup)
 
   return {
