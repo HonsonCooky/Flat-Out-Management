@@ -66,17 +66,15 @@ export async function uploadAvatar(req: Request, res: Response): Promise<IFomRes
 async function streamUpload(req: Request, id: Types.ObjectId, fomDbObject?: IFomDbObject) {
   if (!bucket) throw new Error('500: Flat Out Management cannot currently process photo uploads')
   if (!req.file?.buffer) throw new Error('400: Missing avatar from request')
-  await cleanAvatars()
 
   // Get static file name (based on IP address)
+  if (fomDbObject)
+    // Delete all files related to this fomDocument address
+    await bucket.find({'metadata.association': fomDbObject._id}).forEach((doc: GridFSFile) => {
+      bucket.delete(doc._id)
+    })
+
   let filename = imageName(req)
-  let avatarId = fomDbObject?.avatar
-
-  // Delete all files related to this IP address
-  await bucket.find({$or: [{_id: avatarId}, {filename}]}).forEach((doc: GridFSFile) => {
-    bucket.delete(doc._id)
-  })
-
   // Calculate delete time (now + 2h)
   let validUntil = new Date()
   validUntil.setHours(validUntil.getHours() + 2)
