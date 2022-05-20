@@ -32,7 +32,7 @@ export async function initGridFs() {
  */
 export function imageName(req: Request): string {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  if (!ip) throw new Error('Unable to upload photos with an address')
+  if (!ip) throw new Error('Unable to upload photos without an address')
   return `${ip}_profile_picture`
 }
 
@@ -118,20 +118,24 @@ export async function getAvatar(req: Request, res: Response) {
  * @param aId
  */
 export async function linkAvatar(fomDbObject: IFomDbObject, aId: string) {
-  let avatarCollection = connection.db.collection<GridFSFile>(`${bucketName}.files`)
-  let avatarId = new Types.ObjectId(aId)
-  let file: GridFSFile | null = await avatarCollection.findOne({_id: avatarId})
+  try {
+    let avatarCollection = connection.db.collection<GridFSFile>(`${bucketName}.files`)
+    let avatarId = new Types.ObjectId(aId)
+    let file: GridFSFile | null = await avatarCollection.findOne({_id: avatarId})
 
-  if (!file) throw new Error('400: Unable to find uploaded avatar')
-  if (file.metadata?.association) throw new Error(`400: Attempted second link to avatar ${avatarId}`);
+    if (!file) throw new Error('400: Unable to find uploaded avatar')
+    if (file.metadata?.association) throw new Error(`400: Attempted second link to avatar ${avatarId}`);
 
-  let validUntil = new Date()
-  validUntil.setHours(validUntil.getHours() + 2)
+    let validUntil = new Date()
+    validUntil.setHours(validUntil.getHours() + 2)
 
-  await avatarCollection.updateOne({_id: file._id},
-    {$set: {metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil})}})
+    await avatarCollection.updateOne({_id: file._id},
+      {$set: {metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil})}})
 
-  fomDbObject.avatar = avatarId
+    fomDbObject.avatar = avatarId
+  } catch (e) {
+    throw new Error('400: Unable to find uploaded avatar')
+  }
 }
 
 /**
