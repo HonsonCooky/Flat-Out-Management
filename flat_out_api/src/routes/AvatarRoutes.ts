@@ -1,5 +1,5 @@
 import {routeHandler} from "../middleware/RouteHandler";
-import {downloadAvatar, uploadAvatar} from "../management/AvatarManagement";
+import {deleteAvatar, downloadAvatar, uploadAvatar} from "../management/AvatarManagement";
 import express from "express";
 import multer from "multer";
 import {extractJwt} from "../middleware/ExtractJwt";
@@ -14,4 +14,10 @@ avatarRoutes.post(`/upload`,
   upload.single('avatar'),
   routeHandler(uploadAvatar))
 
-avatarRoutes.get(`/get/:avatarId`, extractJwt(), downloadAvatar)
+avatarRoutes.delete(`/delete`,
+  extractJwt(),
+  routeHandler(deleteAvatar))
+
+avatarRoutes.get(`/get/:avatarId`,
+  extractJwt(),
+  downloadAvatar)

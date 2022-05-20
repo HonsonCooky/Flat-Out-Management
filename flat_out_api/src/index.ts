@@ -1,8 +1,7 @@
 import express, {Request, Response} from "express";
 import helmet from "helmet";
 import {connect} from "mongoose";
-import {env} from "./config/Config";
-import {fomLogger} from "./config/Logger";
+import {CONFIG} from "./Config";
 import baseRoute from "./routes/BaseRoute";
 import {apiRoutes} from "./routes/ApiRoutes";
 import {errorHandler} from "./middleware/ErrorHandling";
@@ -16,15 +15,11 @@ require('./schemas/documents/TableSchema')
  * MONGODB CONNECTION AND SETUP
  -----------------------------------------------------------------------------------------------------------------*/
 // Create a connection to the MongoDB instance
-connect(env.mongo.connectionStr).then(async () => {
-  fomLogger.info(`MongoDB Initialized`)
-  await initGridFs()
+connect(CONFIG.mongoDb.connectionStr).then(async () => {
+  CONFIG.mongoDb.isDbConnected = true
+  initGridFs().then(() => CONFIG.mongoDb.isGridConnected = true).catch()
   apiInitNormalMode()
-}).catch((e) => {
-  fomLogger.error(`MongoDB unavailable: ${e}`)
-  apiInitErrorMode()
-})
-
+}).catch(apiInitErrorMode)
 
 /** -----------------------------------------------------------------------------------------------------------------
  * INITIALIZE THE EXPRESS API
@@ -48,9 +43,8 @@ export function apiInitNormalMode() {
   webAPI.use(errorHandler)
 
   // Lets go!
-  webAPI.listen(env.express.port, () => {
-    fomLogger.info("Heroku connected");
-    if (env.devMode) console.log(`http://localhost:${env.express.port}`)
+  webAPI.listen(CONFIG.express.port, () => {
+    if (CONFIG.devMode) console.log(`http://localhost:${CONFIG.express.port}`)
   })
 }
 
@@ -64,13 +58,12 @@ export function apiInitErrorMode() {
 
   webAPIErrMode.use((req: Request, res: Response) => {
     res.status(500).send({
-      msg: 'Database is currently unavailable for interactions. Backend interactions will be unavailable'
+      msg: 'Database is currently unavailable for interactions. Interactions with the server will be unavailable'
     })
   })
 
-  webAPIErrMode.listen(env.express.port, () => {
-    fomLogger.info("Heroku connected");
-    if (env.devMode) console.log(`http://localhost:${env.express.port}`)
+  webAPIErrMode.listen(CONFIG.express.port, () => {
+    if (CONFIG.devMode) console.log(`http://localhost:${CONFIG.express.port}`)
     else console.log(`https://flat-out-management-api.herokuapp.com`)
   })
 }

@@ -5,10 +5,12 @@ import {GridFSBucket, GridFSBucketReadStream, GridFSFile} from "mongodb";
 import {Readable} from "stream";
 import sharp from "sharp";
 import {IFomAvatarMetaData, IFomMetaDataOptions} from "../interfaces/IFomAvatarMetaData";
-import {getController} from "./util/AuthorizationPartials";
+import {getController, getControllerAndComponentQuery, getRegisteringParent} from "./util/AuthorizationPartials";
 import {IFomUser} from "../interfaces/IFomUser";
-import {fomLogger} from "../config/Logger";
+
 import {IFomDbObject} from "../interfaces/IFomDbObject";
+import {authLevel} from "./util/GenericPartials";
+import {RoleType} from "../interfaces/IFomEnums";
 
 const bucketName = 'avatars'
 let bucket: GridFSBucket;
@@ -17,13 +19,8 @@ let bucket: GridFSBucket;
  * Initialize the GridFSBucket (which can only be done when a connection to MongoDB has been established)
  */
 export async function initGridFs() {
-  try {
-    bucket = new mongo.GridFSBucket(connection.db, {bucketName})
-    fomLogger.info('GridFs Initialized')
-    await cleanAvatars()
-  } catch (e) {
-    fomLogger.error(`${e}`)
-  }
+  bucket = new mongo.GridFSBucket(connection.db, {bucketName})
+  await cleanAvatars()
 }
 
 function getIp(req: Request): string {
@@ -43,10 +40,14 @@ function toImageName(name: string) {
 export async function uploadAvatar(req: Request, res: Response): Promise<IFomRes> {
   let customId = new Types.ObjectId()
 
-  try {
+  if ("association" in req.query) { // Given a component to associate some picture to
+    let {component, role} = await getControllerAndComponentQuery(req, res)
+    if (authLevel(role) > authLevel(RoleType.WRITER)) throw new Error('400: Invalid authorization')
+    await streamUpload(req, customId, component)
+  } else if (res.locals.jwt) { // Given an authenticated user
     let user: IFomUser = await getController<IFomUser>(res)
     await streamUpload(req, customId, user)
-  } catch (e) {
+  } else { // Given nothing
     await streamUpload(req, customId)
   }
 
@@ -79,7 +80,8 @@ async function streamUpload(req: Request, id: Types.ObjectId, fomDbObject?: IFom
   let writeStream = bucket.openUploadStreamWithId(id,
     // Image name based on ID or IP
     fomDbObject ? toImageName(fomDbObject._id.toString()) : toImageName(getIp(req)),
-    {metadata: new IFomAvatarMetaData({
+    {
+      metadata: new IFomAvatarMetaData({
         association: fomDbObject ? fomDbObject._id : undefined,
         validUntil // Always included (in case future updates allow dis-association)
       })
@@ -143,6 +145,24 @@ export async function linkAvatar(req: Request, fomDbObject: IFomDbObject, aId: s
 }
 
 /**
+ * A wrapper for 'cleanAvatars', which determines the
+ * @param req
+ * @param res
+ */
+export async function deleteAvatar(req: Request, res: Response): Promise<IFomRes> {
+  let doc: IFomDbObject = await getRegisteringParent(req, res)
+  if (!doc.avatar) throw new Error(`400: Document doesn't have an avatar to delete`)
+
+  await cleanAvatars({id: doc._id})
+  doc.avatar = undefined
+  await doc.save()
+
+  return {
+    msg: `Successfully removed avatar`
+  }
+}
+
+/**
  * Clean the avatars in the MongoDB.
  * When some entity can be associated to the upload, remove their previous uploads.
  * IP deletes occur because the same user has clearly changed their mind. If a new user is created from the same IP,
@@ -163,6 +183,5 @@ export async function cleanAvatars(options?: { id?: Types.ObjectId, ip?: string 
       if (IFomAvatarMetaData.shouldDelete(doc.metadata as unknown as IFomMetaDataOptions)) bucket.delete(doc._id)
     })
   } catch (e) {
-    fomLogger.error(`${e}`)
   }
 }

@@ -14,11 +14,11 @@ export class IFomAvatarMetaData {
     this.validUntil = options.validUntil;
   }
 
-  shouldDelete(): boolean {
-    return !this.association && Date.now() > this.validUntil.getTime()
+  static shouldDelete(options: IFomMetaDataOptions) {
+    return new IFomAvatarMetaData(options).shouldDelete()
   }
 
-  static shouldDelete(options: IFomMetaDataOptions){
-    return new IFomAvatarMetaData(options).shouldDelete()
+  shouldDelete(): boolean {
+    return !this.association && Date.now() > this.validUntil.getTime()
   }
 }
