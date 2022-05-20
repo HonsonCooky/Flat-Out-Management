@@ -34,7 +34,7 @@ export async function groupRegister(req: Request, res: Response): Promise<IFomRe
 
   })
 
-  if (avatar) await linkAvatar(group, avatar)
+  if (avatar) await linkAvatar(req, group, avatar)
   await group.save()
 
   await connectDocuments(
@@ -113,7 +113,7 @@ export async function groupUpdate(req: Request, res: Response): Promise<IFomRes>
   component.uiName = newName ?? component.uiName
   component.children = await componentUpdateConnections(component.children, children, false);
 
-  if (avatar) await linkAvatar(component, avatar)
+  if (avatar) await linkAvatar(req, component, avatar)
   await groupRenew(component as IFomGroup)
 
   return {

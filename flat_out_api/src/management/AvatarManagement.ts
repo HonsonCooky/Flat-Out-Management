@@ -4,7 +4,7 @@ import {connection, mongo, Types} from "mongoose";
 import {GridFSBucket, GridFSBucketReadStream, GridFSFile} from "mongodb";
 import {Readable} from "stream";
 import sharp from "sharp";
-import {IFomAvatarMetaData} from "../interfaces/IFomAvatarMetaData";
+import {IFomAvatarMetaData, IFomMetaDataOptions} from "../interfaces/IFomAvatarMetaData";
 import {getController} from "./util/AuthorizationPartials";
 import {IFomUser} from "../interfaces/IFomUser";
 import {fomLogger} from "../config/Logger";
@@ -26,14 +26,13 @@ export async function initGridFs() {
   }
 }
 
-/**
- * Each device can upload one photo, thus, an image name
- * @param req
- */
-export function imageName(req: Request): string {
+function getIp(req: Request): string {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  if (!ip) throw new Error('Unable to upload photos without an address')
-  return `${ip}_profile_picture`
+  return `${ip}`
+}
+
+function toImageName(name: string) {
+  return `${name}_avatar`
 }
 
 /**
@@ -67,25 +66,24 @@ async function streamUpload(req: Request, id: Types.ObjectId, fomDbObject?: IFom
   if (!bucket) throw new Error('500: Flat Out Management cannot currently process photo uploads')
   if (!req.file?.buffer) throw new Error('400: Missing avatar from request')
 
-  // Get static file name (based on IP address)
-  if (fomDbObject)
-    // Delete all files related to this fomDocument address
-    await bucket.find({'metadata.association': fomDbObject._id}).forEach((doc: GridFSFile) => {
-      bucket.delete(doc._id)
-    })
 
-  let filename = imageName(req)
+  // Remove previous uploads
+  if (fomDbObject) await cleanAvatars({id: fomDbObject._id})
+  await cleanAvatars({ip: getIp(req)})
+
   // Calculate delete time (now + 2h)
   let validUntil = new Date()
   validUntil.setHours(validUntil.getHours() + 2)
 
   // Create a read and write stream, to upload date to GridFS
-  let writeStream = bucket.openUploadStreamWithId(id, `${filename}`, {
-    metadata: new IFomAvatarMetaData({
-      association: fomDbObject ? fomDbObject._id : undefined,
-      validUntil
+  let writeStream = bucket.openUploadStreamWithId(id,
+    // Image name based on ID or IP
+    fomDbObject ? toImageName(fomDbObject._id.toString()) : toImageName(getIp(req)),
+    {metadata: new IFomAvatarMetaData({
+        association: fomDbObject ? fomDbObject._id : undefined,
+        validUntil // Always included (in case future updates allow dis-association)
+      })
     })
-  })
 
   let readStream = Readable.from(
     sharp(req.file.buffer).resize({fit: sharp.fit.contain, width: 400, height: 400}).png())
@@ -113,10 +111,11 @@ export async function downloadAvatar(req: Request, res: Response) {
 /**
  * Avatars are uploaded separately to documents. Avatars will be uploaded first, and then documents will be
  * registered/updated after a successful upload. As such
+ * @param req
  * @param fomDbObject
  * @param aId
  */
-export async function linkAvatar(fomDbObject: IFomDbObject, aId: string) {
+export async function linkAvatar(req: Request, fomDbObject: IFomDbObject, aId: string) {
   let avatarCollection = connection.db.collection<GridFSFile>(`${bucketName}.files`)
 
   let avatarId = new Types.ObjectId(aId)
@@ -128,26 +127,40 @@ export async function linkAvatar(fomDbObject: IFomDbObject, aId: string) {
   let validUntil = new Date()
   validUntil.setHours(validUntil.getHours() + 2)
 
-  // Delete all files related to this fomDocument address
-  await bucket.find({'metadata.association': fomDbObject._id}).forEach((doc: GridFSFile) => {
-    bucket.delete(doc._id)
-  })
+  await cleanAvatars({id: fomDbObject._id})
 
   await avatarCollection.updateOne({_id: file._id},
-    {$set: {metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil})}})
+    {
+      $set: {
+        metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil}),
+        filename: toImageName(fomDbObject._id.toString())
+      }
+    })
+
+  await cleanAvatars({ip: getIp(req)})
 
   fomDbObject.avatar = avatarId
 }
 
 /**
- * Clean through the avatars. Each avatar has a two-hour time period to be associated to some document. Once this time
- * period expires, then the document is thought to be stale, and removed from the DB.
+ * Clean the avatars in the MongoDB.
+ * When some entity can be associated to the upload, remove their previous uploads.
+ * IP deletes occur because the same user has clearly changed their mind. If a new user is created from the same IP,
+ * then the previous images has already been associated with a user, and thus, has a new name.
  */
-async function cleanAvatars() {
+export async function cleanAvatars(options?: { id?: Types.ObjectId, ip?: string }) {
   try {
-    await bucket.find().forEach((doc: GridFSFile) => {
-      if (!doc.metadata) bucket.delete(doc._id)
-      else if (new IFomAvatarMetaData(doc.metadata as any).shouldDelete()) bucket.delete(doc._id)
+    // Remove avatars that are not associated to another document, and have expired
+    if (options?.id) await bucket.find({'metadata.association': options.id}).forEach((doc: GridFSFile) => {
+      bucket.delete(doc._id)
+    })
+    // Remove avatars based on IP (file name for unclaimed images)
+    if (options?.ip) await bucket.find({filename: toImageName(options.ip)}).forEach((doc: GridFSFile) => {
+      bucket.delete(doc._id)
+    })
+    // Remove avatars associated to this id (each document only gets ONE profile picture).
+    if (!options) await bucket.find().forEach((doc: GridFSFile) => {
+      if (IFomAvatarMetaData.shouldDelete(doc.metadata as unknown as IFomMetaDataOptions)) bucket.delete(doc._id)
     })
   } catch (e) {
     fomLogger.error(`${e}`)
