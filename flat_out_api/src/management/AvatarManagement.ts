@@ -46,9 +46,9 @@ export async function uploadAvatar(req: Request, res: Response): Promise<IFomRes
 
   try {
     let user: IFomUser = await getController<IFomUser>(res)
-    await upload(req, customId, user._id)
+    await streamUpload(req, customId, user)
   } catch (e) {
-    await upload(req, customId)
+    await streamUpload(req, customId)
   }
 
   return {
@@ -61,18 +61,19 @@ export async function uploadAvatar(req: Request, res: Response): Promise<IFomRes
  * Upload an avatar to the GridFS storage.
  * @param req
  * @param id
- * @param association
+ * @param fomDbObject
  */
-async function upload(req: Request, id: Types.ObjectId, association?: Types.ObjectId) {
+async function streamUpload(req: Request, id: Types.ObjectId, fomDbObject?: IFomDbObject) {
   if (!bucket) throw new Error('500: Flat Out Management cannot currently process photo uploads')
   if (!req.file?.buffer) throw new Error('400: Missing avatar from request')
   await cleanAvatars()
 
   // Get static file name (based on IP address)
   let filename = imageName(req)
+  let avatarId = fomDbObject?.avatar
 
   // Delete all files related to this IP address
-  await bucket.find({filename}).forEach((doc: GridFSFile) => {
+  await bucket.find({$or: [{_id: avatarId}, {filename}]}).forEach((doc: GridFSFile) => {
     bucket.delete(doc._id)
   })
 
@@ -83,7 +84,7 @@ async function upload(req: Request, id: Types.ObjectId, association?: Types.Obje
   // Create a read and write stream, to upload date to GridFS
   let writeStream = bucket.openUploadStreamWithId(id, `${filename}`, {
     metadata: new IFomAvatarMetaData({
-      association,
+      association: fomDbObject ? fomDbObject._id : undefined,
       validUntil
     })
   })
@@ -101,7 +102,7 @@ async function upload(req: Request, id: Types.ObjectId, association?: Types.Obje
  * @param req
  * @param res
  */
-export async function getAvatar(req: Request, res: Response) {
+export async function downloadAvatar(req: Request, res: Response) {
   try {
     res.contentType('image/png')
     let stream: GridFSBucketReadStream = bucket.openDownloadStream(new Types.ObjectId(req.params.avatarId))
@@ -118,24 +119,26 @@ export async function getAvatar(req: Request, res: Response) {
  * @param aId
  */
 export async function linkAvatar(fomDbObject: IFomDbObject, aId: string) {
-  try {
-    let avatarCollection = connection.db.collection<GridFSFile>(`${bucketName}.files`)
-    let avatarId = new Types.ObjectId(aId)
-    let file: GridFSFile | null = await avatarCollection.findOne({_id: avatarId})
+  let avatarCollection = connection.db.collection<GridFSFile>(`${bucketName}.files`)
 
-    if (!file) throw new Error('400: Unable to find uploaded avatar')
-    if (file.metadata?.association) throw new Error(`400: Attempted second link to avatar ${avatarId}`);
+  let avatarId = new Types.ObjectId(aId)
+  let file: GridFSFile | null = await avatarCollection.findOne({_id: avatarId})
 
-    let validUntil = new Date()
-    validUntil.setHours(validUntil.getHours() + 2)
+  if (!file) throw new Error('400: Unable to find uploaded avatar')
+  if (file.metadata?.association) throw new Error(`400: Attempted second link to avatar ${avatarId}`);
 
-    await avatarCollection.updateOne({_id: file._id},
-      {$set: {metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil})}})
+  let validUntil = new Date()
+  validUntil.setHours(validUntil.getHours() + 2)
 
-    fomDbObject.avatar = avatarId
-  } catch (e) {
-    throw new Error('400: Unable to find uploaded avatar')
-  }
+  // Delete all files related to this fomDocument address
+  await bucket.find({'metadata.association': fomDbObject._id}).forEach((doc: GridFSFile) => {
+    bucket.delete(doc._id)
+  })
+
+  await avatarCollection.updateOne({_id: file._id},
+    {$set: {metadata: new IFomAvatarMetaData({association: fomDbObject._id, validUntil})}})
+
+  fomDbObject.avatar = avatarId
 }
 
 /**
