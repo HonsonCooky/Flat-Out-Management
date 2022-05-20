@@ -1,6 +1,6 @@
+import 'package:flat_out_app/core/interfaces/fom_association.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'fom_association.dart';
 import 'fom_component.dart';
 import 'utils/enums.dart';
 
@@ -33,9 +33,20 @@ class FomTable extends FomComponent {
   List<dynamic> records;
   List<FomTableRotationConfig> rotations;
 
-  FomTable(String id, String uiName, String fomVersion, List<FomAssociation> parents, List<FomAssociation> children,
-      DateTime createdAt, DateTime updatedAt, this.columns, this.fieldIndexes, this.records, this.rotations)
-      : super(id, uiName, fomVersion, parents, children, createdAt, updatedAt);
+  FomTable(
+      String id,
+      String uiName,
+      String fomVersion,
+      String? avatar,
+      List<FomAssociation> parents,
+      List<FomAssociation> children,
+      DateTime createdAt,
+      DateTime updatedAt,
+      this.columns,
+      this.fieldIndexes,
+      this.records,
+      this.rotations)
+      : super(id, uiName, fomVersion, avatar, parents, children, createdAt, updatedAt);
 
   factory FomTable.fromJson(Map<String, dynamic> json) => _$FomTableFromJson(json);
 

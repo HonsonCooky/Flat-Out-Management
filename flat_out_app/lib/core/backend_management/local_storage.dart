@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flat_out_app/core/jsons/utils/enums.dart';
+import 'package:flat_out_app/core/interfaces/utils/enums.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LocalStorage {

@@ -3,8 +3,8 @@ import 'package:flat_out_app/components/molecules/auth_text_field.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
-import 'package:flat_out_app/core/jsons/fom_group.dart';
-import 'package:flat_out_app/core/jsons/fom_res.dart';
+import 'package:flat_out_app/core/interfaces/fom_group.dart';
+import 'package:flat_out_app/core/interfaces/fom_res.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +25,7 @@ class _GroupSignupPageState extends State<GroupCreatePage> {
       widget.errorToast("Passwords do not match", context);
     } else {
       try {
-        FomRes res = await FomReq.groupRegister(uName.text, pWord.text, context.read<RuntimeCache>().user?.token ?? "");
+        FomRes res = await fomReq.groupRegister(uName.text, pWord.text, context.read<RuntimeCache>().user?.token ?? "");
         if (res.statusCode == 200) {
           widget.successToast(res.msg, context);
           context.read<RuntimeCache>().addGroup(FomGroup.fromJson(res.item));
@@ -33,7 +33,7 @@ class _GroupSignupPageState extends State<GroupCreatePage> {
         } else
           widget.errorToast(res.msg, context);
       } catch (e) {
-        widget.fuckMeToast("${e}", context);
+        widget.devErrorToast("${e}", context);
       }
     }
     setState(() => isLoading = false);

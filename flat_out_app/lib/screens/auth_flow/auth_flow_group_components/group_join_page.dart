@@ -5,9 +5,9 @@ import 'package:flat_out_app/components/templates/alert.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
-import 'package:flat_out_app/core/jsons/fom_group.dart';
-import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/jsons/utils/enums.dart';
+import 'package:flat_out_app/core/interfaces/fom_group.dart';
+import 'package:flat_out_app/core/interfaces/fom_res.dart';
+import 'package:flat_out_app/core/interfaces/utils/enums.dart';
 import 'package:flat_out_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
 
   void join() async {
     try {
-      FomRes res = await FomReq.groupJoin(_gName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
+      FomRes res = await fomReq.groupJoin(_gName.text, _pWord.text, context.read<RuntimeCache>().user!.token, _type);
       if (res.statusCode == 200) {
         if (_type != RoleType.request) {
           widget.successToast(res.msg, context);
@@ -41,7 +41,7 @@ class _GroupJoinPageState extends State<GroupJoinPage> {
       } else
         widget.errorToast(res.msg, context);
     } catch (e) {
-      widget.fuckMeToast("${e}", context);
+      widget.devErrorToast("${e}", context);
     }
     setState(() => _isLoading = false);
   }

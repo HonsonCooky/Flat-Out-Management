@@ -10,11 +10,13 @@ class FomDbObject {
   String id;
   String uiName;
   String fomVersion;
+  String? avatar;
   List<FomAssociation> children;
   DateTime createdAt;
   DateTime updatedAt;
 
-  FomDbObject(this.id, this.uiName, this.fomVersion, this.children, this.createdAt, this.updatedAt);
+
+  FomDbObject(this.id, this.uiName, this.fomVersion, this.avatar, this.children, this.createdAt, this.updatedAt);
 
   factory FomDbObject.fromJson(Map<String, dynamic> json) => _$FomDbObjectFromJson(json);
 
@@ -22,6 +24,7 @@ class FomDbObject {
 
   @override
   String toString() {
-    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion, children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return 'FomDbObject{id: $id, uiName: $uiName, fomVersion: $fomVersion,'
+        'children: $children, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 }

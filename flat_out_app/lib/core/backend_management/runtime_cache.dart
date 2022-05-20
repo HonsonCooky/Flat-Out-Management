@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/local_storage.dart';
-import 'package:flat_out_app/core/jsons/fom_group.dart';
-import 'package:flat_out_app/core/jsons/fom_res.dart';
-import 'package:flat_out_app/core/jsons/fom_table.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
-import 'package:flat_out_app/core/jsons/utils/enums.dart';
+import 'package:flat_out_app/core/interfaces/fom_group.dart';
+import 'package:flat_out_app/core/interfaces/fom_res.dart';
+import 'package:flat_out_app/core/interfaces/fom_table.dart';
+import 'package:flat_out_app/core/interfaces/fom_user.dart';
+import 'package:flat_out_app/core/interfaces/utils/enums.dart';
 import 'package:flutter/cupertino.dart';
 
 const String noGroupKey = 'no_group';
@@ -63,7 +63,7 @@ class RuntimeCache extends ChangeNotifier {
           .where((element) =>
               element.model == ModelType.group &&
               !(element.role == RoleType.request || element.role == RoleType.mentioned))
-          .map((e) async => await FomReq.groupGet(e, _user!.token))
+          .map((e) async => await fomReq.groupGet(e, _user!.token))
           .toList());
 
       for (int i = 0; i < gs.length; i++) {
@@ -95,6 +95,7 @@ class RuntimeCache extends ChangeNotifier {
    * Gets all information from local storage, and sets it to it's respective values.
    */
   Future<void> init([Function? onErr = null]) async {
+    _clearAll();
     String? u = await LocalStorage.read(partition: ModelType.user);
     _user = u != null ? FomUser.fromJson(jsonDecode(u)) : null;
     _groups =

@@ -50,3 +50,6 @@ flat_out_app/app.*.map.json
 flat_out_app/android/app/debug
 flat_out_app/android/app/profile
 flat_out_app/android/app/release
+/flat_out_api/uploads/
+/flat_out_api/tmp/
+/flat_out_api/downloads/

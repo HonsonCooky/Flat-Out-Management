@@ -1,7 +1,7 @@
 import 'package:flat_out_app/components/atoms/unfocus_wrapper.dart';
 import 'package:flat_out_app/components/templates/alert.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
-import 'package:flat_out_app/core/jsons/fom_user.dart';
+import 'package:flat_out_app/core/interfaces/fom_user.dart';
 import 'package:flat_out_app/screens/auth_flow/auth_flow_group_components/group_auth_header.dart';
 import 'package:flat_out_app/screens/auth_flow/auth_flow_group_components/group_auth_page_body.dart';
 import 'package:flat_out_app/screens/auth_flow/auth_flow_group_components/group_create_page.dart';

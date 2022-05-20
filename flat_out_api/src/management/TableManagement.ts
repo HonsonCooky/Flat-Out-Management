@@ -8,6 +8,7 @@ import {IFomTable} from "../interfaces/IFomTable";
 import {IFomRes} from "../interfaces/IFomRes";
 import {ModelType, RoleType} from "../interfaces/IFomEnums";
 import {IFomDbObject} from "../interfaces/IFomDbObject";
+import {linkAvatar} from "./AvatarManagement";
 
 export async function tableRenew(table: IFomTable) {
   tableRotations(table)
@@ -21,7 +22,7 @@ export async function tableRenew(table: IFomTable) {
  */
 export async function tableRegister(req: Request, res: Response): Promise<IFomRes> {
   let parent: IFomDbObject = await getRegisteringParent(req, res)
-  let {name, password, fieldIndexes, records, rotations} = req.body
+  let {name, password, fieldIndexes, records, rotations, avatar} = req.body
 
   let table: IFomTable = new TableModel({
     uiName: name,
@@ -30,7 +31,10 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
     fieldIndexes,
     records,
     rotations,
+
   })
+
+  if (avatar) await linkAvatar(table, avatar)
 
   await tableRenew(table)
 
@@ -52,7 +56,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
  * @param res
  */
 export async function tableUpdate(req: Request, res: Response): Promise<IFomRes> {
-  let {newName, newPassword, fieldIndexes, records, rotations, parents} = req.body
+  let {newName, newPassword, fieldIndexes, records, rotations, parents, avatar} = req.body
   let {controller, component, role} = await getControllerComponentAndRoleUrl<IFomTable>(req, res)
 
   if (authLevel(role) > authLevel(RoleType.WRITER))
@@ -62,12 +66,13 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
     component.password = saltAndHash(newPassword) ?? component.password
     component.rotations = rotations ?? component.rotations
     component.parents = await componentUpdateConnections(component.parents, parents);
-    console.log(component.parents)
   }
 
   component.uiName = newName ?? component.uiName
   component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
   component.records = records ?? component.records
+
+  if (avatar) await linkAvatar(component, avatar)
 
   await tableRenew(component as IFomTable)
 

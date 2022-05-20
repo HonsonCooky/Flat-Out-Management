@@ -42,7 +42,7 @@ abstract class ToastWrapper extends StatefulWidget {
     ));
   }
 
-  void fuckMeToast(String id, BuildContext context) {
+  void devErrorToast(String id, BuildContext context) {
     final s = ScaffoldMessenger.of(context);
     s.showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,

@@ -17,10 +17,10 @@ const log = (message: string, object?: any, logLevel?: LogLevel) => {
     })
     localLogs = []
     LogModel.find().sort({createdAt: 1}).limit(100);
+  } else {
+    console.log(message)
   }
 }
-
-log("hello");
 
 const info = (message: string, object?: any) =>
   log(message, object)

@@ -21,7 +21,7 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
  */
 function sanitizeRes(iFomRes: IFomRes): IFomRes {
   fomLogger.info(iFomRes.msg)
-  if (!iFomRes.item || !("_id" in iFomRes.item)) return iFomRes
+  if (!iFomRes.item || !("uiName" in iFomRes.item)) return iFomRes
 
   let {dynUuid, password, ...rest} = iFomRes.item.toObject()
   rest.token = iFomRes.token

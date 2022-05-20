@@ -1,11 +1,7 @@
-import {models, Types} from "mongoose";
+import {models} from "mongoose";
 import {ModelType, RoleType} from "../../interfaces/IFomEnums";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {Request} from "express";
-import {IFomImage} from "../../interfaces/IFomImage";
-import sharp from "sharp";
-import fs from "fs";
 import {IFomDbObject} from "../../interfaces/IFomDbObject";
 
 /**
@@ -72,7 +68,7 @@ export async function connectDocuments(
  * @param parents
  * @param children
  */
-export async function preDocRemoval(doc: { _id: Types.ObjectId, [key: string]: any },
+export async function preDocRemoval(doc: IFomDbObject,
   children: IFomAssociation[], parents?: IFomAssociation[]) {
 
   // Remove child from parents
@@ -148,24 +144,4 @@ export async function componentUpdateConnections(refArr: IFomAssociation[], upda
     throw new Error('400: Updates leave remove an owner. Components require an owner')
 
   return update
-}
-
-
-/**
- * Extract and image from form data in request, to an IFomImage.
- * @param req
- */
-export async function extractImageBuffer(req: Request): Promise<IFomImage | undefined> {
-  try {
-    if (!req.file) return undefined
-
-    return {
-      data: await sharp(fs.readFileSync('uploads/' + req.file.filename))
-        .resize(200, 200)
-        .toBuffer(),
-      contentType: req.file.mimetype
-    }
-  } catch (e) {
-    return undefined
-  }
 }

@@ -6,7 +6,7 @@ import {authLevel} from "./GenericPartials";
 import {IFomComponent} from "../../interfaces/IFomComponent";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomController} from "../../interfaces/IFomController";
-import {ModelType, RoleType} from "../../interfaces/IFomEnums";
+import {RoleType} from "../../interfaces/IFomEnums";
 import assert from "node:assert";
 import {IFomDbObject} from "../../interfaces/IFomDbObject";
 
@@ -150,33 +150,6 @@ export async function getControllerComponentAndRoleUrl<T extends IFomComponent>(
   return {
     controller,
     component,
-    role: association.role
-  }
-}
-
-
-/**
- * Get the reference database object. A user will ALWAYS be needed from an authorization header. However, a component
- * MIGHT be referenced in the URL. In the case of a component referenced in the url, return that component, else return
- * the user.
- * @param req
- * @param res
- */
-export async function getReferenceObject<T extends IFomDbObject>(req: Request, res: Response):
-  Promise<{ dbObject: T, role: RoleType }> {
-
-  let controller: IFomController = await getController<IFomController>(res)
-
-  if (!req.params.component || req.params.component === ModelType.USER)
-    return {
-      dbObject: controller as unknown as T,
-      role: RoleType.OWNER
-    }
-
-  let component: IFomComponent = await getComponentUrl<IFomComponent>(req)
-  let association: IFomAssociation = await getAssociation(controller._id, component)
-  return {
-    dbObject: component as unknown as T,
     role: association.role
   }
 }

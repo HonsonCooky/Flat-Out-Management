@@ -7,6 +7,7 @@ export enum ModelType {
   USER = 'user',
   GROUP = 'group',
   TABLE = 'table',
+  IMAGE_META = 'imageMeta'
 }
 
 /**

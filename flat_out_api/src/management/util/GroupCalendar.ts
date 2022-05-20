@@ -23,9 +23,10 @@ export async function groupCalendar(group: IFomGroup) {
       return (a.ref as IFomUser)
         .outOfFlatDates
         .filter((e: IFomEvent) => e.eType === EventType.GROUP)
-        .map(({date, eType, header, message}: IFomEvent) => {
+        .map(({from, to, eType, header, message}: IFomEvent) => {
           return {
-            date,
+            from,
+            to,
             eType,
             header: `${a.ref.uiName}: ${header}`,
             message,
