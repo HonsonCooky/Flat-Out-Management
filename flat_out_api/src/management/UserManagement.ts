@@ -29,7 +29,7 @@ export async function userRegister(req: Request, res: Response): Promise<IFomRes
     colorAssociation,
   })
 
-  if (avatar) await linkAvatar(user, avatar)
+  if (avatar) await linkAvatar(req, user, avatar)
 
   let token: string = signJWT(user, req.body.expiresIn)
 
@@ -121,7 +121,7 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   user.uiName = uiName ?? user.uiName
   user.colorAssociation = uiColor ?? user.colorAssociation
 
-  if (avatar) await linkAvatar(user, avatar)
+  if (avatar) await linkAvatar(req, user, avatar)
 
   if (outOfFlatDates) {
     user.outOfFlatDates = outOfFlatDates

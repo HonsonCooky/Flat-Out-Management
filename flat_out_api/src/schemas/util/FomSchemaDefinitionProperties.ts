@@ -1,5 +1,5 @@
 import {Schema, SchemaDefinitionProperty, Types} from "mongoose";
-import {env} from "../../config/Config"
+import {CONFIG} from "../../Config"
 import {EventType, ModelType, RoleType, TimeIntervals} from "../../interfaces/IFomEnums";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
 import {IFomEvent} from "../../interfaces/IFomEvent";
@@ -85,7 +85,7 @@ const verRegex = new RegExp(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/)
 
 export const FOM_VERSION: SchemaDefinitionProperty<string> = {
   type: String,
-  default: env.version,
+  default: CONFIG.version,
   required: true,
   validate: {
     validator: (value: string) => verRegex.test(value),

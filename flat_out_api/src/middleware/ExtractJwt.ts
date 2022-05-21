@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
-import {env} from "../config/Config";
+import {CONFIG} from "../Config";
 
 /**
  * An Express middleware component which will
@@ -16,7 +16,7 @@ export function extractJwt(required: boolean = true) {
       return
     }
 
-    jwt.verify(token, env.token.secret, (err, decoded) => {
+    jwt.verify(token, CONFIG.token.secret, (err, decoded) => {
       if (err) throw new Error(`400: Access denied`)
       res.locals.jwt = decoded
       next()

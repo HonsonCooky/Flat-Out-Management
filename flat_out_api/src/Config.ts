@@ -1,5 +1,4 @@
 import {config} from "dotenv";
-import {connection} from "mongoose";
 
 /**
  * ENVIRONMENT VARIABLES
@@ -37,21 +36,22 @@ const DATABASE_ACCESS: string =
 /**
  * Get the VCS value from the package.json
  */
-const packageJson: any = require('../../package.json')
+const packageJson: any = require('../package.json')
 const fomVersion: string = packageJson.version
 
 /**
  * Export all the above, tied with a bow, in an object
  */
-export const env = {
+export const CONFIG = {
   devMode: DATABASE_ENVIRONMENT === '-t01',
   version: fomVersion,
   express: {
     port: SERVER_PORT,
   },
-  mongo: {
+  mongoDb: {
     connectionStr: DATABASE_ACCESS,
-    isDbConnected: () => connection.readyState === 1,
+    isDbConnected: false,
+    isGridConnected: false,
   },
   token: {
     issuer: SERVER_TOKEN_ISSUER,

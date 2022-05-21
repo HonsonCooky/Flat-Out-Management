@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import {env} from "../../config/Config";
+import {CONFIG} from "../../Config";
 import jwt from "jsonwebtoken";
 import {IFomController} from "../../interfaces/IFomController";
 import {IFomJwtContract} from "../../interfaces/IFomJwtContract";
@@ -29,7 +29,7 @@ export function compareHashes(a?: string, b?: string): boolean {
  * @param controller
  * @param expiresIn
  */
-export function signJWT(controller: IFomController, expiresIn: string = env.token.expirationDays): string {
+export function signJWT(controller: IFomController, expiresIn: string = CONFIG.token.expirationDays): string {
   if (!controller) throw new Error(`500: Unable to sign a JWT without some content`)
 
   let payload: IFomJwtContract = {
@@ -37,10 +37,10 @@ export function signJWT(controller: IFomController, expiresIn: string = env.toke
   }
 
   let options: any = {
-    issuer: env.token.issuer,
+    issuer: CONFIG.token.issuer,
     algorithm: 'HS256',
     expiresIn: expiresIn + 'd'
   }
 
-  return 'Bearer ' + jwt.sign(payload, env.token.secret, options)
+  return 'Bearer ' + jwt.sign(payload, CONFIG.token.secret, options)
 }

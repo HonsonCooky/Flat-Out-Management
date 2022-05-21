@@ -1,5 +1,4 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {fomLogger} from "../config/Logger";
 import {IFomRes} from "../interfaces/IFomRes";
 
 /**
@@ -20,7 +19,6 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
  * @param iFomRes
  */
 function sanitizeRes(iFomRes: IFomRes): IFomRes {
-  fomLogger.info(iFomRes.msg)
   if (!iFomRes.item || !("uiName" in iFomRes.item)) return iFomRes
 
   let {dynUuid, password, ...rest} = iFomRes.item.toObject()

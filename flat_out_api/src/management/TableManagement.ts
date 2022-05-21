@@ -34,7 +34,7 @@ export async function tableRegister(req: Request, res: Response): Promise<IFomRe
 
   })
 
-  if (avatar) await linkAvatar(table, avatar)
+  if (avatar) await linkAvatar(req, table, avatar)
 
   await tableRenew(table)
 
@@ -72,7 +72,7 @@ export async function tableUpdate(req: Request, res: Response): Promise<IFomRes>
   component.fieldIndexes = fieldIndexes ?? component.fieldIndexes
   component.records = records ?? component.records
 
-  if (avatar) await linkAvatar(component, avatar)
+  if (avatar) await linkAvatar(req, component, avatar)
 
   await tableRenew(component as IFomTable)
 
