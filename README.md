@@ -18,4 +18,4 @@ Some example of things that can be done:
 - Group calander, where everyone's schedules are combined.
 - The ability to assign 'associations' to the flat, such that partners, landlords, and friends can view the schedule of the flat.
 
-The application can do so much more, [see here]([url](https://github.com/HonsonCooky/Flat-Out-Management/tree/main/flat_out_app))
+The application can do so much more, [see here](https://github.com/HonsonCooky/Flat-Out-Management/tree/main/flat_out_app)
