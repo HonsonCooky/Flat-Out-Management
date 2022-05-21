@@ -8,7 +8,7 @@ For full transparency, this application was designed and created for _**fun**_. 
 
 Having a full time job, and a large student debt, this project is designed and created at the hobbiest level ([see more here](https://github.com/HonsonCooky/Flat-Out-Management/tree/main/flat_out_api)). As such, the performance and engineering of this application has majorly been designed around being 'no cost'. Feedback and ideas more than welcome, please leave comments as 'issues' in this git repository. 
 
-## What can FOM do? ❓
+## What can FOM do? 📱
 FOM is a cross-platform application to resolve some of the flatting issues I've encountered (and some I thought might be encountered). 
 
 Some example of things that can be done:
