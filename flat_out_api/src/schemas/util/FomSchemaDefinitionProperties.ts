@@ -2,8 +2,8 @@ import {Schema, SchemaDefinitionProperty, Types} from "mongoose";
 import {CONFIG} from "../../Config"
 import {EventType, ModelType, RoleType, TimeIntervals} from "../../interfaces/IFomEnums";
 import {IFomAssociation} from "../../interfaces/IFomAssociation";
-import {IFomEvent} from "../../interfaces/IFomEvent";
-import {IFomTable, IFomTableRecord, IFomTableRotationConfig} from "../../interfaces/IFomTable";
+import {IFomEvent, IFomEventNotification} from "../../interfaces/IFomEvent";
+import {IFomCellCalculation, IFomTable, IFomTableRecord, IFomTableRotationConfig} from "../../interfaces/IFomTable";
 
 function getParent<T>(t: any): T {
   if (!t) throw new Error('500: Unable to get parent with null')
@@ -53,7 +53,7 @@ const FOM_ASSOCIATION_REF: SchemaDefinitionProperty<Types.ObjectId> = {
   type: Schema.Types.ObjectId,
   required: true,
   ref: function () {
-    return (this as any).model
+    return this.model
   }
 }
 
@@ -105,15 +105,32 @@ export const FOM_COLOR_ASSOCIATION: SchemaDefinitionProperty<string> = {
   }
 }
 
+
 /**
  * Some tuple of date, title and message.
  */
+// EventType
+const FOM_EVENT_TYPE: SchemaDefinitionProperty<EventType> = {
+  type: String,
+  enum: EventType,
+  default: EventType.USER
+}
+
+// Event Notification
+const FOM_EVENT_NOTIFICATION: SchemaDefinitionProperty<IFomEventNotification> = {
+  associations: [FOM_ASSOCIATION],
+  notificationTime: Date
+}
+
+// IFomEvent
 export const FOM_EVENT: SchemaDefinitionProperty<IFomEvent> = {
-  date: {type: Date, required: true},
-  eType: {type: String, enum: EventType, default: EventType.USER},
+  from: {type: Date, required: true},
+  to: {type: Date, required: true},
+  eType: FOM_EVENT_TYPE,
   header: FOM_NAME,
   message: String,
-  colorAssociation: FOM_COLOR_ASSOCIATION
+  color: FOM_COLOR_ASSOCIATION,
+  notifications: [FOM_EVENT_NOTIFICATION]
 }
 
 /** ------------------------------------------------------------------------------------------------------------------
@@ -136,27 +153,9 @@ export const FOM_DYNAMIC_UUID: SchemaDefinitionProperty<Types.ObjectId> = {
 /**
  * Outlines the total number of columns.
  */
-export const FOM_TABLE_COLUMNS: SchemaDefinitionProperty<number> = {
+export const FOM_TABLE_LENGTH: SchemaDefinitionProperty<number> = {
   type: Number,
-  required: true
-}
-
-/**
- * Outlines which rows inside a table, are headers. Mostly used for UI, but also rotations.
- */
-export const FOM_TABLE_FIELD_INDEXES: SchemaDefinitionProperty<number> = {
-  type: Number,
-  validate: function (val: number) {
-    let table: any = this
-    return table ? 0 <= val && val < table.records.length : false
-  }
-}
-
-/**
- * Outlines a row in the table, outlining a list of valid object types inside a cell.
- */
-export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
-  type: [String || FOM_ASSOCIATION || Date]
+  required: true,
 }
 
 /**
@@ -166,12 +165,29 @@ export const FOM_TABLE_CONFIG_ROTATION: SchemaDefinitionProperty<IFomTableRotati
   column: {
     type: Number,
     validate: function (val: number) {
-      let table: IFomTable = getParent<IFomTable>(this)
-      return 0 <= val && val < table.columns
+      let table = getParent<IFomTable>(this)
+      return 0 <= val && val < table.colLength
     }
   },
   startDate: {type: Date, default: new Date()},
   nextUpdate: Date,
-  intervalValue: {type: Number, default: 1},
-  intervalUnit: {type: String, enum: TimeIntervals},
+  intervalValue: {type: Number, min: 1, required: true},
+  intervalUnit: {type: String, enum: TimeIntervals, required: true},
+}
+
+/**
+ * Allows for some cell's value to be the executed value of this one
+ */
+const FOM_TABLE_CELL_CALCULATION: SchemaDefinitionProperty<IFomCellCalculation> = {
+  codeStr: {
+    type: String,
+    required: true
+  }
+}
+
+/**
+ * Outlines the types of data objects, that can be stored in a table record
+ */
+export const FOM_TABLE_RECORD: SchemaDefinitionProperty<IFomTableRecord> = {
+  type: [(String || Number || Date || FOM_ASSOCIATION || FOM_EVENT || FOM_TABLE_CELL_CALCULATION)],
 }

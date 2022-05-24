@@ -8,66 +8,76 @@ import {TimeIntervals} from "../../interfaces/IFomEnums";
 export function tableRotations(table: IFomTable) {
   for (let r of table.rotations) {
     let oldNext = r.nextUpdate ?? r.startDate
-    let {newNext, jumps} = getNextAndJumps(r, oldNext)
+    let {updateDate, jumps} = getUpdatedDateAndJumps(r, oldNext)
 
-    if (oldNext.getTime() === newNext.getTime()) return
+    if (oldNext.getTime() === updateDate.getTime()) return
 
     rotateColumn(r, table, jumps)
-    r.nextUpdate = newNext;
+    r.nextUpdate = updateDate;
   }
 }
 
 /**
- * Calculate the next update time based on the configuration of the table rotation.
+ * This method determines if the amount of time passed since Rotation.nextUpdate is sufficient for the table to rotate.
+ * It does this by calculating the number of rotations ("jumps") between the two dates, based on the configuration.
+ *
+ * For example, if a configuration is set up to rotate every two weeks, and there is a five-week difference between
+ * Rotation.nextUpdate and now, then:
+ * - We are guaranteed one rotation for simply exceeding the 'nextUpdate' time.
+ * - We need to calculate how many rotations have been since the last update
+ * - We need to calculate when the next update will be
  * @param config
- * @param date
- * @param jumps
+ * @param updateDate
  */
-function getNextAndJumps(config: IFomTableRotationConfig, date: Date,
-  jumps: number = 0): { newNext: Date, jumps: number } {
-  // Re-config to UTC
-  let today = new Date()
-  let newNext = new Date(date)
+function getUpdatedDateAndJumps(config: IFomTableRotationConfig, updateDate: Date):
+  { updateDate: Date, jumps: number } {
 
+  let now = new Date()
 
-  let todayUTC = new Date(Date.UTC(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-    0, 0, 0, 0
-  ))
-  let newNextUTC = new Date(Date.UTC(
-    newNext.getFullYear(),
-    newNext.getMonth(),
-    newNext.getDate(),
-    0, 0, 0, 0
-  ))
+  // If RIGHT NOW is not yet beyond the date of the next update, then don't make any changes.
+  if (now.getTime() < updateDate.getTime()) return {updateDate, jumps: 0}
 
-  // If the provided date is beyond today, return it
-  if (todayUTC.getTime() < newNextUTC.getTime()) return {newNext: new Date(newNextUTC.setHours(0)), jumps}
-
-  // Implement one cycle of an update. If the update is not
   let {intervalUnit, intervalValue} = config
+
+  let timeDiff = now.getTime() - updateDate.getTime()
+  let oneDayInMs = 1000 * 60 * 60 * 24
+  let jumps = 0
   switch (intervalUnit) {
-    // Day
+    /*
+     DAYS: The rotation happens every X DAYS
+     intervalValue = number of days
+     timeDiff = amount
+     */
     case TimeIntervals.DAILY:
-      newNext.setDate(newNextUTC.getDate() + intervalValue)
-      return getNextAndJumps(config, newNext, jumps + 1)
-    // Week
+      // Floor, such that the time is guaranteed to expire
+      jumps = Math.floor(timeDiff / (oneDayInMs * intervalValue))
+      if (jumps <= 0) break
+
+      updateDate.setDate(updateDate.getDate() + (jumps * intervalValue))
+      return {updateDate, jumps}
+    /*
+     */
     case TimeIntervals.WEEKLY:
-      newNext.setDate(newNextUTC.getDate() + (7 * intervalValue))
-      return getNextAndJumps(config, newNext, jumps + 1)
-    // Month
+      jumps = Math.floor(timeDiff / (oneDayInMs * 7 * intervalValue))
+      if (jumps <= 0) break
+      updateDate.setDate(updateDate.getDate() + (jumps * intervalValue))
+      return {updateDate, jumps}
+    // MONTHS
     case TimeIntervals.MONTHLY:
-      newNext.setMonth(newNextUTC.getMonth() + intervalValue)
-      return getNextAndJumps(config, newNext, jumps + 1)
-    // Year
+      jumps = (updateDate.getFullYear() - now.getFullYear()) * 12;
+      jumps += updateDate.getMonth() - now.getMonth();
+      jumps = jumps <= 0 ? 0 : jumps; // Number of months
+
+      if (jumps <= 0) break
+
+      jumps = jumps / intervalValue // Number of month interval
+      updateDate.setMonth(updateDate.getMonth() + (jumps * intervalValue))
+      return {updateDate, jumps}
+    // YEARS
     case TimeIntervals.ANNUALLY:
-      newNext.setFullYear(newNextUTC.getFullYear() + intervalValue)
-      return getNextAndJumps(config, newNext, jumps + 1)
-    default:
-      throw new Error(`400: Unknown time interval unit in table rotations configuration. "${intervalUnit}"`)
   }
+
+  return {updateDate, jumps: 0}
 }
 
 
@@ -78,22 +88,7 @@ function getNextAndJumps(config: IFomTableRotationConfig, date: Date,
  * @param jumps
  */
 function rotateColumn(config: IFomTableRotationConfig, table: IFomTable, jumps: number) {
-  let col = config.column
-  let recordLength = table.records.length
-  jumps = jumps % (recordLength - table.fieldIndexes.length)
-  let newTable = Array(recordLength)
-
-  for (let i = 0; i < recordLength; i++) {
-    newTable[i] = [...table.records[i]]
-    if (table.fieldIndexes.includes(i)) continue
-
-    let j = i - jumps
-    j = j < 0 ? recordLength + j : j
-    j = findNonField(j, recordLength, table.fieldIndexes)
-
-    newTable[i][col] = table.records[j][col]
-  }
-  table.records = newTable
+  // TODO
 }
 
 /**

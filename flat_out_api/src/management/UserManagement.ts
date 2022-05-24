@@ -119,12 +119,12 @@ export async function userUpdate(req: Request, res: Response): Promise<IFomRes> 
   }
 
   user.uiName = uiName ?? user.uiName
-  user.colorAssociation = uiColor ?? user.colorAssociation
+  user.color = uiColor ?? user.color
 
   if (avatar) await linkAvatar(req, user, avatar)
 
   if (outOfFlatDates) {
-    user.outOfFlatDates = outOfFlatDates
+    user.calendar = outOfFlatDates
     await dateUpdate(user)
   }
 

@@ -66,7 +66,7 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
     return joined;
   }
 
-  double pointFrom() {
+  double _pointFrom() {
     double min = MediaQuery.of(context).size.width / 5;
     double max = MediaQuery.of(context).size.width - (min * 2);
     int listSize = (widget.buttonNames.length - 1);
@@ -76,7 +76,7 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
     return min + ((max / listSize) * indexOf);
   }
 
-  double pointTo() {
+  double _pointTo() {
     double min = MediaQuery.of(context).size.width / 5;
     double max = MediaQuery.of(context).size.width - (min * 2);
     int listSize = (widget.buttonNames.length - 1);
@@ -90,7 +90,7 @@ class _HeaderAnimatedSlideState extends State<HeaderAnimatedSlide> {
   Widget build(BuildContext context) {
     final ScrollController _scrollController = ScrollController();
     // Point animation
-    Animation<double> _pointAnimation = Tween<double>(begin: pointFrom(), end: pointTo()).animate(widget.controller)
+    Animation<double> _pointAnimation = Tween<double>(begin: _pointFrom(), end: _pointTo()).animate(widget.controller)
       ..addListener(() {
         setState(() {});
       });

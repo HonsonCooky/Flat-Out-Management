@@ -1,5 +1,6 @@
 import 'package:flat_out_app/components/molecules/auth_text_confirm_passwords.dart';
 import 'package:flat_out_app/components/molecules/auth_text_field.dart';
+import 'package:flat_out_app/components/molecules/avatar_selector.dart';
 import 'package:flat_out_app/components/templates/toast_page.dart';
 import 'package:flat_out_app/core/backend_management/http_requests.dart';
 import 'package:flat_out_app/core/backend_management/runtime_cache.dart';
@@ -43,6 +44,7 @@ class _UserSignupPageState extends State<UserSignupPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        AvatarSelector(),
         AuthTextField(
           controller: uName,
           hintText: "Username",

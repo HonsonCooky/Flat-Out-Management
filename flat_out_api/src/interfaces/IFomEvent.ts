@@ -1,4 +1,13 @@
 import {EventType} from "./IFomEnums";
+import {IFomAssociation} from "./IFomAssociation";
+
+/**
+ * Stores when notifications for events should be executed
+ */
+export interface IFomEventNotification {
+  associations: IFomAssociation[],
+  notificationTime: Date
+}
 
 /**
  * An event document
@@ -9,5 +18,6 @@ export interface IFomEvent {
   eType: EventType,
   header: string,
   message: string,
-  colorAssociation: string,
+  color: string,
+  notifications: IFomEventNotification[]
 }

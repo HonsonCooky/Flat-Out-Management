@@ -14,8 +14,8 @@ import {ModelType} from "../../interfaces/IFomEnums";
  */
 const UserSchema = new Schema<IFomUser>({
   ...FomControllerSchemaDef,
-  outOfFlatDates: [FOM_EVENT],
-  colorAssociation: FOM_COLOR_ASSOCIATION
+  calendar: [FOM_EVENT],
+  color: FOM_COLOR_ASSOCIATION
 }, {timestamps: true})
 
 export const UserModel = model<IFomUser>(ModelType.USER, UserSchema)
