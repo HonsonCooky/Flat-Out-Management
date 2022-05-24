@@ -1,14 +1,14 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {IFomRes} from "../interfaces/IFomRes";
+import {FomRes} from "../interfaces/utils/FomRes";
 
 /**
  * Manage the execution and try catching of all functions being called from a URL call.
  * @param fn
  */
-export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRes>): RequestHandler {
+export function routeHandler(fn: (req: Request, res: Response) => Promise<FomRes>): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res)
-      .then(async (iFomRes: IFomRes) => res.status(200).send(sanitizeRes(iFomRes)))
+      .then(async (iFomRes: FomRes) => res.status(200).send(sanitizeRes(iFomRes)))
       .catch((e: any) => next(e))
   }
 }
@@ -18,7 +18,7 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<IFomRe
  * necessary to parse back.
  * @param iFomRes
  */
-function sanitizeRes(iFomRes: IFomRes): IFomRes {
+function sanitizeRes(iFomRes: FomRes): FomRes {
   if (!iFomRes.item || !("uiName" in iFomRes.item)) return iFomRes
 
   let {dynUuid, password, ...rest} = iFomRes.item.toObject()

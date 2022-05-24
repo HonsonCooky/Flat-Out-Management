@@ -2,7 +2,7 @@ import express from "express";
 import {userRoutes} from "./UserRoutes";
 import {groupRoutes} from "./GroupRoutes";
 import {tableRoutes} from "./TableRoutes";
-import {ModelType} from "../interfaces/IFomEnums";
+import {ModelType} from "../interfaces/utils/IFomEnums";
 import {avatarRoutes} from "./AvatarRoutes";
 
 export const apiRoutes = express.Router({mergeParams: true})

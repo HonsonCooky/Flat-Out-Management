@@ -2,14 +2,11 @@ import express, {Request, Response} from "express";
 import helmet from "helmet";
 import {connect} from "mongoose";
 import {CONFIG} from "./Config";
-import baseRoute from "./routes/BaseRoute";
-import {apiRoutes} from "./routes/ApiRoutes";
 import {errorHandler} from "./middleware/ErrorHandling";
-import {initGridFs} from "./management/AvatarManagement";
 
-require('./schemas/documents/UserSchema')
-require('./schemas/documents/GroupSchema')
-require('./schemas/documents/TableSchema')
+require('./schemas/UserSchema')
+require('./schemas/GroupSchema')
+require('./schemas/TableSchema')
 
 /** -----------------------------------------------------------------------------------------------------------------
  * MONGODB CONNECTION AND SETUP
@@ -17,7 +14,7 @@ require('./schemas/documents/TableSchema')
 // Create a connection to the MongoDB instance
 connect(CONFIG.mongoDb.connectionStr).then(async () => {
   CONFIG.mongoDb.isDbConnected = true
-  initGridFs().then(() => CONFIG.mongoDb.isGridConnected = true).catch()
+  // initGridFs().then(() => CONFIG.mongoDb.isGridConnected = true).catch()
   apiInitNormalMode()
 }).catch(apiInitErrorMode)
 
@@ -36,8 +33,8 @@ export function apiInitNormalMode() {
   webAPI.use(express.urlencoded({extended: true}))
 
   // Initialize Routes
-  webAPI.use(baseRoute)
-  webAPI.use(apiRoutes)
+  // webAPI.use(baseRoute)
+  // webAPI.use(apiRoutes)
 
   // Handle errors if the request is invalid
   webAPI.use(errorHandler)

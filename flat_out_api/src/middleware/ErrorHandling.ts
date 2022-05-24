@@ -1,6 +1,6 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
 
-import {IFomRes} from "../interfaces/IFomRes";
+import {FomRes} from "../interfaces/utils/FomRes";
 
 const known400ErrorMessages = [
   '400',
@@ -10,7 +10,7 @@ const known400ErrorMessages = [
   'Cannot read properties of undefined'
 ]
 
-function jsonError(msg: string): IFomRes {
+function jsonError(msg: string): FomRes {
   return {
     msg: msg.replace(/400: /g, '')
       .replace(/500: /g, '')

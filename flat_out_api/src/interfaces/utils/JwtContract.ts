@@ -1,9 +1,9 @@
 import {JwtPayload} from "jsonwebtoken";
-import {Types} from "mongoose";
+import {ObjectId} from "mongoose";
 
 /**
  * A jwt token can be extracted to this contract. It must also be signed using this contract.
  */
-export interface IFomJwtContract extends JwtPayload {
-  dynUuid?: Types.ObjectId
+export interface JwtContract extends JwtPayload {
+  jwtUuid: ObjectId
 }
