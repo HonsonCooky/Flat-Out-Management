@@ -17,6 +17,8 @@ export enum TimeUnits {
 export class RepeatCycle {
   /**Determines the end of the current cycle*/
   private _endOfCycle: Date
+  /**Pause the cycle. Functions will return default, zero, values*/
+  private _pause: boolean
   /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKS}*/
   private readonly _unit: TimeUnits
   /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKS} && unitDuration = 2*/
@@ -26,19 +28,27 @@ export class RepeatCycle {
 
   /**
    * Repeat is essentially a glorified timer. It has two main functions.
-   *  1) Determine how many
-   *  2) Create a list of dates
+   * - getCyclesToDate: Returns the number of cycles that have past since {@link _endOfCycle}.
+   * - getUpcomingEndOfCycleDates: Returns an array of n length, with upcoming end of cycle dates.
    *
-   * @param options An object which contains a unit: {@link TimeUnits}, unitDurations: number, and maybe a
-   *   referenceDate (defaults to Date.now)
+   * @param unit A {@link TimeUnits} enum, that identifies some time interval
+   * @param unitDuration A number that represents how many {@link unit}s to each cycle
+   * @param endOfCycle A cache which stores the date, which represents the end of the current cycle.
    */
-  constructor(options: any) {
-    assert(options.unit && options.unitDuration)
-    this._unit = options.unit;
-    this._unitDuration = options.unitDuration;
-    this._endOfCycle = options.endOfCycle ?
-                       new Date(options.endOfCycle.setHours(0, 0, 0, 0)) :
+  constructor(unit: TimeUnits, unitDuration: number, endOfCycle?: Date) {
+    this._unit = unit;
+    this._unitDuration = unitDuration;
+    this._endOfCycle = endOfCycle ?
+                       new Date(endOfCycle.setHours(0, 0, 0, 0)) :
                        new Date(new Date().setHours(0, 0, 0, 0))
+    this._pause = false
+  }
+
+  /**
+   * Get the date which represents the end of the current cycle.
+   */
+  get endOfCycle(): Date {
+    return new Date(this._endOfCycle);
   }
 
   /**
@@ -49,9 +59,35 @@ export class RepeatCycle {
     this._endOfCycle = new Date(date.setHours(0, 0, 0, 0));
   }
 
+  /**
+   * Get the current pause state of this repeat cycle.
+   */
+  get isPaused(): boolean {
+    return this._pause;
+  }
 
-  get endOfCycle(): Date {
-    return new Date(this._endOfCycle);
+  /**
+   * A wrapper function to enable the construction of a {@link RepeatCycle} from an unknown object source.
+   * @param options - { unit: TimeUnits, unitDuration: number, endOfCycle?: Date }
+   */
+  static from(options: any): RepeatCycle {
+    assert(options.unit && options.unitDuration)
+    return new RepeatCycle(options.unit, options.unitDuration, options.endOfCycle)
+  }
+
+  /**
+   * Pause the repeat cycle.
+   */
+  pause() {
+    this._pause = true;
+  }
+
+  /**
+   * Unpause the repeat cycle.
+   */
+  unpause() {
+    this._pause = false;
+    this.endOfCycle = new Date()
   }
 
   /**
@@ -59,6 +95,8 @@ export class RepeatCycle {
    * @param updateReferenceDate
    */
   getCyclesToDate(updateReferenceDate: boolean = true): number {
+    if (this.isPaused) return 0
+
     let {cycles, endOfCycle} = this._getCycles(this.endOfCycle, new Date());
     if (updateReferenceDate) this._endOfCycle = endOfCycle
     return cycles
@@ -69,6 +107,8 @@ export class RepeatCycle {
    * @param n
    */
   getUpcomingEndOfCycleDates(n: number): Date[] {
+    if (this.isPaused) return [this.endOfCycle]
+
     let upcomingEndOfCycleDates: Date[] = []
     let expireDate = this.endOfCycle
     let toDate = new Date(this.endOfCycle.setHours(this.endOfCycle.getHours() + 1))

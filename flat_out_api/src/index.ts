@@ -4,9 +4,9 @@ import {connect} from "mongoose";
 import {CONFIG} from "./config";
 import {errorHandler} from "./middleware/error-handling";
 
-require('./schemas/user-schema')
-require('./schemas/group-schema')
-require('./schemas/table-schema')
+require('./schemas/entities/user-schema')
+require('./schemas/entities/group-schema')
+require('./schemas/non-entities/table-schema')
 
 /** -----------------------------------------------------------------------------------------------------------------
  * MONGODB CONNECTION AND SETUP
@@ -33,7 +33,6 @@ export function apiInitNormalMode() {
   webAPI.use(express.urlencoded({extended: true}))
 
   // Initialize Routes
-  // webAPI.use(baseRoute)
   // webAPI.use(apiRoutes)
 
   // Handle errors if the request is invalid

@@ -25,6 +25,7 @@ export enum RoleType {
  */
 export interface Association {
   ref: ObjectId,
-  model: ModelType
-  role: RoleType
+  model: ModelType,
+  role: RoleType,
+  value: string,
 }

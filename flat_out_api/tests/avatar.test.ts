@@ -18,11 +18,11 @@ it.each([
     expected: true
   }
 ])('Avatar.shouldDelete - expiration : $expirationDate', ({association, expirationDate, expected}) => {
-  let avatar = new AvatarMetaData({
+  let avatar = new AvatarMetaData(
+    expirationDate,
     association,
-    expirationDate
-  })
+  )
 
   expect(avatar.shouldDelete()).toBe(expected)
-  expect(AvatarMetaData.shouldDelete({association, expirationDate})).toBe(expected)
+  expect(AvatarMetaData.from({association, expirationDate}).shouldDelete()).toBe(expected)
 })

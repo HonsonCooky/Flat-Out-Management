@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose";
-import {FomGroup} from "../interfaces/entities/fom-group";
-import {ModelType} from "../interfaces/association";
+import {FomGroup} from "../../interfaces/entities/fom-group";
+import {ModelType} from "../../interfaces/association";
 
 
 /**

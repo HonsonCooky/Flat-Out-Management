@@ -1,27 +1,23 @@
-import {ObjectId} from "mongoose";
+import {ObjectId, Types} from "mongoose";
 import assert from "assert";
 
 /**
  * A contract for GridFS avatar meta data images.
  */
 export class AvatarMetaData {
-  /**An association to some {@link Document}. <br/>Type: {@link ObjectId?}*/
-  association?: ObjectId
   /**The exact moment, where this image can be deleted after (if not associated). <br/>Type: {@link Date}*/
-  expirationDate: Date
+  private readonly _expirationDate: Date
+  /**An association to some {@link Document}. <br/>Type: {@link ObjectId?}*/
+  private readonly _association?: Types.ObjectId
 
-  constructor(options: any) {
-    assert(options.expirationDate);
-    this.association = options.association;
-    this.expirationDate = options.expirationDate;
+  constructor(expirationDate: Date, association?: Types.ObjectId) {
+    this._expirationDate = expirationDate;
+    this._association = association;
   }
 
-  /**
-   * Helper method to allow on-the-fly detection of image deletion.
-   * @param options Some object that represents an {@link AvatarMetaData}
-   */
-  static shouldDelete(options: any) {
-    return new AvatarMetaData(options).shouldDelete()
+  static from(options: any): AvatarMetaData {
+    assert(options.expirationDate);
+    return new AvatarMetaData(options.expirationDate, options.association)
   }
 
   /**
@@ -29,6 +25,6 @@ export class AvatarMetaData {
    * be deleted from the MongoDB.
    */
   shouldDelete(): boolean {
-    return !this.association && Date.now() > this.expirationDate.getTime()
+    return !this._association && Date.now() > this._expirationDate.getTime()
   }
 }

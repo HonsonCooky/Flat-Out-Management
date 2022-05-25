@@ -1,7 +1,7 @@
 import {model, Schema, Types} from "mongoose";
-import {FomUser} from "../interfaces/entities/fom-user";
-import {ModelType} from "../interfaces/association";
-import {FomDbObject} from "./fom-db-objects";
+import {FomUser} from "../../interfaces/entities/fom-user";
+import {ModelType} from "../../interfaces/association";
+import {FomDbObject} from "../fom-db-objects";
 
 
 /**

@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose";
-import {FomTable} from "../interfaces/non-entities/fom-table";
-import {ModelType} from "../interfaces/association";
+import {FomTable} from "../../interfaces/non-entities/fom-table";
+import {ModelType} from "../../interfaces/association";
 
 
 /**

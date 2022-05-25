@@ -1,4 +1,5 @@
 import {DbNonEntity} from "./db-non-entity";
+import {RepeatCycle} from "./repeat";
 
 /**
  * A contract for Events in a Calendar.
@@ -16,13 +17,16 @@ export interface Event {
   /**Number of milliseconds before the event starts, to notify users
    * Note: Server constraints means this is just information for the frontend to handle*/
   notifyTimeBeforeMs?: number
+  /**Defines a {@link RepeatCycle}, that allows this event to be repeated*/
+  cycle: RepeatCycle
 }
 
 /**
  * A contract for Calendar documents on the MongoDB.
- * Calendars are essentially glorified lists of events. They differ from {@link FomTable}s, in that, they hold one
- * specific type of item ({@link Event}).
+ * Calendars are essentially glorified lists of events. They differ from {@link FomTable}s, in that, they only hold
+ * events. Although {@link Event}s can also be placed into tables, calendars guarantee that all items are events.
  */
 export interface FomCalendar extends DbNonEntity {
+  /**The list of events, which make up the calendar*/
   events: Event[],
 }
