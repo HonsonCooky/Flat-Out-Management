@@ -1,5 +1,5 @@
-import {DbObject} from "../DbObject";
-import {Association} from "../Association";
+import {DbObject} from "../db-object";
+import {Association} from "../association";
 
 /**
  * NonEntity objects are those which are dependent on some entity. When the entity no longer exists, then neither

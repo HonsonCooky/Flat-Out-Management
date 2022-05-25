@@ -1,7 +1,7 @@
 import {SchemaDefinition, SchemaDefinitionProperty, Types} from "mongoose";
-import {DbObject} from "../interfaces/DbObject";
+import {DbObject} from "../interfaces/db-object";
 import {UiComponent} from "../interfaces/entities/UiComponent";
-import {Association, ModelType, RoleType} from "../interfaces/Association";
+import {Association, ModelType, RoleType} from "../interfaces/association";
 
 /**
  * Schema Definition for Association

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
-import {CONFIG} from "../Config";
+import {CONFIG} from "../config";
 
 /**
  * An Express middleware component which will

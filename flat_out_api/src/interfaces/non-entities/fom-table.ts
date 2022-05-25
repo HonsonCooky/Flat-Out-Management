@@ -1,5 +1,5 @@
-import {Association} from "../Association";
-import {DbNonEntity} from "./DbNonEntity";
+import {Association} from "../association";
+import {DbNonEntity} from "./db-non-entity";
 
 export type CellCalculation = {
   codeStr: string

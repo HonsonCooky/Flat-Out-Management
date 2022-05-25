@@ -15,6 +15,8 @@ export enum TimeUnits {
  * Repeat object. See constructor
  */
 export class RepeatCycle {
+  /**Determines the end of the current cycle*/
+  private _endOfCycle: Date
   /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKLY}*/
   private readonly _unit: TimeUnits
   /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKLY} && unitDuration = 2*/
@@ -37,9 +39,6 @@ export class RepeatCycle {
     this._endOfCycle = options.endOfCycle ?? new Date()
   }
 
-  /**Determines the end of the current cycle*/
-  private _endOfCycle: Date
-
   /**
    * Update the endOfCycle date manually.
    * @param date
@@ -48,6 +47,40 @@ export class RepeatCycle {
     this._endOfCycle = date;
   }
 
+
+  get endOfCycle(): Date {
+    return new Date(this._endOfCycle);
+  }
+
+  /**
+   * Get the cycles that have occurred to the current date.
+   * @param updateReferenceDate
+   */
+  getCyclesToDate(updateReferenceDate: boolean = true): number {
+    let {cycles, endOfCycle} = this._getCycles(this.endOfCycle, new Date());
+    if (updateReferenceDate) this._endOfCycle = endOfCycle
+    return cycles
+  }
+
+  /**
+   * Get n amount of upcoming endOfCycle dates.
+   * @param n
+   */
+  getUpcomingEndOfCycleDates(n: number): Date[] {
+    let upcomingEndOfCycleDates: Date[] = []
+    let fromDate = this.endOfCycle
+    let toDate = new Date(this.endOfCycle.setSeconds(this.endOfCycle.getSeconds() + 1))
+
+    for (let i = 0; i < n; i++) {
+      let {endOfCycle} = this._getCycles(fromDate, toDate)
+      upcomingEndOfCycleDates.push(endOfCycle)
+
+      fromDate = endOfCycle
+      toDate = new Date(endOfCycle.setSeconds(endOfCycle.getSeconds() + 1))
+    }
+
+    return upcomingEndOfCycleDates
+  }
 
   /**
    * Calculates the number of cycles that have occurred to the given {@link to} from the given {@link endOfCycle}
@@ -58,7 +91,7 @@ export class RepeatCycle {
    * @return {cycles: number, endOfCycle: Date} Where the cycles is the number of cycles from 'from', to 'to'. And
    * endOfCycle is the date that it lands on.
    */
-  getCyclesToDate(from: Date, to: Date): { cycles: number, endOfCycle: Date } {
+  private _getCycles(from: Date, to: Date): { cycles: number, endOfCycle: Date } {
     // If we have yet to surpass the endOfCycle date, then no cycles have passed
     if (from.getTime() > to.getTime()) return {cycles: 0, endOfCycle: from}
 
@@ -177,29 +210,10 @@ export class RepeatCycle {
     throw new Error('500: Unable to correctly calculate cycles')
   }
 
-  getCyclesSince(updateReferenceDate: boolean = true): number {
-    let {cycles, endOfCycle} = this.getCyclesToDate(new Date(this._endOfCycle), new Date());
-    if (updateReferenceDate) this._endOfCycle = endOfCycle
-    return cycles
-  }
-
-  /**
-   * Get all the upcoming 'endOfCycle' dates. Will return {@link n} number of dates.
-   * @param n
-   */
-  getRepeats(n: number): Date[] {
-    let repeats: Date[] = []
-    for (let i = 0; i < n; i++) {
-      // TODO
-    }
-    return []
-  }
-
   /**
    * A helper function for debugging. Date manipulation is difficult *sighs*
    */
   toString(): string {
     return `Repeat Cycle: ${this._unit} : ${this._unitDuration}\n End Of Current Cycle: ${this._endOfCycle}`
   }
-
 }

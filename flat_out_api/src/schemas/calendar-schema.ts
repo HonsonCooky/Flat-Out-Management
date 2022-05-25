@@ -1,6 +1,6 @@
 import {model, Schema, SchemaDefinitionProperty} from "mongoose";
-import {ModelType} from "../interfaces/Association";
-import {FOM_ASSOCIATION} from "./FomDbObjects";
+import {ModelType} from "../interfaces/association";
+import {FOM_ASSOCIATION} from "./fom-db-objects";
 
 
 /**

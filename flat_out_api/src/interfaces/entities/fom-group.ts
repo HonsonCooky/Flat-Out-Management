@@ -1,5 +1,5 @@
-import {Association} from "../Association";
-import {DbEntity} from "./DbEntity";
+import {Association} from "../association";
+import {DbEntity} from "./db-entity";
 
 /**
  * A contract for Group documents on the MongoDB.

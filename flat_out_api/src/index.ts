@@ -1,12 +1,12 @@
 import express, {Request, Response} from "express";
 import helmet from "helmet";
 import {connect} from "mongoose";
-import {CONFIG} from "./Config";
-import {errorHandler} from "./middleware/ErrorHandling";
+import {CONFIG} from "./config";
+import {errorHandler} from "./middleware/error-handling";
 
-require('./schemas/UserSchema')
-require('./schemas/GroupSchema')
-require('./schemas/TableSchema')
+require('./schemas/user-schema')
+require('./schemas/group-schema')
+require('./schemas/table-schema')
 
 /** -----------------------------------------------------------------------------------------------------------------
  * MONGODB CONNECTION AND SETUP

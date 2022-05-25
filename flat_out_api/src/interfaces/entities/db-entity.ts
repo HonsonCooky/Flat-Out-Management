@@ -1,5 +1,5 @@
-import {DbObject} from "../DbObject";
-import {Association} from "../Association";
+import {DbObject} from "../db-object";
+import {Association} from "../association";
 import {ObjectId} from "mongoose";
 
 /**

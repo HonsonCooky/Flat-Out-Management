@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {CONFIG} from "../Config";
+import {CONFIG} from "../config";
 
 
 const baseRoute = express.Router({mergeParams: true})

@@ -1,4 +1,4 @@
-import {DbNonEntity} from "./DbNonEntity";
+import {DbNonEntity} from "./db-non-entity";
 
 /**
  * A contract for Events in a Calendar.

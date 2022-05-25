@@ -1,8 +1,8 @@
-import {routeHandler} from "../middleware/RouteHandler";
+import {routeHandler} from "../middleware/route-handler";
 import {deleteAvatar, downloadAvatar, uploadAvatar} from "../management/AvatarManagement";
 import express from "express";
 import multer from "multer";
-import {extractJwt} from "../middleware/ExtractJwt";
+import {extractJwt} from "../middleware/extract-jwt";
 
 export const avatarRoutes = express.Router({mergeParams: true})
 
