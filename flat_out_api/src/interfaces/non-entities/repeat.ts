@@ -36,7 +36,9 @@ export class RepeatCycle {
     assert(options.unit && options.unitDuration)
     this._unit = options.unit;
     this._unitDuration = options.unitDuration;
-    this._endOfCycle = options.endOfCycle ?? new Date()
+    this._endOfCycle = options.endOfCycle ?
+                       new Date(options.endOfCycle.setHours(0, 0, 0, 0)) :
+                       new Date(new Date().setHours(0, 0, 0, 0))
   }
 
   /**
@@ -44,7 +46,7 @@ export class RepeatCycle {
    * @param date
    */
   set endOfCycle(date: Date) {
-    this._endOfCycle = date;
+    this._endOfCycle = new Date(date.setHours(0, 0, 0, 0));
   }
 
 
@@ -68,15 +70,15 @@ export class RepeatCycle {
    */
   getUpcomingEndOfCycleDates(n: number): Date[] {
     let upcomingEndOfCycleDates: Date[] = []
-    let fromDate = this.endOfCycle
-    let toDate = new Date(this.endOfCycle.setSeconds(this.endOfCycle.getSeconds() + 1))
+    let expireDate = this.endOfCycle
+    let toDate = new Date(this.endOfCycle.setHours(this.endOfCycle.getHours() + 1))
 
     for (let i = 0; i < n; i++) {
-      let {endOfCycle} = this._getCycles(fromDate, toDate)
+      let {endOfCycle} = this._getCycles(expireDate, toDate)
       upcomingEndOfCycleDates.push(endOfCycle)
 
-      fromDate = endOfCycle
-      toDate = new Date(endOfCycle.setSeconds(endOfCycle.getSeconds() + 1))
+      expireDate = new Date(endOfCycle.setHours(0, 0, 0, 0))
+      toDate = new Date(expireDate.setHours(expireDate.getHours() + 1))
     }
 
     return upcomingEndOfCycleDates
@@ -86,16 +88,16 @@ export class RepeatCycle {
    * Calculates the number of cycles that have occurred to the given {@link to} from the given {@link endOfCycle}
    * (inclusive). Completing a cycle is simply exceeding the {@link endOfCycle} date.
    *
-   * @param from
+   * @param expire
    * @param to
    * @return {cycles: number, endOfCycle: Date} Where the cycles is the number of cycles from 'from', to 'to'. And
    * endOfCycle is the date that it lands on.
    */
-  private _getCycles(from: Date, to: Date): { cycles: number, endOfCycle: Date } {
+  private _getCycles(expire: Date, to: Date): { cycles: number, endOfCycle: Date } {
     // If we have yet to surpass the endOfCycle date, then no cycles have passed
-    if (from.getTime() > to.getTime()) return {cycles: 0, endOfCycle: from}
+    if (expire.getTime() > to.getTime()) return {cycles: 0, endOfCycle: expire}
 
-    let timeDiffMs = to.getTime() - from.getTime()
+    let timeDiffMs = to.getTime() - expire.getTime()
     switch (this._unit) {
       /*
        DAY CALCULATION:
@@ -124,7 +126,7 @@ export class RepeatCycle {
         let days = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration)) + 1
         return {
           cycles: days,
-          endOfCycle: new Date(from.setDate(from.getDate() + days))
+          endOfCycle: new Date(expire.setDate(expire.getDate() + (days * this._unitDuration)))
         }
       /*
        WEEK CALCULATION:
@@ -134,7 +136,7 @@ export class RepeatCycle {
         let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration * 7)) + 1
         return {
           cycles: weeks,
-          endOfCycle: new Date(from.setDate(from.getDate() + (weeks * 7)))
+          endOfCycle: new Date(expire.setDate(expire.getDate() + (weeks * 7 * this._unitDuration)))
         }
       /*
        MONTH CALCULATION: (Little tricky)
@@ -155,12 +157,12 @@ export class RepeatCycle {
 
        */
       case TimeUnits.MONTHS:
-        let months = (to.getFullYear() - from.getFullYear()) * 12
-        months += to.getMonth() - from.getMonth()
+        let months = (to.getFullYear() - expire.getFullYear()) * 12
+        months += to.getMonth() - expire.getMonth()
         months = Math.floor(months / this._unitDuration) + 1
         return {
           cycles: months,
-          endOfCycle: new Date(from.setMonth(from.getMonth() + months))
+          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (months * this._unitDuration)))
         }
       /*
        ANNUAL CALCULATION:
@@ -200,14 +202,14 @@ export class RepeatCycle {
        */
       case TimeUnits.YEARS:
         // Same month calculation (3 lines, not worth the extra function)
-        let monthDiff = (to.getFullYear() - from.getFullYear()) * 12
-        monthDiff += to.getMonth() - from.getMonth()
+        let monthDiff = (to.getFullYear() - expire.getFullYear()) * 12
+        monthDiff += to.getMonth() - expire.getMonth()
         monthDiff = Math.floor(monthDiff / this._unitDuration) + 1
 
         let years = Math.ceil(monthDiff / 12)
         return {
           cycles: years,
-          endOfCycle: new Date(from.setMonth(from.getMonth() + (years * 12)))
+          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (years * 12 * this._unitDuration)))
         }
     }
 
