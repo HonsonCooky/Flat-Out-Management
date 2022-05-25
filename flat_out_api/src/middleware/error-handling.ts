@@ -1,6 +1,6 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from "express";
 
-import {FomRes} from "../interfaces/utils/FomRes";
+import {FomRes} from "../interfaces/utils/fom-res";
 
 const known400ErrorMessages = [
   '400',

@@ -1,5 +1,5 @@
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {FomRes} from "../interfaces/utils/FomRes";
+import {FomRes} from "../interfaces/utils/fom-res";
 
 /**
  * Manage the execution and try catching of all functions being called from a URL call.

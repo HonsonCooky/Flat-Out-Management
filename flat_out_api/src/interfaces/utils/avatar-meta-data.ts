@@ -11,9 +11,9 @@ export class AvatarMetaData {
   expirationDate: Date
 
   constructor(options: any) {
-    assert(options.validUntil);
+    assert(options.expirationDate);
     this.association = options.association;
-    this.expirationDate = options.validUntil;
+    this.expirationDate = options.expirationDate;
   }
 
   /**

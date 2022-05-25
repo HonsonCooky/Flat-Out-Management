@@ -32,7 +32,7 @@ export class RepeatCycle {
    * @param options An object which contains a unit: {@link TimeUnits}, unitDurations: number, and maybe a
    *   referenceDate (defaults to Date.now)
    */
-  constructor(options: { unit: TimeUnits, unitDuration: number, endOfCycle?: Date }) {
+  constructor(options: any) {
     assert(options.unit && options.unitDuration)
     this._unit = options.unit;
     this._unitDuration = options.unitDuration;
