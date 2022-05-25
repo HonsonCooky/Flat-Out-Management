@@ -10,15 +10,6 @@ export type CellCalculation = {
  */
 export type TableRecord = (string | number | Date | Association | CellCalculation)[]
 
-/**
- * Identifies how often some update must occur.
- */
-export enum TimeIntervals {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  ANNUALLY = 'annually'
-}
 
 /**
  * Outlines the necessary settings for a table rotation configuration
@@ -26,8 +17,6 @@ export enum TimeIntervals {
 export interface TableRotationConfig {
   colNum: number,
   updateDate: Date,
-  intervalValue: number,
-  intervalUnit: TimeIntervals
 }
 
 /**
