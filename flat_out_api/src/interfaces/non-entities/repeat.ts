@@ -5,10 +5,10 @@ import assert from "assert";
  * A constant that outlines different time units (only those relevant for FOM)
  */
 export enum TimeUnits {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  ANNUALLY = 'annually'
+  DAYS = 'days',
+  WEEKS = 'weeks',
+  MONTHS = 'months',
+  YEARS = 'years'
 }
 
 /**
@@ -17,9 +17,9 @@ export enum TimeUnits {
 export class RepeatCycle {
   /**Determines the end of the current cycle*/
   private _endOfCycle: Date
-  /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKLY}*/
+  /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKS}*/
   private readonly _unit: TimeUnits
-  /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKLY} && unitDuration = 2*/
+  /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKS} && unitDuration = 2*/
   private readonly _unitDuration: number
   /**A constant used for some calculations (number of milliseconds in one day)*/
   private readonly _oneDayMs = 1000 * 60 * 60 * 24;
@@ -120,7 +120,7 @@ export class RepeatCycle {
        _endOfCycle = 30/05/22
 
        */
-      case TimeUnits.DAILY:
+      case TimeUnits.DAYS:
         let days = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration)) + 1
         return {
           cycles: days,
@@ -130,7 +130,7 @@ export class RepeatCycle {
        WEEK CALCULATION:
        Same as DAY CALCULATION, except we multiply the number of days by 7. Thus dividing by numberOfWeeksMs
        */
-      case TimeUnits.WEEKLY:
+      case TimeUnits.WEEKS:
         let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration * 7)) + 1
         return {
           cycles: weeks,
@@ -154,9 +154,10 @@ export class RepeatCycle {
        01/03/23.
 
        */
-      case TimeUnits.MONTHLY:
-        let months = ((to.getFullYear() - from.getFullYear()) * 12) +
-          ((to.getMonth() - from.getMonth())) + 1
+      case TimeUnits.MONTHS:
+        let months = (to.getFullYear() - from.getFullYear()) * 12
+        months += to.getMonth() - from.getMonth()
+        months = Math.floor(months / this._unitDuration) + 1
         return {
           cycles: months,
           endOfCycle: new Date(from.setMonth(from.getMonth() + months))
@@ -197,9 +198,12 @@ export class RepeatCycle {
        diff     = Math.ceil(17 / 12) === 2 (correct)
 
        */
-      case TimeUnits.ANNUALLY:
-        let monthDiff = ((to.getFullYear() - from.getFullYear()) * 12) +
-          ((to.getMonth() - from.getMonth()))
+      case TimeUnits.YEARS:
+        // Same month calculation (3 lines, not worth the extra function)
+        let monthDiff = (to.getFullYear() - from.getFullYear()) * 12
+        monthDiff += to.getMonth() - from.getMonth()
+        monthDiff = Math.floor(monthDiff / this._unitDuration) + 1
+
         let years = Math.ceil(monthDiff / 12)
         return {
           cycles: years,
