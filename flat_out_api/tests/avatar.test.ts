@@ -24,24 +24,5 @@ it.each([
   })
 
   expect(avatar.shouldDelete()).toBe(expected)
-})
-
-it.each([
-  {
-    association: undefined,
-    expirationDate: new Date(new Date().setHours(new Date().getHours() + 2)),
-    expected: false
-  },
-  {
-    association: new Types.ObjectId(),
-    expirationDate: new Date(new Date().setHours(new Date().getHours() - 2)),
-    expected: false
-  },
-  {
-    association: undefined,
-    expirationDate: new Date(new Date().setHours(new Date().getHours() - 2)),
-    expected: true
-  }
-])('Avatar.shouldDelete - expiration : $expirationDate - STATIC', ({association, expirationDate, expected}) => {
   expect(AvatarMetaData.shouldDelete({association, expirationDate})).toBe(expected)
 })
