@@ -15,6 +15,10 @@ export class AvatarMetaData {
     this._association = association;
   }
 
+  /**
+   * A static constructor for JSON objects.
+   * @param options
+   */
   static from(options: any): AvatarMetaData {
     assert(options.expirationDate);
     return new AvatarMetaData(options.expirationDate, options.association)

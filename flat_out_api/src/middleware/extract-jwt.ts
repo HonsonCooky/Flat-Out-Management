@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
 import {CONFIG} from "../config";
+import {JwtContract} from "../interfaces/utils/jwt-contract";
 
 /**
  * An Express middleware component which will
@@ -18,7 +19,7 @@ export function extractJwt(required: boolean = true) {
 
     jwt.verify(token, CONFIG.token.secret, (err, decoded) => {
       if (err) throw new Error(`400: Access denied`)
-      res.locals.jwt = decoded
+      res.locals.jwt = decoded as JwtContract
       next()
     })
   }

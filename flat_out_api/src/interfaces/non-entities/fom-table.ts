@@ -44,11 +44,12 @@ export type TableRecord = (string | number | Date | ComplexCell)[]
 
 
 /**
- *
+ * This object outlines a rotation cycle for some column.
  */
-export interface TableRotationConfig {
+export interface ColumnRotationConfig {
+  /**The column number to be rotated*/
   colNum: number,
-  updateDate: Date,
+  /**The repeat cycle, that describes how this column rotates (timing + util functions)*/
   cycle: RepeatCycle
 }
 
@@ -60,9 +61,14 @@ export interface TableRotationConfig {
  * what chore).
  */
 export interface FomTable extends DbNonEntity {
+  /**The number of columns in this table*/
   colLength: number,
+  /**The number of records in this table*/
   rowLength: number,
-  fields: TableRecord
+  /**An optional field, that outlines titles for columns*/
+  fields?: string[]
+  /**An array of {@link TableRecord}s, which make up the contents of the table*/
   records: TableRecord[],
-  rotations: TableRotationConfig[],
+  /**Each column can have one rotation configuration*/
+  rotations: ColumnRotationConfig[],
 }

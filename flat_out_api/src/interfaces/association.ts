@@ -24,8 +24,12 @@ export enum RoleType {
  * other MongoDB document, where the connection type is of 'role'.
  */
 export interface Association {
+  /**The _id associated with some document*/
   ref: ObjectId,
+  /**The model type of the _id*/
   model: ModelType,
+  /**The connection type between the object holding this {@link Association}, and the {@link ref}*/
   role: RoleType,
+  /**A string representation of the {@link ref}. Used on the frontend*/
   value: string,
 }
