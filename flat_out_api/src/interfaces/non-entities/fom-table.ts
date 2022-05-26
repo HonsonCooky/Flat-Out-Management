@@ -48,7 +48,7 @@ export type Record = (string | number | Date | ComplexCell)[]
  */
 export interface ColumnRotationConfig {
   /**The column number to be rotated*/
-  colNum: number,
+  colIndex: number,
   /**The repeat cycle, that describes how this column rotates (timing + util functions)*/
   cycle: RepeatCycle
 }

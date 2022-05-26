@@ -8,8 +8,9 @@ import {
   Record
 } from "../../interfaces/non-entities/fom-table";
 import {ModelType} from "../../interfaces/association";
-import {AssociationSchema, RepeatCycleSchema} from "../fom-db-objects";
+import {AssociationSchema, RequiredRepeatCycleSchema} from "../fom-db-objects";
 import {EventSchema} from "./calendar-schema";
+import {DbNonEntitySchema} from "./db-non-entity-schema";
 
 /**
  * Schema definition for {@link CalculationCell}
@@ -45,16 +46,27 @@ const RecordSchema: SchemaDefinitionProperty<Record> = {
  * Schema definition for {@link ColumnRotationConfig}
  */
 const ColumnRotationConfigSchema: SchemaDefinitionProperty<ColumnRotationConfig> = {
-  colNum: {type: Number, required: true},
-  cycle: RepeatCycleSchema
+  colIndex: {
+    type: Number,
+    required: true,
+    validate: function (val: number) {
+      let table = getParent<FomTable>(this)
+      return 0 <= val && val < table.colLength
+    }
+  },
+  cycle: RequiredRepeatCycleSchema,
 }
 
 /**
- * Translates the FomTable interface into a mongoose.Schema.
- * Tables are utilized to
+ * Schema definition for {@link FomTable}
  */
 const TableSchema = new Schema<FomTable>({
-  //TODO
+  ...DbNonEntitySchema,
+  colLength: {type: Number, required: true, min: 1, max: 6,},
+  rowLength: {type: Number, required: true},
+  fields: [String],
+  records: [RecordSchema],
+  rotations: [ColumnRotationConfigSchema],
 }, {timestamps: true})
 
 export const TableModel = model(ModelType.TABLE, TableSchema)

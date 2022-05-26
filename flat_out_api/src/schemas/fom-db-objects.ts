@@ -1,7 +1,7 @@
 import {SchemaDefinition, SchemaDefinitionProperty, Types} from "mongoose";
 import {DbObject} from "../interfaces/db-object";
 import {Association, ModelType, RoleType} from "../interfaces/association";
-import {RepeatCycle} from "../interfaces/non-entities/repeat";
+import {RepeatCycle, TimeUnits} from "../interfaces/non-entities/repeat";
 
 /**
  * Schema definition for {@link Association}
@@ -39,7 +39,21 @@ export const RequiredAssociationSchema: SchemaDefinitionProperty<Association> = 
 /**
  * Schema definition for {@link RepeatCycle}
  */
-export const RepeatCycleSchema: SchemaDefinitionProperty = {}
+export const RepeatCycleSchema: SchemaDefinitionProperty<RepeatCycle> = {
+  unit: {type: String, enum: TimeUnits, required: true},
+  unitDuration: {type: Number, required: true},
+  endOfCycle: {type: Date, required: true},
+  pause: {type: Boolean, required: true},
+}
+
+/**
+ * Schema definition for {@link RepeatCycle} that also includes a REQUIRED field. Where possible (inside arrays),
+ * avoid using this schema.
+ */
+export const RequiredRepeatCycleSchema: SchemaDefinitionProperty<RepeatCycle> = {
+  ...RepeatCycleSchema,
+  required: true
+}
 
 /**
  * Schema definition for {@link DbObject}
