@@ -40,7 +40,7 @@ export type ComplexCell = {
  * - String, Number and Date are all native data values.
  * - See {@link ComplexCell}s, for understanding of more complex data types.
  */
-export type TableRecord = (string | number | Date | ComplexCell)[]
+export type Record = (string | number | Date | ComplexCell)[]
 
 
 /**
@@ -67,8 +67,8 @@ export interface FomTable extends DbNonEntity {
   rowLength: number,
   /**An optional field, that outlines titles for columns*/
   fields?: string[]
-  /**An array of {@link TableRecord}s, which make up the contents of the table*/
-  records: TableRecord[],
+  /**An array of {@link Record}s, which make up the contents of the table*/
+  records: Record[],
   /**Each column can have one rotation configuration*/
   rotations: ColumnRotationConfig[],
 }

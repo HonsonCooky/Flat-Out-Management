@@ -30,8 +30,8 @@ export interface DbEntity extends DbObject {
   jwtUuid: ObjectId,
   /**The UI components of this entity*/
   ui: UiComponent,
-  /**Tables that are associated to this entity*/
-  tables: Association[],
   /**A Calendar that is associated to this entity*/
   calendar?: Association,
+  /**Tables that are associated to this entity*/
+  tables: Association[],
 }

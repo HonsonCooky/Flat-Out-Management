@@ -45,6 +45,13 @@ export class RepeatCycle {
   }
 
   /**
+   * Get the current pause state of this repeat cycle.
+   */
+  get isPaused(): boolean {
+    return this._pause;
+  }
+
+  /**
    * Get the date which represents the end of the current cycle.
    */
   get endOfCycle(): Date {
@@ -60,22 +67,6 @@ export class RepeatCycle {
   }
 
   /**
-   * Get the current pause state of this repeat cycle.
-   */
-  get isPaused(): boolean {
-    return this._pause;
-  }
-
-  /**
-   * A wrapper function to enable the construction of a {@link RepeatCycle} from an unknown object source.
-   * @param options - { unit: TimeUnits, unitDuration: number, endOfCycle?: Date }
-   */
-  static from(options: any): RepeatCycle {
-    assert(options.unit && options.unitDuration)
-    return new RepeatCycle(options.unit, options.unitDuration, options.endOfCycle)
-  }
-
-  /**
    * Pause the repeat cycle.
    */
   pause() {
@@ -88,6 +79,15 @@ export class RepeatCycle {
   unpause() {
     this._pause = false;
     this.endOfCycle = new Date()
+  }
+
+  /**
+   * A wrapper function to enable the construction of a {@link RepeatCycle} from an unknown object source.
+   * @param options - { unit: TimeUnits, unitDuration: number, endOfCycle?: Date }
+   */
+  static from(options: any): RepeatCycle {
+    assert(options.unit && options.unitDuration)
+    return new RepeatCycle(options.unit, options.unitDuration, options.endOfCycle)
   }
 
   /**

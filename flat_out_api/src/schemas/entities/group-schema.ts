@@ -1,6 +1,8 @@
 import {model, Schema} from "mongoose";
 import {FomGroup} from "../../interfaces/entities/fom-group";
 import {ModelType} from "../../interfaces/association";
+import {DbEntitySchema} from "./db-entity-schema";
+import {AssociationSchema} from "../fom-db-objects";
 
 
 /**
@@ -13,7 +15,8 @@ import {ModelType} from "../../interfaces/association";
  * each user's itinerary.
  */
 const GroupSchema = new Schema<FomGroup>({
-  //TODO
+  ...DbEntitySchema,
+  users: [AssociationSchema]
 }, {timestamps: true})
 
 export const GroupModel = model(ModelType.GROUP, GroupSchema)

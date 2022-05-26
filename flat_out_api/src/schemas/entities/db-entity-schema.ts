@@ -1,24 +1,27 @@
 import {SchemaDefinition, SchemaDefinitionProperty, Types} from "mongoose";
 import {DbEntity, UiComponent} from "../../interfaces/entities/db-entity";
+import {AssociationSchema, DbObjectSchema} from "../fom-db-objects";
 
 
 /**
- * Ui Component outlines the UiComponent interface. Name and Color are required fields, however, avatar is optional
- * to the user, and therefore, optional here.
+ * Schema definition for {@link UiComponent}
  */
-const FOM_UI_COMPONENT: SchemaDefinitionProperty<UiComponent> = {
-  name: {
-    type: String,
-    required: true
-  },
-  color: {
-    type: String,
-    required: true
-  },
-  avatar: {
-    type: Types.ObjectId
-  }
+const UiComponentSchema: SchemaDefinitionProperty<UiComponent> = {
+  name: {type: String, required: true},
+  color: {type: String, required: true},
+  avatar: Types.ObjectId,
+  required: true
 }
 
-
-export const DbEntitySchema: SchemaDefinition<DbEntity> = {}
+/**
+ * Schema definition for {@link DbEntity}
+ */
+export const DbEntitySchema: SchemaDefinition<DbEntity> = {
+  ...DbObjectSchema,
+  name: {type: String, required: true, unique: true},
+  password: {type: String, required: true},
+  jwtUuid: {type: Types.ObjectId, required: true, unique: true},
+  ui: UiComponentSchema,
+  calendar: AssociationSchema,
+  tables: [AssociationSchema]
+}

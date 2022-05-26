@@ -1,7 +1,8 @@
-import {model, Schema, Types} from "mongoose";
+import {model, Schema} from "mongoose";
 import {FomUser} from "../../interfaces/entities/fom-user";
 import {ModelType} from "../../interfaces/association";
-import {FomDbObject} from "../fom-db-objects";
+import {AssociationSchema} from "../fom-db-objects";
+import {DbEntitySchema} from "./db-entity-schema";
 
 
 /**
@@ -12,21 +13,9 @@ import {FomDbObject} from "../fom-db-objects";
  * - colorAssociation: Each user needs some color associated with them for the front end ui
  */
 const UserSchema = new Schema<FomUser>({
-  ...FomDbObject,
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  jwtUuid: {
-    type: Types.ObjectId,
-    required: true,
-    unique: true,
-  },
+  ...DbEntitySchema,
+  groups: [AssociationSchema],
+  shouldUpdate: {type: Boolean, required: true}
 }, {timestamps: true})
 
 export const UserModel = model(ModelType.USER, UserSchema)
