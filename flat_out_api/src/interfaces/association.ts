@@ -1,4 +1,4 @@
-import {ObjectId} from "mongoose";
+import {Types} from "mongoose";
 
 /**
  * Outlines the different types of MongoDB documents.
@@ -25,7 +25,7 @@ export enum RoleType {
  */
 export interface Association {
   /**The _id associated with some document*/
-  ref: ObjectId,
+  ref: Types.ObjectId,
   /**The model type of the _id*/
   model: ModelType,
   /**The connection type between the object holding this {@link Association}, and the {@link ref}*/

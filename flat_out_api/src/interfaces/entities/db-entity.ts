@@ -1,6 +1,6 @@
 import {DbObject} from "../db-object";
 import {Association} from "../association";
-import {ObjectId} from "mongoose";
+import {Types} from "mongoose";
 
 /**
  * Ui Component is purely used to store data for the frontend. This object allows certain values to be consistent
@@ -12,7 +12,7 @@ export interface UiComponent {
   /**The color associated to this document*/
   color: string,
   /**The id of some image stored in the GridFS backend*/
-  avatar?: ObjectId,
+  avatar?: Types.ObjectId,
 }
 
 /**
@@ -27,7 +27,7 @@ export interface DbEntity extends DbObject {
   /**The password which allows access to act for this entity*/
   password: string,
   /**The jwtUuid which allows access to act for this entity through JWT*/
-  jwtUuid: ObjectId,
+  jwtUuid: Types.ObjectId,
   /**The UI components of this entity*/
   ui: UiComponent,
   /**A Calendar that is associated to this entity*/

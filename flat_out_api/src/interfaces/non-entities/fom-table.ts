@@ -27,7 +27,7 @@ export type LinkCell = {
 /**
  * Complex cells allow for more complicated data to be stored in a table.
  * Note, each one of these objects has a 'value' field. This 'value' field represents the frontend representation of
- * the object. The extra information stored in the object is for identifying the type of complex data, and for it's
+ * the object. The extra information stored in the object is for identifying the type of complex data, and for its
  * implementation.
  */
 export type ComplexCell = {

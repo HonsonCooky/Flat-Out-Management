@@ -1,4 +1,4 @@
-import {SchemaDefinition, SchemaDefinitionProperty, Types} from "mongoose";
+import {Schema, SchemaDefinition, SchemaDefinitionProperty} from "mongoose";
 import {DbEntity, UiComponent} from "../../interfaces/entities/db-entity";
 import {AssociationSchema, DbObjectSchema} from "../fom-db-objects";
 
@@ -9,7 +9,7 @@ import {AssociationSchema, DbObjectSchema} from "../fom-db-objects";
 const UiComponentSchema: SchemaDefinitionProperty<UiComponent> = {
   name: {type: String, required: true},
   color: {type: String, required: true},
-  avatar: Types.ObjectId,
+  avatar: Schema.Types.ObjectId,
   required: true
 }
 
@@ -20,7 +20,7 @@ export const DbEntitySchema: SchemaDefinition<DbEntity> = {
   ...DbObjectSchema,
   name: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  jwtUuid: {type: Types.ObjectId, required: true, unique: true},
+  jwtUuid: {type: Schema.Types.ObjectId, required: true, unique: true},
   ui: UiComponentSchema,
   calendar: AssociationSchema,
   tables: [AssociationSchema]

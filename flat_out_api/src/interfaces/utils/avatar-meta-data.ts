@@ -1,4 +1,4 @@
-import {ObjectId, Types} from "mongoose";
+import {Types} from "mongoose";
 import assert from "assert";
 
 export interface AvatarMetaData {

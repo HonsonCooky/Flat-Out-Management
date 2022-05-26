@@ -1,4 +1,4 @@
-import {SchemaDefinition, SchemaDefinitionProperty, Types} from "mongoose";
+import {Schema, SchemaDefinition, SchemaDefinitionProperty} from "mongoose";
 import {DbObject} from "../interfaces/db-object";
 import {Association, ModelType, RoleType} from "../interfaces/association";
 import {RepeatCycle, TimeUnits} from "../interfaces/non-entities/repeat";
@@ -8,7 +8,7 @@ import {RepeatCycle, TimeUnits} from "../interfaces/non-entities/repeat";
  */
 export const AssociationSchema: SchemaDefinitionProperty<Association> = {
   ref: {
-    type: Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
   },
   model: {
