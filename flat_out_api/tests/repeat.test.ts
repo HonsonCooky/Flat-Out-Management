@@ -1,4 +1,4 @@
-import {RepeatCycle, TimeUnits} from "../src/interfaces/non-entities/repeat";
+import {RepeatCycleImpl, TimeUnits} from "../src/interfaces/non-entities/repeat";
 import {AssertionError} from "assert";
 
 /** -----------------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ it.each([
   },
 ])('Repeat.getCyclesToDate - $unit - $title',
   ({unit, unitDuration, endOfCycle, expectedCycles}) => {
-    let repeatCycle = new RepeatCycle(
+    let repeatCycle = new RepeatCycleImpl(
       unit,
       unitDuration,
       endOfCycle,
@@ -257,7 +257,7 @@ it.each([
     ],
   },
 ])('Repeat.getUpcomingEndOfCycleDates - $unit - $title', ({unit, unitDuration, endOfCycle, n, expectedDates}) => {
-  let repeatCycle = new RepeatCycle(
+  let repeatCycle = new RepeatCycleImpl(
     unit,
     unitDuration,
     endOfCycle
@@ -269,15 +269,12 @@ it.each([
   expect(dates).toStrictEqual(expectedDates)
 })
 
-/**
- * UTILITY FUNCTIONS
- */
 it('Repeat.from VALID', () => {
-  expect(RepeatCycle.from({
+  expect(RepeatCycleImpl.from({
     unit: TimeUnits.DAYS,
     unitDuration: 1,
     endOfCycle: new Date('2022-05-01')
-  })).toStrictEqual(new RepeatCycle(
+  })).toStrictEqual(new RepeatCycleImpl(
     TimeUnits.DAYS,
     1,
     new Date('2022-05-01')
@@ -285,33 +282,29 @@ it('Repeat.from VALID', () => {
 })
 
 it('Repeat.from INVALID', () => {
-  expect(() => RepeatCycle.from({})).toThrow(AssertionError)
-  expect(() => RepeatCycle.from({unit: TimeUnits.DAYS})).toThrow(AssertionError)
-  expect(() => RepeatCycle.from({unitDuration: 1})).toThrow(AssertionError)
-  expect(() => RepeatCycle.from({endOfCycle: new Date()})).toThrow(AssertionError)
+  expect(() => RepeatCycleImpl.from({})).toThrow(AssertionError)
+  expect(() => RepeatCycleImpl.from({unit: TimeUnits.DAYS})).toThrow(AssertionError)
+  expect(() => RepeatCycleImpl.from({unitDuration: 1})).toThrow(AssertionError)
+  expect(() => RepeatCycleImpl.from({endOfCycle: new Date()})).toThrow(AssertionError)
+})
+
+it('Repeat.pauseCycle', () => {
+  let repeatCycle = new RepeatCycleImpl(TimeUnits.DAYS, 1, new Date(new Date().setDate(new Date().getDate() - 1)))
+  expect(repeatCycle.pause).toBe(false)
+  expect(repeatCycle.getCyclesToDate(false)).toBe(2)
+
+  repeatCycle.pauseCycle()
+  expect(repeatCycle.pause).toBe(true)
+  expect(repeatCycle.getCyclesToDate(false)).toBe(0)
+
+  repeatCycle.unpauseCycle()
+  expect(repeatCycle.pause).toBe(false)
+  expect(repeatCycle.getCyclesToDate(false)).toBe(1)
 })
 
 it('Repeat.toString', () => {
-  let repeatCycle = new RepeatCycle(TimeUnits.DAYS, 1)
-  repeatCycle.endOfCycle = new Date()
-  expect(repeatCycle.toString()).toBe(
-    `Repeat Cycle: days : 1\n End Of Current Cycle: ${new Date(
-      new Date().setHours(0, 0, 0, 0))}`)
-})
-
-it('Repeat.pause', () => {
-  let repeatCycle = new RepeatCycle(TimeUnits.DAYS, 1, new Date(new Date().setDate(new Date().getDate() - 2)))
-  expect(repeatCycle.isPaused).toBe(false)
-
-  repeatCycle.pause()
-  expect(repeatCycle.endOfCycle)
-    .toStrictEqual(new Date(new Date(new Date().setDate(new Date().getDate() - 2)).setHours(0, 0, 0, 0)))
-  expect(repeatCycle.isPaused).toBe(true)
-
-  expect(repeatCycle.getCyclesToDate()).toBe(0)
-  expect(repeatCycle.getUpcomingEndOfCycleDates(1)).toStrictEqual([repeatCycle.endOfCycle])
-
-  repeatCycle.unpause()
-  expect(repeatCycle.endOfCycle).toStrictEqual(new Date(new Date().setHours(0, 0, 0, 0)))
-  expect(repeatCycle.isPaused).toBe(false)
+  let repeatCycle = new RepeatCycleImpl(TimeUnits.DAYS, 1, new Date("2022-05-01T00:00:00"))
+  expect(repeatCycle.toString()).toBe("Repeat Cycle: days : 1\n End Of Current Cycle: Sun May 01 2022 00:00:00" +
+    " GMT+1200 (New Zealand Standard Time)"
+  )
 })

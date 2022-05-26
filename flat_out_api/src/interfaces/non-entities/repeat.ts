@@ -12,23 +12,41 @@ export enum TimeUnits {
 }
 
 /**
- * Repeat object. See constructor
+ * A sub-document used to describe repeats/cycles for some document.
  */
-export class RepeatCycle {
-  /**Determines the end of the current cycle*/
-  private _endOfCycle: Date
-  /**Pause the cycle. Functions will return default, zero, values*/
-  private _pause: boolean
+export interface RepeatCycle {
   /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKS}*/
-  private readonly _unit: TimeUnits
+  unit: TimeUnits,
   /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKS} && unitDuration = 2*/
-  private readonly _unitDuration: number
+  unitDuration: number,
+  /**Determines the end of the current cycle*/
+  endOfCycle: Date,
+  /**Pause the cycle. Functions will return default, zero, values*/
+  pause: boolean,
+}
+
+/**
+ * Instance of RepeatCycle, with relevant helper methods.
+ * The fields SHOULD be private, except, this is simply a helper to aid with handling RepeatCycle interface.
+ *
+ * The interface is needed for the MongoDB backend. This implementation is needed to micromanage all instances of
+ * RepeatCycle. The two helper functions COULD be made into functions outside this class, however, I like this pattern.
+ */
+export class RepeatCycleImpl implements RepeatCycle {
+  /**Determines the unit of time for this repeat. E.g. {@link TimeUnits.WEEKS}*/
+  unit: TimeUnits
+  /**Determines the number of units for this repeat. 2 Weeks: unit = {@link TimeUnits.WEEKS} && unitDuration = 2*/
+  unitDuration: number
+  /**Determines the end of the current cycle*/
+  endOfCycle: Date
+  /**Pause the cycle. Functions will return default, zero, values*/
+  pause: boolean
   /**A constant used for some calculations (number of milliseconds in one day)*/
   private readonly _oneDayMs = 1000 * 60 * 60 * 24;
 
   /**
    * Repeat is essentially a glorified timer. It has two main functions.
-   * - getCyclesToDate: Returns the number of cycles that have past since {@link _endOfCycle}.
+   * - getCyclesToDate: Returns the number of cycles that have past since {@link endOfCycle}.
    * - getUpcomingEndOfCycleDates: Returns an array of n length, with upcoming end of cycle dates.
    *
    * @param unit A {@link TimeUnits} enum, that identifies some time interval
@@ -36,49 +54,17 @@ export class RepeatCycle {
    * @param endOfCycle A cache which stores the date, which represents the end of the current cycle.
    */
   constructor(unit: TimeUnits, unitDuration: number, endOfCycle?: Date) {
-    this._unit = unit;
-    this._unitDuration = unitDuration;
-    this._endOfCycle = endOfCycle ?
-                       new Date(endOfCycle.setHours(0, 0, 0, 0)) :
-                       new Date(new Date().setHours(0, 0, 0, 0))
-    this._pause = false
+    this.unit = unit;
+    this.unitDuration = unitDuration;
+    this.endOfCycle = new Date((endOfCycle ? endOfCycle : new Date()).setHours(0, 0, 0, 0))
+    this.pause = false
   }
 
   /**
    * Get the current pause state of this repeat cycle.
    */
   get isPaused(): boolean {
-    return this._pause;
-  }
-
-  /**
-   * Get the date which represents the end of the current cycle.
-   */
-  get endOfCycle(): Date {
-    return new Date(this._endOfCycle);
-  }
-
-  /**
-   * Update the endOfCycle date manually.
-   * @param date
-   */
-  set endOfCycle(date: Date) {
-    this._endOfCycle = new Date(date.setHours(0, 0, 0, 0));
-  }
-
-  /**
-   * Pause the repeat cycle.
-   */
-  pause() {
-    this._pause = true;
-  }
-
-  /**
-   * Unpause the repeat cycle.
-   */
-  unpause() {
-    this._pause = false;
-    this.endOfCycle = new Date()
+    return this.pause;
   }
 
   /**
@@ -87,7 +73,30 @@ export class RepeatCycle {
    */
   static from(options: any): RepeatCycle {
     assert(options.unit && options.unitDuration)
-    return new RepeatCycle(options.unit, options.unitDuration, options.endOfCycle)
+    return new RepeatCycleImpl(options.unit, options.unitDuration, options.endOfCycle)
+  }
+
+  /**
+   * Pause the repeat cycle.
+   */
+  pauseCycle() {
+    this.pause = true;
+  }
+
+  /**
+   * Unpause the repeat cycle.
+   */
+  unpauseCycle() {
+    this.pause = false;
+    this.setEndOfCycle(new Date())
+  }
+
+  /**
+   * A filter for setting the cycle, zeroing out the hours
+   * @param date
+   */
+  setEndOfCycle(date: Date) {
+    this.endOfCycle = new Date(date.setHours(0, 0, 0, 0))
   }
 
   /**
@@ -98,7 +107,7 @@ export class RepeatCycle {
     if (this.isPaused) return 0
 
     let {cycles, endOfCycle} = this._getCycles(this.endOfCycle, new Date());
-    if (updateReferenceDate) this._endOfCycle = endOfCycle
+    if (updateReferenceDate) this.setEndOfCycle(endOfCycle)
     return cycles
   }
 
@@ -110,18 +119,25 @@ export class RepeatCycle {
     if (this.isPaused) return [this.endOfCycle]
 
     let upcomingEndOfCycleDates: Date[] = []
-    let expireDate = this.endOfCycle
-    let toDate = new Date(this.endOfCycle.setHours(this.endOfCycle.getHours() + 1))
+    let expireDate = new Date(this.endOfCycle)
+    let toDate = new Date(expireDate.setDate(expireDate.getDate() + 1))
 
     for (let i = 0; i < n; i++) {
       let {endOfCycle} = this._getCycles(expireDate, toDate)
-      upcomingEndOfCycleDates.push(endOfCycle)
+      upcomingEndOfCycleDates.push(new Date(endOfCycle))
 
-      expireDate = new Date(endOfCycle.setHours(0, 0, 0, 0))
-      toDate = new Date(expireDate.setHours(expireDate.getHours() + 1))
+      expireDate = new Date(endOfCycle)
+      toDate = new Date(endOfCycle)
     }
 
     return upcomingEndOfCycleDates
+  }
+
+  /**
+   * A helper function for debugging. Date manipulation is difficult *sighs*
+   */
+  toString(): string {
+    return `Repeat Cycle: ${this.unit} : ${this.unitDuration}\n End Of Current Cycle: ${this.endOfCycle}`
   }
 
   /**
@@ -138,7 +154,7 @@ export class RepeatCycle {
     if (expire.getTime() > to.getTime()) return {cycles: 0, endOfCycle: expire}
 
     let timeDiffMs = to.getTime() - expire.getTime()
-    switch (this._unit) {
+    switch (this.unit) {
       /*
        DAY CALCULATION:
        - (oneDayMs * duration) = numberOfDaysMs
@@ -163,20 +179,20 @@ export class RepeatCycle {
 
        */
       case TimeUnits.DAYS:
-        let days = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration)) + 1
+        let days = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration)) + 1
         return {
           cycles: days,
-          endOfCycle: new Date(expire.setDate(expire.getDate() + (days * this._unitDuration)))
+          endOfCycle: new Date(expire.setDate(expire.getDate() + (days * this.unitDuration)))
         }
       /*
        WEEK CALCULATION:
        Same as DAY CALCULATION, except we multiply the number of days by 7. Thus dividing by numberOfWeeksMs
        */
       case TimeUnits.WEEKS:
-        let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this._unitDuration * 7)) + 1
+        let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration * 7)) + 1
         return {
           cycles: weeks,
-          endOfCycle: new Date(expire.setDate(expire.getDate() + (weeks * 7 * this._unitDuration)))
+          endOfCycle: new Date(expire.setDate(expire.getDate() + (weeks * 7 * this.unitDuration)))
         }
       /*
        MONTH CALCULATION: (Little tricky)
@@ -199,67 +215,28 @@ export class RepeatCycle {
       case TimeUnits.MONTHS:
         let months = (to.getFullYear() - expire.getFullYear()) * 12
         months += to.getMonth() - expire.getMonth()
-        months = Math.floor(months / this._unitDuration) + 1
+        months = Math.floor(months / this.unitDuration) + 1
         return {
           cycles: months,
-          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (months * this._unitDuration)))
+          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (months * this.unitDuration)))
         }
       /*
        ANNUAL CALCULATION:
-       Simply calculate the yearly difference, and add one for the current cycle, right?
-
-       Consider this:
-       ref     = 01/08/22
-       today   = 17/07/23
-       So the difference is one year, plus one means that our _endOfCycle will change to 01/08/24 (which is wrong).
-       The next _endOfCycle should be 01/08/24
-
-       So, don't add the one at the end... okay then, so the works for the above, but...
-
-       Consider this:
-       ref    = 01/02/22
-       today  = 17/07/22
-       Here, we don't add the one, and get a yearly difference of 0, so the _endOfCycle will be 01/02/22 (which is
-       wrong). We need the update.
-
-       So instead, we can do a monthly one, but just divide the number of months by 12, and Math.ceil that number?
-
-       E.g. 1 (Next year)
-       ref      = 01/08/22
-       today    = 17/07/23
-       diff     = Math.ceil(11 / 12) === 1 (correct)
-
-       E.g. 2 (This year)
-       ref      = 01/02/22
-       today    = 17/07/22
-       diff     = Math.ceil(5 / 12) === 1 (correct)
-
-       E.g. 3 (More than one, but less than 2, years)
-       ref      = 01/02/22
-       today    = 17/07/23
-       diff     = Math.ceil(17 / 12) === 2 (correct)
-
+       Same as MONTHS, except divided by 12 to account for months in a year.
        */
       case TimeUnits.YEARS:
         // Same month calculation (3 lines, not worth the extra function)
         let monthDiff = (to.getFullYear() - expire.getFullYear()) * 12
         monthDiff += to.getMonth() - expire.getMonth()
-        monthDiff = Math.floor(monthDiff / this._unitDuration) + 1
+        monthDiff = Math.floor(monthDiff / this.unitDuration) + 1
 
         let years = Math.ceil(monthDiff / 12)
         return {
           cycles: years,
-          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (years * 12 * this._unitDuration)))
+          endOfCycle: new Date(expire.setMonth(expire.getMonth() + (years * 12 * this.unitDuration)))
         }
     }
 
     throw new Error('500: Unable to correctly calculate cycles')
-  }
-
-  /**
-   * A helper function for debugging. Date manipulation is difficult *sighs*
-   */
-  toString(): string {
-    return `Repeat Cycle: ${this._unit} : ${this._unitDuration}\n End Of Current Cycle: ${this._endOfCycle}`
   }
 }

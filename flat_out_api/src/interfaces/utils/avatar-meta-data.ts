@@ -1,27 +1,35 @@
 import {ObjectId, Types} from "mongoose";
 import assert from "assert";
 
-/**
- * A contract for GridFS avatar meta data images.
- */
-export class AvatarMetaData {
+export interface AvatarMetaData {
   /**The exact moment, where this image can be deleted after (if not associated). <br/>Type: {@link Date}*/
-  private readonly _expirationDate: Date
+  expirationDate: Date
   /**An association to some {@link Document}. <br/>Type: {@link ObjectId?}*/
-  private readonly _association?: Types.ObjectId
+  association?: Types.ObjectId
+}
+
+/**
+ * A contract for GridFS image metadata.
+ * NOTE: This is
+ */
+export class AvatarMetaDataImpl implements AvatarMetaData {
+  /**The exact moment, where this image can be deleted after (if not associated). <br/>Type: {@link Date}*/
+  expirationDate: Date
+  /**An association to some {@link Document}. <br/>Type: {@link ObjectId?}*/
+  association?: Types.ObjectId
 
   constructor(expirationDate: Date, association?: Types.ObjectId) {
-    this._expirationDate = expirationDate;
-    this._association = association;
+    this.expirationDate = expirationDate;
+    this.association = association;
   }
 
   /**
    * A static constructor for JSON objects.
    * @param options
    */
-  static from(options: any): AvatarMetaData {
+  static from(options: any): AvatarMetaDataImpl {
     assert(options.expirationDate);
-    return new AvatarMetaData(options.expirationDate, options.association)
+    return new AvatarMetaDataImpl(options.expirationDate, options.association)
   }
 
   /**
@@ -29,6 +37,6 @@ export class AvatarMetaData {
    * be deleted from the MongoDB.
    */
   shouldDelete(): boolean {
-    return !this._association && Date.now() > this._expirationDate.getTime()
+    return !this.association && Date.now() > this.expirationDate.getTime()
   }
 }

@@ -1,4 +1,4 @@
-import {AvatarMetaData} from "../src/interfaces/utils/avatar-meta-data";
+import {AvatarMetaDataImpl} from "../src/interfaces/utils/avatar-meta-data";
 import {Types} from "mongoose";
 
 it.each([
@@ -18,11 +18,11 @@ it.each([
     expected: true
   }
 ])('Avatar.shouldDelete - expiration : $expirationDate', ({association, expirationDate, expected}) => {
-  let avatar = new AvatarMetaData(
+  let avatar = new AvatarMetaDataImpl(
     expirationDate,
     association,
   )
 
   expect(avatar.shouldDelete()).toBe(expected)
-  expect(AvatarMetaData.from({association, expirationDate}).shouldDelete()).toBe(expected)
+  expect(AvatarMetaDataImpl.from({association, expirationDate}).shouldDelete()).toBe(expected)
 })
