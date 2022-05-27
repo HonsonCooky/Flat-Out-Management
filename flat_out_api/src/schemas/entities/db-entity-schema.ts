@@ -7,9 +7,11 @@ import {AssociationSchema, DbObjectSchema} from "../fom-db-objects";
  * Schema definition for {@link UiComponent}
  */
 const UiComponentSchema: SchemaDefinitionProperty<UiComponent> = {
-  name: {type: String, required: true},
-  color: {type: String, required: true},
-  avatar: Schema.Types.ObjectId,
+  type: {
+    name: {type: String, required: true},
+    color: {type: String, required: true},
+    avatar: Schema.Types.ObjectId,
+  },
   required: true
 }
 

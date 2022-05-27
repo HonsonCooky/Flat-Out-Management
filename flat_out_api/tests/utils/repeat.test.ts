@@ -1,4 +1,4 @@
-import {RepeatCycleImpl, TimeUnits} from "../src/interfaces/non-entities/repeat";
+import {RepeatCycleImpl, TimeUnits} from "../../src/interfaces/non-entities/repeat";
 import {AssertionError} from "assert";
 
 /** -----------------------------------------------------------------------------------------------------------

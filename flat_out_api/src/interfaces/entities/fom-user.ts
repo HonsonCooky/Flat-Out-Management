@@ -9,6 +9,7 @@ import {DbEntity} from "./db-entity";
 export interface FomUser extends DbEntity {
   /**Groups that this user associates with*/
   groups: Association[],
-  /**A boolean which, if true, indicates that some connected document has been updated*/
+  /**A boolean which, if true, indicates that some connected document has been updated, so the user should search
+   *  for out-dated documents.*/
   shouldUpdate: boolean,
 }

@@ -7,23 +7,11 @@ import {RepeatCycle, TimeUnits} from "../interfaces/non-entities/repeat";
  * Schema definition for {@link Association}
  */
 export const AssociationSchema: SchemaDefinitionProperty<Association> = {
-  ref: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
-  model: {
-    type: String,
-    enum: ModelType,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: RoleType,
-    required: true
-  },
-  value: {
-    type: String,
-    required: true
+  type: {
+    ref: {type: Schema.Types.ObjectId, required: true,},
+    model: {type: String, enum: ModelType, required: true,},
+    role: {type: String, enum: RoleType, required: true},
+    value: {type: String, required: true}
   }
 }
 
@@ -40,10 +28,12 @@ export const RequiredAssociationSchema: SchemaDefinitionProperty<Association> = 
  * Schema definition for {@link RepeatCycle}
  */
 export const RepeatCycleSchema: SchemaDefinitionProperty<RepeatCycle> = {
-  unit: {type: String, enum: TimeUnits, required: true},
-  unitDuration: {type: Number, required: true},
-  endOfCycle: {type: Date, required: true},
-  pause: {type: Boolean, required: true},
+  type: {
+    unit: {type: String, enum: TimeUnits, required: true},
+    unitDuration: {type: Number, required: true},
+    endOfCycle: {type: Date, required: true},
+    pause: {type: Boolean, required: true},
+  }
 }
 
 /**

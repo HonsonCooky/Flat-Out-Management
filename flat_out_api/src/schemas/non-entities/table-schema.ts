@@ -11,6 +11,7 @@ import {ModelType} from "../../interfaces/association";
 import {AssociationSchema, RequiredRepeatCycleSchema} from "../fom-db-objects";
 import {EventSchema} from "./calendar-schema";
 import {DbNonEntitySchema} from "./db-non-entity-schema";
+import {getParent} from "../schema-utils";
 
 /**
  * Schema definition for {@link CalculationCell}

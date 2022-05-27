@@ -9,8 +9,7 @@ import {JwtContract} from "../../interfaces/utils/jwt-contract";
  * Salt and hash a given input
  * @param input
  */
-export function saltAndHash(input: string): string | null {
-  if (!input) return null
+export function saltAndHash(input: string): string {
   return hashSync(input, genSaltSync())
 }
 
@@ -19,7 +18,7 @@ export function saltAndHash(input: string): string | null {
  * @param a
  * @param b
  */
-export function compareHashes(a?: string, b?: string): boolean {
+export function compareHashes(a?: string | null, b?: string | null): boolean {
   if (!a || !b) return false
   return compareSync(a, b)
 }

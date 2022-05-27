@@ -1,4 +1,4 @@
-import {AvatarMetaDataImpl} from "../src/interfaces/utils/avatar-meta-data";
+import {AvatarMetaDataImpl} from "../../src/interfaces/utils/avatar-meta-data";
 import {Types} from "mongoose";
 
 it.each([
