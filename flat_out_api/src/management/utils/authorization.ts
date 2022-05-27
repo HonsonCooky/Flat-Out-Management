@@ -1,7 +1,9 @@
 import {DbEntity} from "../../interfaces/entities/db-entity";
 import {DbNonEntity} from "../../interfaces/non-entities/db-non-entity";
-import {Association, roleVal} from "../../interfaces/association";
+import {Association, ModelType, roleVal} from "../../interfaces/association";
 import {models, Types} from "mongoose";
+import {Response} from "express";
+import {JwtContract} from "../../interfaces/utils/jwt-contract";
 
 export async function getAssociation(a: DbEntity, b: DbNonEntity, seen?: Types.ObjectId[]): Promise<Association>;
 export async function getAssociation(a: DbEntity, b: DbEntity, seen?: Types.ObjectId[]): Promise<Association>;
@@ -58,3 +60,14 @@ export async function getAssociation(from: any, find: any, seen: Types.ObjectId[
   throw new Error(`400: No association between ${from._id} and ${find._id}`)
 }
 
+/**
+ * Extract and find the entity mentioned in the JWT. If the entity doesn't exist, then an error will be thrown.
+ * @param res
+ */
+export async function getJwtEntity<T extends DbEntity>(res: Response): Promise<{ entity: T, model: ModelType }> {
+  if (!res.locals.jwt) throw new Error('400: Action requires an authenticated entity, try logging in')
+  let jwt = res.locals.jwt as JwtContract
+  let entity = await models[jwt.model].findOne<T>({jwtUuid: jwt.jwtUuid})
+  if (!entity) throw new Error('400: Action requires an authenticated entity, try creating account')
+  return {entity, model: jwt.model}
+}

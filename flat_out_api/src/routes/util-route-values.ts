@@ -1,1 +1,0 @@
-export const idRegExp = '/:id([a-f0-9]{24})'
