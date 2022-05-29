@@ -56,7 +56,7 @@ export class RepeatCycleImpl implements RepeatCycle {
   constructor(unit: TimeUnits, unitDuration: number, endOfCycle?: Date) {
     this.unit = unit;
     this.unitDuration = unitDuration;
-    this.endOfCycle = new Date((endOfCycle ? endOfCycle : new Date()).setHours(0, 0, 0, 0))
+    this.endOfCycle = endOfCycle ? endOfCycle : new Date()
     this.pause = false
   }
 
@@ -96,7 +96,7 @@ export class RepeatCycleImpl implements RepeatCycle {
    * @param date
    */
   setEndOfCycle(date: Date) {
-    this.endOfCycle = new Date(date.setHours(0, 0, 0, 0))
+    this.endOfCycle = new Date(date)
   }
 
   /**
@@ -120,7 +120,7 @@ export class RepeatCycleImpl implements RepeatCycle {
 
     let upcomingEndOfCycleDates: Date[] = []
     let expireDate = new Date(this.endOfCycle)
-    let toDate = new Date(expireDate.setDate(expireDate.getDate() + 1))
+    let toDate = new Date(this.endOfCycle)
 
     for (let i = 0; i < n; i++) {
       let {endOfCycle} = this._getCycles(expireDate, toDate)
@@ -179,7 +179,7 @@ export class RepeatCycleImpl implements RepeatCycle {
 
        */
       case TimeUnits.DAYS:
-        let days = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration)) + 1
+        let days = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration)) + 1 // Ensure one unit has passed
         return {
           cycles: days,
           endOfCycle: new Date(expire.setDate(expire.getDate() + (days * this.unitDuration)))
@@ -189,7 +189,7 @@ export class RepeatCycleImpl implements RepeatCycle {
        Same as DAY CALCULATION, except we multiply the number of days by 7. Thus dividing by numberOfWeeksMs
        */
       case TimeUnits.WEEKS:
-        let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration * 7)) + 1
+        let weeks = Math.floor(timeDiffMs / (this._oneDayMs * this.unitDuration * 7)) + 1 // Ensure one unit has passed
         return {
           cycles: weeks,
           endOfCycle: new Date(expire.setDate(expire.getDate() + (weeks * 7 * this.unitDuration)))
@@ -230,7 +230,7 @@ export class RepeatCycleImpl implements RepeatCycle {
         monthDiff += to.getMonth() - expire.getMonth()
         monthDiff = Math.floor(monthDiff / this.unitDuration) + 1
 
-        let years = Math.ceil(monthDiff / 12)
+        let years = Math.floor(monthDiff / 12) + 1
         return {
           cycles: years,
           endOfCycle: new Date(expire.setMonth(expire.getMonth() + (years * 12 * this.unitDuration)))

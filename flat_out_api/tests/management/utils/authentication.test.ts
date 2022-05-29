@@ -14,6 +14,7 @@ describe('Authentication:', () => {
     expect(snh).not.toBeNull()
 
     expect(compareHashes(input, snh)).toBeTruthy()
+    expect(compareHashes('Some other string value', snh)).toBeFalsy()
     expect(compareHashes(input, null)).toBeFalsy()
     expect(compareHashes(null, snh)).toBeFalsy()
   })

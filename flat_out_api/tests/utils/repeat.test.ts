@@ -150,13 +150,7 @@ it.each([
     unitDuration: 1,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setDate(new Date().getDate() + 1)),
-      new Date(new Date().setDate(new Date().getDate() + 2)),
-      new Date(new Date().setDate(new Date().getDate() + 3)),
-      new Date(new Date().setDate(new Date().getDate() + 4)),
-      new Date(new Date().setDate(new Date().getDate() + 5)),
-    ],
+    dateMultiplier: 1,
   },
   {
     title: '3 day cycle - n 5',
@@ -164,13 +158,7 @@ it.each([
     unitDuration: 3,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setDate(new Date().getDate() + 3)),
-      new Date(new Date().setDate(new Date().getDate() + (2 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (3 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (4 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (5 * 3))),
-    ],
+    dateMultiplier: 3,
   },
   {
     title: '1 week cycle - n 5',
@@ -178,13 +166,7 @@ it.each([
     unitDuration: 1,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setDate(new Date().getDate() + (7))),
-      new Date(new Date().setDate(new Date().getDate() + (2 * 7))),
-      new Date(new Date().setDate(new Date().getDate() + (3 * 7))),
-      new Date(new Date().setDate(new Date().getDate() + (4 * 7))),
-      new Date(new Date().setDate(new Date().getDate() + (5 * 7))),
-    ],
+    dateMultiplier: 7,
   },
   {
     title: '3 week cycle - n 5',
@@ -192,13 +174,7 @@ it.each([
     unitDuration: 3,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setDate(new Date().getDate() + (7 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (2 * 7 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (3 * 7 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (4 * 7 * 3))),
-      new Date(new Date().setDate(new Date().getDate() + (5 * 7 * 3))),
-    ],
+    dateMultiplier: (7 * 3)
   },
   {
     title: '1 month cycle - n 5',
@@ -206,13 +182,7 @@ it.each([
     unitDuration: 1,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setMonth(new Date().getMonth() + 1)),
-      new Date(new Date().setMonth(new Date().getMonth() + 2)),
-      new Date(new Date().setMonth(new Date().getMonth() + 3)),
-      new Date(new Date().setMonth(new Date().getMonth() + 4)),
-      new Date(new Date().setMonth(new Date().getMonth() + 5)),
-    ],
+    dateMultiplier: 1
   },
   {
     title: '3 month cycle - n 5',
@@ -220,13 +190,7 @@ it.each([
     unitDuration: 3,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setMonth(new Date().getMonth() + 3)),
-      new Date(new Date().setMonth(new Date().getMonth() + (2 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (3 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (4 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (5 * 3))),
-    ],
+    dateMultiplier: 3
   },
   {
     title: '1 year cycle - n 5',
@@ -234,13 +198,7 @@ it.each([
     unitDuration: 1,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setMonth(new Date().getMonth() + 12)),
-      new Date(new Date().setMonth(new Date().getMonth() + (2 * 12))),
-      new Date(new Date().setMonth(new Date().getMonth() + (3 * 12))),
-      new Date(new Date().setMonth(new Date().getMonth() + (4 * 12))),
-      new Date(new Date().setMonth(new Date().getMonth() + (5 * 12))),
-    ],
+    dateMultiplier: 12
   },
   {
     title: '3 year cycle - n 5',
@@ -248,25 +206,43 @@ it.each([
     unitDuration: 3,
     endOfCycle: new Date(),
     n: 5,
-    expectedDates: [
-      new Date(new Date().setMonth(new Date().getMonth() + (12 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (2 * 12 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (3 * 12 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (4 * 12 * 3))),
-      new Date(new Date().setMonth(new Date().getMonth() + (5 * 12 * 3))),
-    ],
+    dateMultiplier: (12 * 3)
   },
-])('Repeat.getUpcomingEndOfCycleDates - $unit - $title', ({unit, unitDuration, endOfCycle, n, expectedDates}) => {
+])('Repeat.getUpcomingEndOfCycleDates - $unit - $title', ({unit, unitDuration, endOfCycle, n, dateMultiplier}) => {
   let repeatCycle = new RepeatCycleImpl(
     unit,
     unitDuration,
     endOfCycle
   )
-
+  let today = new Date(endOfCycle)
+  let expectedDates: Date[] = []
+  for (let i = 0; i < n; i++) {
+    switch (unit) {
+      case TimeUnits.DAYS:
+        today = new Date(today.setDate(today.getDate() + dateMultiplier))
+        break;
+      case TimeUnits.WEEKS:
+        today = new Date(today.setDate(today.getDate() + dateMultiplier))
+        break;
+      case TimeUnits.MONTHS:
+        today = new Date(today.setMonth(today.getMonth() + dateMultiplier))
+        break;
+      case TimeUnits.YEARS:
+        today = new Date(today.setMonth(today.getMonth() + dateMultiplier))
+        break;
+    }
+    expectedDates.push(new Date(today))
+  }
   let dates = repeatCycle.getUpcomingEndOfCycleDates(n)
-  dates = dates.map((date: Date) => new Date(new Date(date).setUTCHours(0, 0, 0, 0)))
-  expectedDates = expectedDates.map((date: Date) => new Date(new Date(date).setUTCHours(0, 0, 0, 0)))
+  expect(dates.length).toBe(n)
   expect(dates).toStrictEqual(expectedDates)
+})
+
+it('Repeat set getUpcomingEndOfCycleDates example', () => {
+  let cycle = new RepeatCycleImpl(TimeUnits.DAYS, 3, new Date('2022-05-14T00:00:00'))
+  let future = cycle.getUpcomingEndOfCycleDates(1)[0]
+
+  expect(future.getTime()).toBe(new Date('2022-05-17T00:00:00').getTime())
 })
 
 it('Repeat.from VALID', () => {
