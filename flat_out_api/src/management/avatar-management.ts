@@ -1,48 +1,121 @@
 import {connection, mongo, Types} from "mongoose";
-import {GridFSFile} from "mongodb"
-import {AvatarMetaDataImpl} from "../interfaces/utils/avatar-meta-data";
-import {Request} from "express";
+import {Request, Response} from "express";
+import {CONFIG} from "../config";
+import {FomRes} from "../interfaces/utils/fom-res";
+import {getJwtEntity} from "./utils/authorization/authorization";
+import {DbEntity} from "../interfaces/entities/db-entity";
+import {Readable} from "stream";
+import sharp from "sharp";
+import {RoleType, roleVal} from "../interfaces/association";
+import {getAssociation} from "./utils/authorization/get-association";
 
 const bucketName = 'avatars'
 const bucket = new mongo.GridFSBucket(connection.db, {bucketName});
+CONFIG.mongoDb.isGridConnected = !!bucket
 
 /**
- * Initialize the GridFSBucket (which can only be done when a connection to MongoDB has been established)
+ * A means for creating a consistent naming convention across all files. This makes finding some file for an entity
+ * a lot easier, as it is either listed as this name, or it doesn't exist.
+ * @param entity
  */
-export async function initGridFs() {
-
-  await cleanAvatars()
+function getImageName(entity: DbEntity) {
+  return `${entity._id}_avatar`
 }
 
-function getIp(req: Request): string {
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  return `${ip}`
-}
-
-function toImageName(name: string) {
-  return `${name}_avatar`
-}
 
 /**
- * Clean the avatars in the MongoDB.
- * When some entity can be associated to the upload, remove their previous uploads.
- * IP deletes occur because the same user has clearly changed their mind. If a new user is created from the same IP,
- * then the previous images has already been associated with a user, and thus, has a new name.
+ * Delete an entity's avatar from the database.
  */
-export async function cleanAvatars(options?: { id?: Types.ObjectId, ip?: string }) {
+async function deleteAvatarForEntity(forEntity: DbEntity) {
   try {
-    // Remove avatars that are not associated to another document, and have expired
-    if (options?.id) await bucket.find({'metadata.association': options.id}).forEach((doc: GridFSFile) => {
-      bucket.delete(doc._id)
-    })
-    // Remove avatars based on IP (file name for unclaimed images)
-    if (options?.ip) await bucket.find({filename: toImageName(options.ip)}).forEach((doc: GridFSFile) => {
-      bucket.delete(doc._id)
-    })
-    // Remove avatars associated to this id (each document only gets ONE profile picture).
-    if (!options) await bucket.find().forEach((doc: GridFSFile) => {
-      if (AvatarMetaDataImpl.from(doc.metadata).shouldDelete()) bucket.delete(doc._id)
-    })
+    let avatarMatches = await bucket.find({filename: getImageName(forEntity)}).toArray()
+    for (let avatar of avatarMatches) await bucket.delete(avatar._id)
   } catch (e) {
+    console.log(`Unable to remove documents for ${forEntity._id}\n${e}`)
+  }
+}
+
+
+/**
+ * Uploads an image into the backend on behalf of some entity. This is like any other request that requires an JWT
+ * to locate the entity making the request. The entire process is wrapped into this one method, so connecting and
+ * managing avatars is unnecessary.
+ * @param req
+ * @param res
+ */
+export async function uploadAvatar(req: Request, res: Response): Promise<FomRes> {
+  if (!req.file?.buffer) throw new Error('400: Missing avatar from request')
+  let {entity} = await getJwtEntity(res)
+  let customId = new Types.ObjectId()
+
+  // Remove previous association
+  await deleteAvatarForEntity(entity)
+
+  // Create write stream to upload avatar image to GridFS
+  let writeStream = bucket.openUploadStreamWithId(
+    customId,
+    getImageName(entity),
+  )
+
+  // Create read stream, to resize and upload the avatar image read into memory from Multer.
+  let readStream = Readable.from(sharp(req.file.buffer).resize({
+      fit: sharp.fit.contain,
+      width: 400,
+      height: 400
+    }).png()
+  )
+
+  // Combine the two streams. Reading information from multer, to GridFS
+  await new Promise((resolve, reject) => {
+    readStream.pipe(writeStream).on('finish', resolve).on('error', reject)
+  })
+
+  // Link to the entity
+  entity.ui.avatar = customId
+  await entity.save()
+
+  return {
+    msg: `Avatar uploaded for ${entity.ui.name}`
+  }
+}
+
+
+/**
+ * A wrapper for 'deleteAvatarForEntity', which removes all avatars for this entity.
+ * @param req
+ * @param res
+ */
+export async function deleteAvatar(req: Request, res: Response): Promise<FomRes> {
+  let {entity} = await getJwtEntity(res)
+  if (!entity.ui.avatar) throw new Error(`400: Document doesn't have an avatar to delete`)
+
+  await deleteAvatarForEntity(entity)
+  entity.ui.avatar = undefined
+  await entity.save()
+  return {
+    msg: `Deleted avatar for `
+  }
+}
+
+/**
+ * Retrieve an avatar from the database, and stream it back to the client. Only documents that are connected to the
+ * user (IN ANY WAY) can be retrieved from the database.
+ * @param req
+ * @param res
+ */
+export async function downloadAvatar(req: Request, res: Response) {
+  let avatarId = req.params.avatarId
+  if (!avatarId) throw new Error(`400: Unspecified avatar in request`)
+
+  let {entity} = await getJwtEntity(res, RoleType.READER)
+  let {role} = await getAssociation(entity, new Types.ObjectId(avatarId))
+  if (roleVal(role) > roleVal(RoleType.READER)) throw new Error('400: Invalid authorization to download avatar')
+
+  try {
+    let stream = bucket.openDownloadStream(new Types.ObjectId(avatarId))
+    res.contentType('image/png')
+    stream.pipe(res)
+  } catch (e) {
+    throw new Error(`400: Unable to find avatar ${req.params.avatarId}`)
   }
 }

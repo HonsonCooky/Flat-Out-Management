@@ -1,6 +1,6 @@
 import {compareHashes, saltAndHash, signJWT} from "../../../src/management/utils/authentication";
 import {Types} from "mongoose";
-import {ModelType} from "../../../src/interfaces/association";
+import {ModelType, RoleType} from "../../../src/interfaces/association";
 import {UserModel} from "../../../src/schemas/entities/user-schema";
 import {extractJwt} from "../../../src/middleware/extract-jwt";
 import {Request, Response} from "express";
@@ -24,7 +24,7 @@ describe('Authentication:', () => {
       jwtUuid: new Types.ObjectId(),
     })
 
-    let token = signJWT(user, ModelType.USER)
+    let token = signJWT(user, ModelType.USER, RoleType.WRITER)
     expect(token).not.toBeNull()
 
     let req = {headers: {authorization: token}} as unknown as Request

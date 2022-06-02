@@ -4,7 +4,7 @@ import {Types} from "mongoose";
 import {ModelType, RoleType} from "../../../src/interfaces/association";
 import {TableModel} from "../../../src/schemas/non-entities/table-schema";
 import {GroupModel} from "../../../src/schemas/entities/group-schema";
-import {getAssociation} from "../../../src/management/utils/authorization";
+import {getAssociation} from "../../../src/management/utils/authorization/get-association";
 
 describe('Authorization: ', () => {
   let userId = new Types.ObjectId()
@@ -86,21 +86,21 @@ describe('Authorization: ', () => {
   }, 20000)
 
   it('Simple Association (1 layer):', async () => {
-    let auth = await getAssociation(user, group)
+    let auth = await getAssociation(user, groupId)
     expect(auth.ref).toStrictEqual(groupId)
     expect(auth.model).toBe(ModelType.GROUP)
     expect(auth.role).toBe(RoleType.WRITER)
   })
 
   it('Nested Association (2 layers):', async () => {
-    let auth = await getAssociation(user, table)
+    let auth = await getAssociation(user, tableId)
     expect(auth.ref).toStrictEqual(tableId)
     expect(auth.model).toBe(ModelType.TABLE)
     expect(auth.role).toBe(RoleType.READER)
   })
 
   it('Nested Association Reversed (2 layers):', async () => {
-    let auth = await getAssociation(table, user)
+    let auth = await getAssociation(table, userId)
     expect(auth.ref).toStrictEqual(userId)
     expect(auth.model).toBe(ModelType.USER)
     expect(auth.role).toBe(RoleType.READER)

@@ -7,6 +7,7 @@ import {errorHandler} from "./middleware/error-handling";
 require('./schemas/entities/user-schema')
 require('./schemas/entities/group-schema')
 require('./schemas/non-entities/table-schema')
+require('./schemas/non-entities/calendar-schema')
 
 /** -----------------------------------------------------------------------------------------------------------------
  * MONGODB CONNECTION AND SETUP
@@ -14,7 +15,6 @@ require('./schemas/non-entities/table-schema')
 // Create a connection to the MongoDB instance
 connect(CONFIG.mongoDb.connectionStr).then(async () => {
   CONFIG.mongoDb.isDbConnected = true
-  // initGridFs().then(() => CONFIG.mongoDb.isGridConnected = true).catch()
   apiInitNormalMode()
 }).catch(apiInitErrorMode)
 
@@ -30,7 +30,6 @@ export function apiInitNormalMode() {
   // middleware BEFORE requests
   webAPI.use(helmet())
   webAPI.use(express.json())
-  webAPI.use(express.urlencoded({extended: true}))
 
   // Initialize Routes
   // webAPI.use(apiRoutes)

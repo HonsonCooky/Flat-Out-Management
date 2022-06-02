@@ -2,7 +2,7 @@ import {compareSync, genSaltSync, hashSync} from "bcryptjs";
 import {sign} from "jsonwebtoken"
 import {CONFIG} from "../../config";
 import {DbEntity} from "../../interfaces/entities/db-entity";
-import {ModelType} from "../../interfaces/association";
+import {ModelType, RoleType} from "../../interfaces/association";
 import {JwtContract} from "../../interfaces/utils/jwt-contract";
 
 /**
@@ -25,17 +25,21 @@ export function compareHashes(a?: string | null, b?: string | null): boolean {
 
 
 /**
- * Take the dynamic jwt uuid from some entity, plus that entities model, and wrap it into a JWT
+ * Take the dynamic jwt uuid from some entity, plus that entities model and role (when using the jwt), and wrap it into
+ * a JWT
  * @param entity
  * @param model
+ * @param role
  * @param expiresIn
  */
-export function signJWT(entity: DbEntity, model: ModelType, expiresIn: string = CONFIG.token.expirationDays): string {
+export function signJWT(entity: DbEntity, model: ModelType, role: RoleType,
+  expiresIn: string = CONFIG.token.expirationDays): string {
   if (!entity) throw new Error(`500: Unable to sign a JWT without some content`)
 
   let payload: JwtContract = {
     jwtUuid: entity.jwtUuid,
     model,
+    role,
   }
 
   let options: any = {

@@ -20,7 +20,7 @@ const UiComponentSchema: SchemaDefinitionProperty<UiComponent> = {
  */
 export const DbEntitySchema: SchemaDefinition<DbEntity> = {
   ...DbObjectSchema,
-  name: {type: String, required: true, unique: true},
+  name: {type: String, required: true, unique: true}, // Override to be unique
   password: {type: String, required: true},
   jwtUuid: {type: Schema.Types.ObjectId, required: true, unique: true},
   ui: UiComponentSchema,

@@ -49,5 +49,6 @@ export const RequiredRepeatCycleSchema: SchemaDefinitionProperty<RepeatCycle> = 
  * Schema definition for {@link DbObject}
  */
 export const DbObjectSchema: SchemaDefinition<DbObject> = {
+  name: {type: String, required: true},
   fomVersion: {type: String, required: true}
 }

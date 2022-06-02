@@ -16,16 +16,15 @@ export function routeHandler(fn: (req: Request, res: Response) => Promise<FomRes
 /**
  * Before parsing a document back to the client, remove sensitive information that is not
  * necessary to parse back.
- * @param iFomRes
+ * @param fomRes
  */
-function sanitizeRes(iFomRes: FomRes): FomRes {
-  if (!iFomRes.item || !("uiName" in iFomRes.item)) return iFomRes
+function sanitizeRes(fomRes: FomRes): FomRes {
+  if (!fomRes.item || !("uiName" in fomRes.item)) return fomRes
 
-  let {dynUuid, password, ...rest} = iFomRes.item.toObject()
-  rest.token = iFomRes.token
+  let {dynUuid, password, ...rest} = fomRes.item.toObject()
 
   return {
-    msg: iFomRes.msg,
+    msg: fomRes.msg,
     item: rest
   }
 }

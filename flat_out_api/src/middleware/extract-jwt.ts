@@ -6,11 +6,11 @@ import {JwtContract} from "../interfaces/utils/jwt-contract";
 /**
  * An Express middleware component which will
  */
-export function extractJwt(required: boolean = true) {
+export function extractJwt() {
   return (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization?.split(' ')[1]
 
-    if (!token && required)
+    if (!token)
       throw new Error(`400: Request requires authorization`)
     else if (!token) {
       next()

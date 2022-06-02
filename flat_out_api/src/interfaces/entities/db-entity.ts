@@ -22,8 +22,6 @@ export interface UiComponent {
  * Examples are {@link FomUser} and {@link FomGroup}. These documents act on data, making them entities.
  */
 export interface DbEntity extends DbObject {
-  /**The login 'username' for the entity*/
-  name: string,
   /**The password which allows access to act for this entity*/
   password: string,
   /**The jwtUuid which allows access to act for this entity through JWT*/
@@ -34,4 +32,6 @@ export interface DbEntity extends DbObject {
   calendar?: Association,
   /**Tables that are associated to this entity*/
   tables: Association[],
+  /**EXCLUDED: This value is sent to the user, but is excluded from MongoDB. This is the JWT for this entity*/
+  token?: string,
 }

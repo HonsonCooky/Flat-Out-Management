@@ -6,6 +6,8 @@ import {Document, Types} from "mongoose";
 export interface DbObject extends Document<Types.ObjectId> {
   /**Explicitly state from {@link Document}. <br/>Type: {@link ObjectId}*/
   _id: Types.ObjectId,
+  /**Some human-readable value for this object*/
+  name: string,
   /**Outlines the Flat-Out Management backend version that was used for this document. <br/>Type: {@link string}*/
   fomVersion: string,
   /**Explicitly stated from timestamped {@link Document}. <br/>Type: {@link Date}*/
