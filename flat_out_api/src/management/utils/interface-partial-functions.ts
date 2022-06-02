@@ -2,7 +2,7 @@ import {models, Types} from "mongoose";
 import {Request, Response} from "express";
 import {getUrlModelType} from "./url-handler";
 import {RoleType} from "../../interfaces/association";
-import {getJwtEntity} from "./authorization/authorization-helpers";
+import {getJwtEntity} from "./authorization/jwt-helpers";
 import {DbNonEntity} from "../../interfaces/non-entities/db-non-entity";
 import {DbEntity} from "../../interfaces/entities/db-entity";
 

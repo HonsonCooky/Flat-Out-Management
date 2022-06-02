@@ -1,15 +1,6 @@
-import {Association, ModelType, RoleType, roleVal} from "../../../interfaces/association";
-import {models, Types} from "mongoose";
-import {FomUser} from "../../../interfaces/entities/fom-user";
-import {FomGroup} from "../../../interfaces/entities/fom-group";
-import {FomCalendar} from "../../../interfaces/non-entities/fom-calendar";
-import {FomTable} from "../../../interfaces/non-entities/fom-table";
-import {DbEntity} from "../../../interfaces/entities/db-entity";
-import {DbNonEntity} from "../../../interfaces/non-entities/db-non-entity";
-
-type FromObjectType = FomUser | FomGroup | FomCalendar | FomTable | DbEntity | DbNonEntity
-type FromType = FromObjectType | Association
-type FindType = FromType | Types.ObjectId
+import {Association, RoleType, roleVal} from "../../../interfaces/association";
+import {Types} from "mongoose";
+import {DbIdRef, DbObj, DbObjRef, getObjFromRef, getObjId, objToAssociation} from "./db-object-handling";
 
 /**
  * This is a recursive function that searches for some link between 'from' and 'find'. The search begins at 'from'
@@ -23,78 +14,31 @@ type FindType = FromType | Types.ObjectId
  * want the fastest way to find an association between A and B, then leave this alone.
  * @param seen A list of all the associations that have been searched
  */
-export async function getAssociation(from: FromType, find: FindType, seen: Types.ObjectId[] = [],
+export async function getAssociation(from: DbObjRef, find: DbIdRef, seen: Types.ObjectId[] = [],
   minRole: RoleType = RoleType.REQUEST): Promise<Association> {
   // Place the 'from' object into the pile of seen objects
-  let fromId = getFromTypeId(from)
+  let fromId = getObjId(from)
   seen.push(fromId)
 
   // Convert 'from' and 'find' into components that can be used for the evaluation
-  let fromObject = await getFromObject(from)
+  let fromObject = await getObjFromRef(from)
   if (!fromObject) throw new Error('Attempting to find association without a reference')
-  let findId = getFindTypeId(find)
+  let findId = getObjId(find)
 
-  // Attempt to find in this object
-  if (isFindInFrom(fromObject, findId)) return {
-    ref: fromObject._id,
-    model: getFromObjectModel(fromObject),
-    role: RoleType.WRITER, // Correction will be made in the case where getting here is a lower value
-    value: fromObject.name
-  }
+  // Attempt to find in this object. Use the 'WRITER' role, as any connections with a lesser role before this will
+  // overwrite it. If this id is in the object (without other connections), then we have a writer role.
+  if (isFindInFrom(fromObject, findId)) return objToAssociation(fromObject, RoleType.WRITER)
 
   // Attempt to find the association via other associations
   return searchAssociations(fromObject, findId, seen, minRole)
 }
 
-/**
- * Helper function to extract the ObjectId from some {@link FromType}
- * @param from
- */
-function getFromTypeId(from: FromType): Types.ObjectId {
-  if ("_id" in from) return from._id
-  if ("ref" in from) return from.ref
-  throw new Error('Unable to find id that distinguishes object')
-}
-
-/**
- * Helper function to extract the ObjectId from some {@link FindType}
- * @param find
- */
-function getFindTypeId(find: FindType): Types.ObjectId {
-  if (find instanceof Types.ObjectId) return find
-  return getFromTypeId(find)
-}
-
-/**
- * Translates a FromType into a guaranteed FromObject (or null if it doesn't exist)
- * @param from
- */
-async function getFromObject(from: FromType): Promise<FromObjectType | null> {
-  if (!("ref" in from)) return from
-  return models[from.model].findOne({_id: from.ref});
-}
-
-/**
- * Get an object's model from the object instance (based on unique field in object)
- * Although a generic DbEntity or DbNonEntity can be parsed through, in reality, we are often referencing a DbObject
- * that has come from one of the four defined collections.
- *
- * If we have been parsed a purely generic DbEntity/DbNonEntity, then functionally we have an error. So throw one.
- * @param fromObject
- */
-function getFromObjectModel(fromObject: FromObjectType): ModelType {
-  if ("groups" in fromObject) return ModelType.USER
-  if ("users" in fromObject) return ModelType.GROUP
-  if ("colLength" in fromObject) return ModelType.TABLE
-  if ("events" in fromObject) return ModelType.CALENDAR
-  throw new Error('Attempting to find model type without a valid reference')
-}
 
 /**
  * Extracts all the Associations that from could possibly have.
  * @param from
  */
-function getAllAssociations(from: FromObjectType): Association[] {
+function getAllAssociations(from: DbObj): Association[] {
   let associations: Association[] = []
   // FomUser
   if ("groups" in from) associations.push(...from.groups)
@@ -119,7 +63,7 @@ function getAllAssociations(from: FromObjectType): Association[] {
  * @param from
  * @param find
  */
-function isFindInFrom(from: FromType, find: Types.ObjectId): boolean {
+function isFindInFrom(from: DbObjRef, find: Types.ObjectId): boolean {
   let objectConnections: Types.ObjectId[] = []
   if ("_id" in from) objectConnections.push(from._id)
   if ("ref" in from) objectConnections.push(from.ref)
@@ -137,7 +81,7 @@ function isFindInFrom(from: FromType, find: Types.ObjectId): boolean {
  * @param seen
  * @param minRole
  */
-async function searchAssociations(from: FromObjectType, find: Types.ObjectId, seen: Types.ObjectId[], minRole: RoleType)
+async function searchAssociations(from: DbObj, find: Types.ObjectId, seen: Types.ObjectId[], minRole: RoleType)
   : Promise<Association> {
   for (let association of getAllAssociations(from)) {
     if (seen.some((id: Types.ObjectId) => id.equals(association.ref))) continue

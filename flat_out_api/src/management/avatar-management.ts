@@ -2,7 +2,7 @@ import {connection, mongo, Types} from "mongoose";
 import {Request, Response} from "express";
 import {CONFIG} from "../config";
 import {FomRes} from "../interfaces/utils/fom-res";
-import {getJwtEntity} from "./utils/authorization/authorization-helpers";
+import {getJwtEntity} from "./utils/authorization/jwt-helpers";
 import {DbEntity} from "../interfaces/entities/db-entity";
 import {Readable} from "stream";
 import sharp from "sharp";

@@ -3,7 +3,6 @@ import {ModelType, RoleType, roleVal} from "../../../interfaces/association";
 import {models} from "mongoose";
 import {Response} from "express";
 import {JwtContract} from "../../../interfaces/utils/jwt-contract";
-import {DbNonEntity} from "../../../interfaces/non-entities/db-non-entity";
 
 
 /**
@@ -27,8 +26,4 @@ export async function getJwtEntity<T extends DbEntity>(res: Response, minRole: R
   let entity = await models[jwt.model].findOne<T>({jwtUuid: jwt.jwtUuid})
   if (!entity) throw new Error('400: Action requires an authenticated entity, try creating account')
   return {entity, model: jwt.model, role: jwt.role}
-}
-
-export function connectComponents(comA: DbEntity | DbNonEntity, comB: DbEntity | DbNonEntity) {
-
 }
