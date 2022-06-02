@@ -24,8 +24,7 @@ type FindType = FromType | Types.ObjectId
  * @param seen A list of all the associations that have been searched
  */
 export async function getAssociation(from: FromType, find: FindType, seen: Types.ObjectId[] = [],
-  minRole: RoleType = RoleType.REQUEST,): Promise<Association> {
-
+  minRole: RoleType = RoleType.REQUEST): Promise<Association> {
   // Place the 'from' object into the pile of seen objects
   let fromId = getFromTypeId(from)
   seen.push(fromId)
@@ -36,7 +35,7 @@ export async function getAssociation(from: FromType, find: FindType, seen: Types
   let findId = getFindTypeId(find)
 
   // Attempt to find in this object
-  if (isFindInFrom(fromObject, findId, seen)) return {
+  if (isFindInFrom(fromObject, findId)) return {
     ref: fromObject._id,
     model: getFromObjectModel(fromObject),
     role: RoleType.WRITER, // Correction will be made in the case where getting here is a lower value
@@ -44,7 +43,7 @@ export async function getAssociation(from: FromType, find: FindType, seen: Types
   }
 
   // Attempt to find the association via other associations
-  return searchAssociations(fromObject, findId, seen)
+  return searchAssociations(fromObject, findId, seen, minRole)
 }
 
 /**
@@ -75,6 +74,14 @@ async function getFromObject(from: FromType): Promise<FromObjectType | null> {
   return models[from.model].findOne({_id: from.ref});
 }
 
+/**
+ * Get an object's model from the object instance (based on unique field in object)
+ * Although a generic DbEntity or DbNonEntity can be parsed through, in reality, we are often referencing a DbObject
+ * that has come from one of the four defined collections.
+ *
+ * If we have been parsed a purely generic DbEntity/DbNonEntity, then functionally we have an error. So throw one.
+ * @param fromObject
+ */
 function getFromObjectModel(fromObject: FromObjectType): ModelType {
   if ("groups" in fromObject) return ModelType.USER
   if ("users" in fromObject) return ModelType.GROUP
@@ -84,28 +91,10 @@ function getFromObjectModel(fromObject: FromObjectType): ModelType {
 }
 
 /**
- * Search A DbObject to see if any of its components are the link we are looking for. Here, we are not concerned
- * with associations, but merely if some object is/contains the id we are looking for. We DO NOT search through
- * Associations (those are done separately).
- * @param from
- * @param find
- * @param seen
- */
-function isFindInFrom(from: FromType, find: Types.ObjectId, seen: Types.ObjectId[]): boolean {
-  let objectConnections: Types.ObjectId[] = []
-  if ("_id" in from) objectConnections.push(from._id)
-  if ("ref" in from) objectConnections.push(from.ref)
-  if ("ui" in from && from.ui.avatar) objectConnections.push(from.ui.avatar)
-  if ("jwtUuid" in from) objectConnections.push(from.jwtUuid)
-  // We don't look through Table Cells, because frankly, there is a better way to find an association to a table.
-  return objectConnections.some((id: Types.ObjectId) => id.equals(find));
-}
-
-/**
  * Extracts all the Associations that from could possibly have.
  * @param from
  */
-function getAllAssociations(from: FromType): Association[] {
+function getAllAssociations(from: FromObjectType): Association[] {
   let associations: Association[] = []
   // FomUser
   if ("groups" in from) associations.push(...from.groups)
@@ -124,19 +113,39 @@ function getAllAssociations(from: FromType): Association[] {
 }
 
 /**
- * Search the list of associations for some link to
+ * Search A DbObject to see if any of its components are the link we are looking for. Here, we are not concerned
+ * with associations, but merely if some object is/contains the id we are looking for. We DO NOT search through
+ * Associations (those are done separately).
+ * @param from
+ * @param find
+ */
+function isFindInFrom(from: FromType, find: Types.ObjectId): boolean {
+  let objectConnections: Types.ObjectId[] = []
+  if ("_id" in from) objectConnections.push(from._id)
+  if ("ref" in from) objectConnections.push(from.ref)
+  if ("ui" in from && from.ui.avatar) objectConnections.push(from.ui.avatar)
+  if ("jwtUuid" in from) objectConnections.push(from.jwtUuid)
+  // We don't look through Table Cells, because frankly, there is a better way to find an association to a table.
+  return objectConnections.some((id: Types.ObjectId) => id.equals(find));
+}
+
+/**
+ * Search through all the associations of this DB object, and see if any of those associations are the one we are
+ * looking for.
  * @param from
  * @param find
  * @param seen
+ * @param minRole
  */
-async function searchAssociations(from: FromObjectType, find: Types.ObjectId, seen: Types.ObjectId[])
+async function searchAssociations(from: FromObjectType, find: Types.ObjectId, seen: Types.ObjectId[], minRole: RoleType)
   : Promise<Association> {
-
   for (let association of getAllAssociations(from)) {
     if (seen.some((id: Types.ObjectId) => id.equals(association.ref))) continue
-    if (association.ref.equals(find._id)) return association
+    if (isFindInFrom(association, find)) return association
     try {
       let nestedAssociation = await getAssociation(association, find, seen)
+      if (roleVal(nestedAssociation.role) > roleVal(minRole)) continue
+
       return {
         ref: nestedAssociation.ref,
         model: nestedAssociation.model,

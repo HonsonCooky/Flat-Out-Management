@@ -1,0 +1,26 @@
+name: Flat Out Api CI
+
+on:
+  push:
+    paths:
+      - 'flat_out_api/**'
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Tests
+        run: npm run
+
+      - name: Add remote origin
+        run: git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+
+      - name: Deploy backend to heroku
+        run: git push --force heroku `git subtree split --prefix server HEAD`:master
