@@ -6,13 +6,12 @@ import {FomTable} from "../../../interfaces/non-entities/fom-table";
 import {FomCalendar} from "../../../interfaces/non-entities/fom-calendar";
 import {FomGroup} from "../../../interfaces/entities/fom-group";
 import {FomUser} from "../../../interfaces/entities/fom-user";
-import {DbObject} from "../../../interfaces/db-object";
 
 /**An actual instance of a DB object*/
 type DbObjInstance = FomUser | FomGroup | FomCalendar | FomTable
 /**A generic instance of a DB object (parent interface). Although these are used in code, we can usually guarantee
  *  that at runtime, this will be an actual instance. For typescript and generic functionality, this must be included*/
-type DbObjGeneric = DbEntity | DbNonEntity | DbObject
+type DbObjGeneric = DbEntity | DbNonEntity
 /**Any db object*/
 export type DbObj = DbObjInstance | DbObjGeneric
 /**A reference to a DB object which can be used to get the object (either it already is, or has enough information

@@ -1,5 +1,6 @@
-import {DbObj, DbObjRef, getObjFromRef, objToAssociation} from "./db-object-handling";
+import {DbObj, DbObjRef, getObjFromRef, getObjValue, objToAssociation} from "./db-object-handling";
 import {Association, ModelType, RoleType} from "../../../interfaces/association";
+import {DbNonEntity} from "../../../interfaces/non-entities/db-non-entity";
 
 /**
  * Connect component A to component B. This method overrides existing connections, and does NOT check that A or B
@@ -7,7 +8,8 @@ import {Association, ModelType, RoleType} from "../../../interfaces/association"
  * connection to A.
  * @param comA Some DB component or Association
  * @param comB Another DB component or Association
- * @param options <br/>**role:** The role type of the connection from A to B (default REQUEST, lowest)<br/>
+ * @param options <br/>
+ * **role:** The role type of the connection from A to B (default REQUEST, lowest)<br/>
  * **override:** If true, will override any association with the same reference (default true)<br/>
  * **strict:** If true, will throw an error if some association already exists. This ignores override. (default false)
  */
@@ -45,17 +47,23 @@ async function connectOneWay(aObj: DbObj, bObj: DbObj,
   options: { role: RoleType, override: boolean, strict: boolean }) {
   let bAss = await objToAssociation(bObj, options.role)
 
-  // DbNonEntity | FomCalendar | FomTable
-  if ("associations" in aObj)
-    await addWithEnforceOptions(aObj.associations, bAss, options)
-  // DbEntity | FomUser | FomGroup
-  else if ("tables" in aObj && bAss.model === ModelType.TABLE)
-    await addWithEnforceOptions(aObj.tables, bAss, options)
-  else if ("calendar" in aObj && bAss.model === ModelType.CALENDAR)
-    await addWithEnforceOptions(aObj.calendar, bAss, options)
-  else {
-    throw new Error('Unable to connect components. Unknown location to store association')
-  }
+  if ("associations" in aObj) {
+    let newAssociation = await filterThroughOptions(aObj, aObj.associations, bAss, options)
+    if (newAssociation) aObj.associations.push(bAss)
+  } else if ("groups" in aObj && bAss.model === ModelType.GROUP) {
+    let newAssociation = await filterThroughOptions(aObj, aObj.groups, bAss, options)
+    if (newAssociation) aObj.groups.push(bAss)
+  } else if ("users" in aObj && bAss.model === ModelType.USER) {
+    let newAssociation = await filterThroughOptions(aObj, aObj.users, bAss, options)
+    if (newAssociation) aObj.users.push(bAss)
+  } else if ("tables" in aObj && bAss.model === ModelType.TABLE) {
+    let newAssociation = await filterThroughOptions(aObj, aObj.tables, bAss, options)
+    if (newAssociation) aObj.tables.push(bAss)
+  } else if ("calendar" in aObj && bAss.model === ModelType.CALENDAR) {
+    let newAssociation = await filterThroughOptions(aObj, aObj.calendar, bAss, options)
+    if (newAssociation) aObj.calendar = bAss
+  } else throw new Error(`400: Unable to connect ${getObjValue(aObj)}`)
+
 
   // Save the changes, ensuring all validation logic is adhered to. Also ensuring that this object exists in the DB
   // for when B connects to A.
@@ -63,42 +71,44 @@ async function connectOneWay(aObj: DbObj, bObj: DbObj,
 }
 
 /**
- * Add an association to some list, enforcing the options
- * @param connector
- * @param association
+ * Provides a method for ensuring that options are executed. Also ensures that previous associations are
+ * disconnected before reconnecting them.
+ * @param aObj
+ * @param curValue
+ * @param addAssociation
  * @param options
  */
-async function addWithEnforceOptions(connector: (Association | undefined) | Association[], association: Association,
-  options: { role: RoleType, override: boolean, strict: boolean }) {
-  // STRICT and NOT OVERRIDE have a similar idea. If some association exists, then don't attempt the connection.
-  // The only difference is in how this is handled.
+async function filterThroughOptions(aObj: DbObj, curValue: undefined | Association | Association[],
+  addAssociation: Association, options: { override: boolean, strict: boolean }): Promise<Association | undefined> {
+
+  let curAssociation = getAssociationFromCurValue(curValue, addAssociation)
+
   if (options.strict || !options.override) {
-    if (associationExists(connector, association)) {
-      if (options.strict) throw new Error('Attempted to connect components that are already associated')
-      else return
+    if (curAssociation) {
+      if (options.strict) throw new Error('400: Components are already connected')
+      return undefined
     }
   }
 
-  // Override is TRUE and Strict is False
-  if (!Array.isArray(connector)) {
-    if (connector) await disconnectComponents(connector, association)
-    connector = association
-    return
+  // Disconnect from the previous connection
+  if (curAssociation) {
+    await disconnectComponents(aObj, curAssociation)
   }
 
-  connector = connector.filter((a: Association) => !a.ref.equals(association.ref))
-  connector.push(association)
+  return addAssociation
 }
 
 /**
- * Check to see if some connection (reference in A from B) already exists.
- * @param connector
+ * Confirm if some association already exists.
+ * @param curValue
  * @param association
  */
-function associationExists(connector: (Association | undefined) | Association[], association: Association): boolean {
-  if (Array.isArray(connector)) return connector.some((a: Association) => a.ref.equals(association.ref))
-  return !!connector
+function getAssociationFromCurValue(curValue: undefined | Association | Association[],
+  association: Association): Association | undefined {
+  if (Array.isArray(curValue)) return curValue.find((a) => a.ref.equals(association.ref))
+  return curValue
 }
+
 
 /**
  * Disconnect A from B, and B from A. This helper function does not check that A has the authority to make these
