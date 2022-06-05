@@ -5,7 +5,7 @@ import {GroupModel} from "../../src/schemas/entities/group-schema";
 import {TableModel} from "../../src/schemas/non-entities/table-schema";
 import {CalendarModel} from "../../src/schemas/non-entities/calendar-schema";
 
-async function clearDb() {
+export async function clearDb() {
   await UserModel.deleteMany()
   await GroupModel.deleteMany()
   await TableModel.deleteMany()

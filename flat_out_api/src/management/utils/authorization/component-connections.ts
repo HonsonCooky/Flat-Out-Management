@@ -1,6 +1,10 @@
 import {DbObj, DbObjRef, getObjFromRef, getObjValue, objToAssociation} from "./db-object-handling";
 import {Association, ModelType, RoleType} from "../../../interfaces/association";
 import {DbNonEntity} from "../../../interfaces/non-entities/db-non-entity";
+import {Types} from "mongoose";
+
+type Options = { role?: RoleType, override?: boolean, strict?: boolean }
+type StrictOptions = { role: RoleType, override: boolean, strict: boolean }
 
 /**
  * Connect component A to component B. This method overrides existing connections, and does NOT check that A or B
@@ -13,19 +17,16 @@ import {DbNonEntity} from "../../../interfaces/non-entities/db-non-entity";
  * **override:** If true, will override any association with the same reference (default true)<br/>
  * **strict:** If true, will throw an error if some association already exists. This ignores override. (default false)
  */
-export async function connectComponents(comA: DbObjRef, comB: DbObjRef,
-  options: { role: RoleType, override: boolean, strict: boolean } = {
-    role: RoleType.REQUEST,
-    override: true,
-    strict: false
-  }) {
+export async function connectComponents(comA: DbObjRef, comB: DbObjRef, options?: Options) {
+  let fullOptions: StrictOptions = {role: RoleType.REQUEST, override: true, strict: false, ...options}
+
   let aObj = await getObjFromRef(comA)
   let bObj = await getObjFromRef(comB)
   if (!aObj || !bObj) throw new Error(`400: Attempting to connect objects, of which one doesn't exist`)
 
   try {
-    await connectOneWay(aObj, bObj, options) // Create B Association in A
-    await connectOneWay(bObj, aObj, options) // Create A Association in B
+    await connectOneWay(aObj, bObj, fullOptions) // Create B Association in A
+    await connectOneWay(bObj, aObj, fullOptions) // Create A Association in B
   } catch (e) {
     // Disconnect the objects before throwing the error
     await disconnectComponents(comA, comB)
@@ -43,8 +44,7 @@ export async function connectComponents(comA: DbObjRef, comB: DbObjRef,
  * @param bObj
  * @param options
  */
-async function connectOneWay(aObj: DbObj, bObj: DbObj,
-  options: { role: RoleType, override: boolean, strict: boolean }) {
+async function connectOneWay(aObj: DbObj, bObj: DbObj, options: StrictOptions) {
   let bAss = await objToAssociation(bObj, options.role)
 
   if ("associations" in aObj) {
@@ -79,9 +79,9 @@ async function connectOneWay(aObj: DbObj, bObj: DbObj,
  * @param options
  */
 async function filterThroughOptions(aObj: DbObj, curValue: undefined | Association | Association[],
-  addAssociation: Association, options: { override: boolean, strict: boolean }): Promise<Association | undefined> {
+  addAssociation: Association, options: StrictOptions): Promise<Association | undefined> {
 
-  let curAssociation = getAssociationFromCurValue(curValue, addAssociation)
+  let curAssociation = Array.isArray(curValue) ? curValue.find((a) => a.ref.equals(addAssociation.ref)) : curValue
 
   if (options.strict || !options.override) {
     if (curAssociation) {
@@ -99,18 +99,6 @@ async function filterThroughOptions(aObj: DbObj, curValue: undefined | Associati
 }
 
 /**
- * Confirm if some association already exists.
- * @param curValue
- * @param association
- */
-function getAssociationFromCurValue(curValue: undefined | Association | Association[],
-  association: Association): Association | undefined {
-  if (Array.isArray(curValue)) return curValue.find((a) => a.ref.equals(association.ref))
-  return curValue
-}
-
-
-/**
  * Disconnect A from B, and B from A. This helper function does not check that A has the authority to make these
  * overriding changes. Furthermore, this method either works, or it doesn't. Most errors are avoided.
  * @param comA
@@ -119,7 +107,7 @@ function getAssociationFromCurValue(curValue: undefined | Association | Associat
 export async function disconnectComponents(comA: DbObjRef, comB: DbObjRef) {
   let aObj = await getObjFromRef(comA)
   let bObj = await getObjFromRef(comB)
-  if (!aObj || !bObj) throw new Error(`400: Attempting to connect objects, of which one doesn't exist`)
+  if (!aObj || !bObj) throw new Error(`400: Attempting to disconnect objects, of which one doesn't exist`)
 
   try {
     await disconnectOneWay(aObj, bObj)
@@ -130,5 +118,27 @@ export async function disconnectComponents(comA: DbObjRef, comB: DbObjRef) {
 }
 
 async function disconnectOneWay(aObj: DbObj, bObj: DbObj) {
+  let bAss = await objToAssociation(bObj)
 
+  if ("associations" in aObj) {
+    aObj.associations = associationFilter(aObj.associations, bAss.ref)
+    if (aObj.associations.length === 0) await aObj.deleteOne()
+  } else if ("groups" in aObj && bAss.model === ModelType.GROUP) {
+    aObj.groups = associationFilter(aObj.groups, bAss.ref)
+  } else if ("users" in aObj && bAss.model === ModelType.USER) {
+    aObj.users = associationFilter(aObj.users, bAss.ref)
+  } else if ("tables" in aObj && bAss.model === ModelType.TABLE) {
+    aObj.tables = associationFilter(aObj.tables, bAss.ref)
+  } else if ("calendar" in aObj && bAss.model === ModelType.CALENDAR) {
+    aObj.calendar = undefined
+  } else console.warn(`Attempted to disconnect entity ${aObj._id} from ${bAss}`)
+}
+
+/**
+ * Helper function to remove some complexity in disconnectOneWay
+ * @param listToFilter
+ * @param removalRef
+ */
+function associationFilter(listToFilter: Association[], removalRef: Types.ObjectId) {
+  return listToFilter.filter((b) => !b.ref.equals(removalRef))
 }

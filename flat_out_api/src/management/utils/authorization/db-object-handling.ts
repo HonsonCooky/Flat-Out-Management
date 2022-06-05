@@ -33,11 +33,11 @@ export function getObjId(idRef: DbIdRef): Types.ObjectId {
 
 /**
  * Helper function to translate some reference to a DB Object into a guaranteed DB object
- * @param ref
+ * @param dbRef
  */
-export async function getObjFromRef(ref: DbObjRef): Promise<DbObj> {
-  if (!("ref" in ref)) return ref
-  let obj = await models[ref.model].findOne({_id: ref.ref});
+export async function getObjFromRef(dbRef: DbObjRef): Promise<DbObj> {
+  if (!("ref" in dbRef)) return dbRef
+  let obj = await models[dbRef.model].findOne({_id: dbRef.ref});
   if (!obj) throw new Error(`Object reference does not resolve with a valid database entry`)
   return obj
 }
@@ -55,7 +55,7 @@ export function getObjModel(obj: DbObj): ModelType {
   if ("users" in obj) return ModelType.GROUP
   if ("colLength" in obj) return ModelType.TABLE
   if ("events" in obj) return ModelType.CALENDAR
-  throw new Error('Attempting to find model type without a valid reference')
+  throw new Error('Invalid object construction. No defining model feature.')
 }
 
 /**
@@ -63,8 +63,9 @@ export function getObjModel(obj: DbObj): ModelType {
  * @param obj
  */
 export function getObjValue(obj: DbObj): string {
-  if ("ui" in obj) return obj.ui.name
-  return obj.name
+  if ("ui" in obj && obj.ui.name) return obj.ui.name
+  if ("name" in obj && obj.name) return obj.name
+  throw new Error('Invalid object construction. No name.')
 }
 
 /**
