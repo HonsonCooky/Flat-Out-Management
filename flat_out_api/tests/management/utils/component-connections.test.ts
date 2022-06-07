@@ -1,4 +1,7 @@
-import {connectComponents} from "../../../src/management/utils/authorization/component-connections";
+import {
+  connectComponents,
+  disconnectComponents
+} from "../../../src/management/utils/authorization/component-connections";
 import {Types} from "mongoose";
 import {UserModel} from "../../../src/schemas/entities/user-schema";
 import {ModelType, RoleType} from "../../../src/interfaces/association";
@@ -169,7 +172,7 @@ describe("Connection Tests", () => {
     expect(dbTable?.associations[0].value).toBe(user.ui.name)
   })
 
-  it("Connect User to Table with Strict", async () => {
+  it("Connect User to Table Twice with Strict", async () => {
     await connectComponents(user, table1)
     expect(user.tables[0].ref).toBe(tableId)
     expect(table1.associations[0].ref).toBe(userId)
@@ -187,7 +190,68 @@ describe("Connection Tests", () => {
     expect(dbTable?.associations[0].value).toBe(user.ui.name)
 
 
-    expect(async () => await connectComponents(user, table2, {strict: true})).toThrow()
+    await expect(() => connectComponents(user, table1, {strict: true})).rejects.toThrow()
+  })
 
+  it("Connect User to Table Twice with Non Override", async () => {
+    await connectComponents(user, table1)
+    expect(user.tables[0].ref).toBe(tableId)
+    expect(table1.associations[0].ref).toBe(userId)
+
+    let dbUser = await UserModel.findOne({_id: userId})
+    expect(dbUser?.tables[0].ref).toStrictEqual(tableId)
+    expect(dbUser?.tables[0].model).toBe(ModelType.TABLE)
+    expect(dbUser?.tables[0].role).toBe(RoleType.REQUEST)
+    expect(dbUser?.tables[0].value).toBe(table1.name)
+
+    let dbTable = await TableModel.findOne({_id: tableId})
+    expect(dbTable?.associations[0].ref).toStrictEqual(userId)
+    expect(dbTable?.associations[0].model).toBe(ModelType.USER)
+    expect(dbTable?.associations[0].role).toBe(RoleType.REQUEST)
+    expect(dbTable?.associations[0].value).toBe(user.ui.name)
+
+    await connectComponents(user, table1, {role: RoleType.READER, override: false})
+    expect(user.tables[0].ref).toBe(tableId)
+    expect(table1.associations[0].ref).toBe(userId)
+
+    dbUser = await UserModel.findOne({_id: userId})
+    expect(dbUser?.tables[0].ref).toStrictEqual(tableId)
+    expect(dbUser?.tables[0].model).toBe(ModelType.TABLE)
+    expect(dbUser?.tables[0].role).toBe(RoleType.REQUEST)
+    expect(dbUser?.tables[0].value).toBe(table1.name)
+
+    dbTable = await TableModel.findOne({_id: tableId})
+    expect(dbTable?.associations[0].ref).toStrictEqual(userId)
+    expect(dbTable?.associations[0].model).toBe(ModelType.USER)
+    expect(dbTable?.associations[0].role).toBe(RoleType.REQUEST)
+    expect(dbTable?.associations[0].value).toBe(user.ui.name)
+  })
+
+  it("Disconnect User to Table", async () => {
+    await connectComponents(user, table1)
+    expect(user.tables[0].ref).toBe(tableId)
+    expect(table1.associations[0].ref).toBe(userId)
+
+    let dbUser = await UserModel.findOne({_id: userId})
+    expect(dbUser?.tables[0].ref).toStrictEqual(tableId)
+    expect(dbUser?.tables[0].model).toBe(ModelType.TABLE)
+    expect(dbUser?.tables[0].role).toBe(RoleType.REQUEST)
+    expect(dbUser?.tables[0].value).toBe(table1.name)
+
+    let dbTable = await TableModel.findOne({_id: tableId})
+    expect(dbTable?.associations[0].ref).toStrictEqual(userId)
+    expect(dbTable?.associations[0].model).toBe(ModelType.USER)
+    expect(dbTable?.associations[0].role).toBe(RoleType.REQUEST)
+    expect(dbTable?.associations[0].value).toBe(user.ui.name)
+
+    await disconnectComponents(user, table1)
+    expect(user.tables.length).toBe(0)
+    expect(table1.associations.length).toBe(0)
+
+    dbUser = await UserModel.findOne({_id: userId})
+    expect(dbUser?.tables.length).toBe(0)
+
+    dbTable = await TableModel.findOne({_id: tableId}) // Deleted when associations are lost in app
+    expect(dbTable).toStrictEqual(null)
   })
 })

@@ -27,7 +27,7 @@ export async function connectComponents(comA: DbObjRef, comB: DbObjRef, options?
   try {
     await connectOneWay(aObj, bObj, fullOptions) // Create B Association in A
     await connectOneWay(bObj, aObj, fullOptions) // Create A Association in B
-  } catch (e) {
+  } catch (e: any) {
     // Disconnect the objects before throwing the error
     await disconnectComponents(comA, comB)
     throw e
@@ -132,6 +132,8 @@ async function disconnectOneWay(aObj: DbObj, bObj: DbObj) {
   } else if ("calendar" in aObj && bAss.model === ModelType.CALENDAR) {
     aObj.calendar = undefined
   } else console.warn(`Attempted to disconnect entity ${aObj._id} from ${bAss}`)
+
+  await aObj.save()
 }
 
 /**
